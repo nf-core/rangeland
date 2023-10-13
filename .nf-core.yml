@@ -1,0 +1,5 @@
+repository_type: pipeline
+template:
+  prefix: nf-core
+  skip:
+  - igenomes
