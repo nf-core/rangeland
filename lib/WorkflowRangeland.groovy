@@ -11,11 +11,13 @@ class WorkflowRangeland {
     // Check and validate parameters
     //
     public static void initialise(params, log) {
-
-
-        if (!params.fasta) {
-            Nextflow.error "Genome fasta file not specified with e.g. '--fasta genome.fa' or via a detectable config file."
-        }
+        // Check mandatory parameters
+        if (!params.input)     { Nextflow.error "Input satellite data not specified with e.g. --input <SATELLITE DATA ROOT> or via detectable config file." }
+        if (!params.dem)       { Nextflow.error "Input digital elevation model not specified with e.g. --dem <DIGITAL ELEVATION MODEL ROOT> or via detectable config file." }
+        if (!params.wvdb)      { Nextflow.error "Input water vapor data not specified with e.g. --wvdb <WATER VAPOR DATA ROOT> or via detectable config file." }
+        if (!params.data_cube) { Nextflow.error "Input datacube definition not specified with e.g. --data_cube datacube.gpkg or via detectable config file." }
+        if (!params.aoi)       { Nextflow.error "Input area-of-interest specification not specified with e.g. --aoi aoi.gpkg or via detectable config file." }
+        if (!params.endmember) { Nextflow.error "Input endmember specification not specified with e.g. --endmember endmember.txt or via detectable config file." }
     }
 
     //
@@ -51,13 +53,11 @@ class WorkflowRangeland {
 
     public static String toolCitationText(params) {
 
-        // TODO nf-core: Optionally add in-text citation tools to this list.
-        // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "Tool (Foo et al. 2023)" : "",
         // Uncomment function in methodsDescriptionText to render in MultiQC report
         def citation_text = [
                 "Tools used in the workflow included:",
-                "FastQC (Andrews 2010),",
                 "MultiQC (Ewels et al. 2016)",
+                "FORCE (Frantz et al. 2019)",
                 "."
             ].join(' ').trim()
 
@@ -66,12 +66,10 @@ class WorkflowRangeland {
 
     public static String toolBibliographyText(params) {
 
-        // TODO Optionally add bibliographic entries to this list.
-        // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "<li>Author (2023) Pub name, Journal, DOI</li>" : "",
         // Uncomment function in methodsDescriptionText to render in MultiQC report
         def reference_text = [
-                "<li>Andrews S, (2010) FastQC, URL: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).</li>",
-                "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
+                "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>",
+                "<li>Frantz, D. (2019). FORCE—Landsat + Sentinel-2 Analysis Ready Data and Beyond. Remote Sensing, 11, 1124</li>"
             ].join(' ').trim()
 
         return reference_text
@@ -91,9 +89,9 @@ class WorkflowRangeland {
         meta["tool_citations"] = ""
         meta["tool_bibliography"] = ""
 
-        // TODO Only uncomment below if logic in toolCitationText/toolBibliographyText has been filled!
-        //meta["tool_citations"] = toolCitationText(params).replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
-        //meta["tool_bibliography"] = toolBibliographyText(params)
+        // Only uncomment below if logic in toolCitationText/toolBibliographyText has been filled!
+        meta["tool_citations"] = toolCitationText(params).replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
+        meta["tool_bibliography"] = toolBibliographyText(params)
 
 
         def methods_text = mqc_methods_yaml.text
