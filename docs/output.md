@@ -6,14 +6,100 @@ This document describes the output produced by the pipeline.
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
-
 ## Pipeline overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
+- [untar](#untar) - Optionally extract input files
+- [Preparation](#preparation)- Create a masks and boundaries for further analyses.
+- [Preprocessing](#preprocessing) - Preprocessing of satellite imagery.
+- [Higher-level-Processing](#higher-level-processing) - Classify preprocessed imagery and perform time series analyses.
+- [Visualization](#visualization). Create two visualizations of the results.
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+
+### Untar
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `untar/`
+  - `<digital_elevation_dir>`: directory containing symlinks to decompressed digital elevation input data. Only present if a tar archive was provided for the digital elevation model. Name of the directory derived from archive contents.
+  - `<water_vapor_dir>`: directory containing symlinks to decompressed water vapor input data. Only present if a tar archive was provided for water vapor data. Name of the directory derived from archive contents.
+  - `<satellite_data_dir>`: directory containing symlinks to decompressed satellite imagery input data. Only present if a tar archive was provided for satellite data. Name of the directory derived from archive contents.
+
+</details>
+
+[untar](https://nf-co.re/modules/untar) is a nf-core module used to extract files from tar archives.
+
+Invokation of untar depends on certain parameters (i.e input_tar, dem_tar and wvdb_tar). Thus, the outputs files are only generated when these are set to true.
+
+### Preparation
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `preparation/`
+  - `tile_allow.txt`: File containing all [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) notation tiles of the earths surface that should be used further in the pipeline. The first line contains the number of tiles. Following lines contain tile identifiers.
+  - `mask/`: Directory containing a subdirectory for every [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) tile. Each subdirectory contains the `aoi.tif` file. This file represents a binary mask layer that indicates which pixels are eligible for analyses.
+
+</details>
+
+In the preparation step, usable tiles and pixels per tile are identified.
+
+[force-tile-extent](https://force-eo.readthedocs.io/en/latest/components/auxilliary/tile-extent.html#force-tile-extent) analyses the area of interest information and determines the tiles that can be used. These tiles are later used by other [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) submodules.
+
+[force-cube](https://force-eo.readthedocs.io/en/latest/components/auxilliary/cube.html#force-cube) computes the usable pixels for each [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) tile. This computation is based on the specified are of interest and the resolution. The resulting binary masks can be used to understand which pixels were discarded (e.g. because they only contain water).
+
+### Preprocessing
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `preprocess/<SATELLITE INPUT IMAGE>/`
+  - `param_files/`: Directory containing parameter files for [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) preprocessing modules. One file per satellite mission per tile.
+  - `level2_ard/`: Directory containing symlinks to analysis-ready-data. Subdirectories contain the .tif files that were generated during preprocessing.
+  - `logs/`: Logs from preprocessing.
+
+</details>
+
+Preprocessing consist of two parts, generating parameter files and actual preprocessing.
+
+The parameter files created through [force-parameter](https://force-eo.readthedocs.io/en/latest/components/auxilliary/parameter.html#force-parameter) can be viewed to understand concrete preprocessing techniques applied for a given tile.
+
+Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html) command. Logs can be consulted for debugging purposes. ARD may be collected as a basis for other remote sensing workflows. Moreover, ARD contains two .tif files per initial input image, a quality data file and the atmospherically corrected satellite data, that can be viewed using geographic information systems (GISs). Note that ARD data is only published as symbolic links due to the amount and size of the files.
+
+### Higher-level-Processing
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `higher-level/<TILE>/`
+  - `param_files/`: Parameter files used in [force-higher-level](https://force-eo.readthedocs.io/en/latest/components/higher-level/index.html).
+  - `trend_files`: Symlinks to trend files that are the result of higher-level processing.
+
+</details>
+
+Higher level processing consist of two parts, generating parameter files and performing various processing task as defined in the parameter files.
+
+Parameter files may be consulted to derive information about the specific processing task performed for a given tile. In this workflow a classification, optionally using spectral unmixing, is conducted. Next, time series analysis for different characteristics is performed.
+
+The resulting trend files can be consulted to view trends for individual tiles. They are saved as symlinks because of their large size.
+
+### Visualization
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `trend/`
+  - `mosaic/trend/`
+    - `<TILE>/`: Auxiliary files for the mosaic visualization.
+    - `mosaic`: Contains a single virtual raster file that defines the mosaic visualization.
+  - `pyramid/<TREND_TYPE>/trend/<TILE>/`: Contains tile-wise pyramid visualizations for every trend analyzed in the workflow.
+
+</details>
+
+Two types of common visualizations are generated in the last step of the pipeline. They are results of [force-mosaic](https://force-eo.readthedocs.io/en/latest/components/auxilliary/mosaic.html) and [force-pyramid](https://force-eo.readthedocs.io/en/latest/components/auxilliary/pyramid.html). Note that these visualizations do not add more logic to the workflow but rather rearrange the output files of higher-level-processing.
 
 ### MultiQC
 

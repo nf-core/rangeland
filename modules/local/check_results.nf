@@ -2,7 +2,6 @@ nextflow.enable.dsl = 2
 
 process CHECK_RESULTS {
 
-    //Only retry if OutOfMemoryError
     container 'docker.io/rocker/geospatial:4.3.1'
 
     input:

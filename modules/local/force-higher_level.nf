@@ -3,9 +3,10 @@ nextflow.enable.dsl = 2
 process FORCE_HIGHER_LEVEL {
 
     container "docker.io/davidfrantz/force:3.7.11"
+    tag {tile}
 
     input:
-    tuple path( config ), path( ard ), path( aoi ), path ( datacube ), path ( endmember )
+    tuple val(tile), path( config ), path( ard ), path( aoi ), path ( datacube ), path ( endmember )
 
     output:
     path 'trend/*.tif*', emit: trend_files

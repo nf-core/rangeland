@@ -11,7 +11,7 @@ process HIGHER_LEVEL_CONFIG {
     path endmember
 
     output:
-    tuple path( "trend_${tile}.prm" ), path( "ard/", includeInputs: true  ), path( "mask/", includeInputs: true ), path( 'ard/datacube-definition.prj', includeInputs: true ), path( endmember, includeInputs: true ), emit: higher_level_configs_and_data
+    tuple val (tile), path( "trend_${tile}.prm" ), path( "ard/", includeInputs: true  ), path( "mask/", includeInputs: true ), path( 'ard/datacube-definition.prj', includeInputs: true ), path( endmember, includeInputs: true ), emit: higher_level_configs_and_data
 
     """
     # generate parameterfile from scratch
