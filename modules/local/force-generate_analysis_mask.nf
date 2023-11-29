@@ -11,9 +11,16 @@ process FORCE_GENERATE_ANALYSIS_MASK{
     output:
     //Mask for whole region
     path 'mask/*/*.tif', emit: masks
+    path "versions.yml", emit: versions
 
+    script:
     """
     force-cube -o mask/ -s $params.resolution $aoi
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
     """
 
 }

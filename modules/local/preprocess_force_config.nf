@@ -16,9 +16,9 @@ process PREPROCESS_CONFIG {
     output:
     tuple path("*.prm"), path(data), path(cube), path(tile), path(dem), path(wvdb),  emit: preprocess_config_and_data
     path "*.prm"
+    path "versions.yml", emit: versions
 
     script:
-
     """
     BASE=\$(basename $data)
 
@@ -47,6 +47,11 @@ process PREPROCESS_CONFIG {
     sed -i "/^ORIGIN_LAT /c\\ORIGIN_LAT = \$ORIGINY" \$PARAM
     sed -i "/^PROJECTION /c\\PROJECTION = \$CRS" \$PARAM
     sed -i "/^NTHREAD /c\\NTHREAD = $params.force_threads" \$PARAM
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
     """
 
 }

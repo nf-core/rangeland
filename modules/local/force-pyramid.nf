@@ -9,14 +9,20 @@ process FORCE_PYRAMID {
     tuple val( tile ), path( image )
 
     output:
-    path( '**' ), emit: trends
+    path( '**' ),        emit: trends
+    path "versions.yml", emit: versions
 
+    script:
     """
     files="*.tif"
     for file in \$files; do
         force-pyramid \$file
-    done
-    ls -la
+    done;
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
     """
 
 }

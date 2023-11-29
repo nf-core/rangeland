@@ -13,9 +13,10 @@ process MERGE {
 
     output:
     tuple val( id ), path( "*.tif" ), emit: tiles_merged
+    path "versions.yml"             , emit: versions
 
+    script:
     """
-
     files=`find -L input/ -type f -printf "%f\\n" | sort | uniq`
     numberFiles=`echo \$files | wc -w`
     currentFile=0
@@ -38,8 +39,14 @@ process MERGE {
         #apply meta
         force-mdcp \$onefile \$file
 
-    done
+    done;
 
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+        r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
+        raster: \$(Rscript -e "library(raster); cat(as.character(packageVersion('raster')))")
+    END_VERSIONS
     """
 
 }

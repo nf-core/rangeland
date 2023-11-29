@@ -21,15 +21,24 @@ workflow PREPROCESSING {
 
     main:
 
+        ch_versions = Channel.empty()
+
         FORCE_GENERATE_TILE_ALLOW_LIST( aoi_file, cube_file )
+        ch_versions = ch_versions.mix(FORCE_GENERATE_TILE_ALLOW_LIST.out.versions)
+
         FORCE_GENERATE_ANALYSIS_MASK( aoi_file, cube_file )
+        ch_versions = ch_versions.mix(FORCE_GENERATE_ANALYSIS_MASK.out.versions)
 
         //Group masks by tile
         masks = FORCE_GENERATE_ANALYSIS_MASK.out.masks.flatten().map{ x -> [ extractDirectory(x), x ] }
 
+        // Preprocessing configuration
         PREPROCESS_CONFIG( data, cube_file, FORCE_GENERATE_TILE_ALLOW_LIST.out.tile_allow, dem, wvdb )
+        ch_versions = ch_versions.mix(PREPROCESS_CONFIG.out.versions.first().ifEmpty(null))
 
+        // Main preprocessing
         FORCE_PREPROCESS( PREPROCESS_CONFIG.out.preprocess_config_and_data)
+        ch_versions = ch_versions.mix(FORCE_PREPROCESS.out.versions.first().ifEmpty(null))
 
         //Group by tile, date and sensor
         boa_tiles = FORCE_PREPROCESS.out.boa_tiles.flatten().map{ [ "${extractDirectory(it)}_${it.simpleName}", it ] }.groupTuple()
@@ -54,7 +63,10 @@ workflow PREPROCESSING {
         qai_tiles_done = qai_tiles.filter{ x -> x[1].size() == 1 }.map{ x -> [ x[0] .substring( 0, 11 ), x[1][0] ] }
 
         MERGE_BOA( "boa", boa_tiles_to_merge, cube_file )
+        ch_versions = ch_versions.mix(MERGE_BOA.out.versions.first().ifEmpty(null))
+
         MERGE_QAI( "qai", qai_tiles_to_merge, cube_file )
+        ch_versions = ch_versions.mix(MERGE_QAI.out.versions.first().ifEmpty(null))
 
         //Concat merged list with single images, group by tile over time
         boa_tiles = MERGE_BOA.out.tiles_merged
@@ -66,5 +78,6 @@ workflow PREPROCESSING {
 
     emit:
         tiles_and_masks = boa_tiles.join( qai_tiles ).join( masks )
+        versions        = ch_versions
 
 }

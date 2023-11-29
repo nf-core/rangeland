@@ -12,7 +12,9 @@ process FORCE_PREPROCESS {
     path "**/*BOA.tif", optional:true, emit: boa_tiles
     path "**/*QAI.tif", optional:true, emit: qai_tiles
     path "*.log"
+    path "versions.yml"              , emit: versions
 
+    script:
     """
     PARAM=$conf
 
@@ -32,6 +34,11 @@ process FORCE_PREPROCESS {
     FILEPATH=$data
     BASE=\$(basename $data)
     force-l2ps \$FILEPATH \$PARAM > level2_log\$BASE.log
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
     """
 
 

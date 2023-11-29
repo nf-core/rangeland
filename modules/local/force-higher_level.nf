@@ -10,26 +10,32 @@ process FORCE_HIGHER_LEVEL {
 
     output:
     path 'trend/*.tif*', emit: trend_files
+    path "versions.yml", emit: versions
+
+    script:
+    """
+    PARAM=$config
+
+    mkdir trend
+
+    # set provenance
+    mkdir prov
+    sed -i "/^DIR_PROVENANCE /c\\DIR_PROVENANCE = prov/" \$PARAM
 
 
-"""
-PARAM=$config
+    force-higher-level \$PARAM
 
-mkdir trend
+    #Rename files: /trend/<Tile>/<Filename> to <Tile>_<Filename>, otherwise we can not reextract the tile name later
+    results=`find trend -name '*.tif*'`
+    for path in \$results; do
+        mv \$path \${path%/*}_\${path##*/}
+    done;
 
-# set provenance
-mkdir prov
-sed -i "/^DIR_PROVENANCE /c\\DIR_PROVENANCE = prov/" \$PARAM
-
-
-force-higher-level \$PARAM
-
-#Rename files: /trend/<Tile>/<Filename> to <Tile>_<Filename>, otherwise we can not reextract the tile name later
-results=`find trend -name '*.tif*'`
-for path in \$results; do
-    mv \$path \${path%/*}_\${path##*/}
-done;
-"""
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
+    """
 
 }
 

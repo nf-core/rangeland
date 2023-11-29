@@ -12,7 +12,9 @@ process HIGHER_LEVEL_CONFIG {
 
     output:
     tuple val (tile), path( "trend_${tile}.prm" ), path( "ard/", includeInputs: true  ), path( "mask/", includeInputs: true ), path( 'ard/datacube-definition.prj', includeInputs: true ), path( endmember, includeInputs: true ), emit: higher_level_configs_and_data
+    path "versions.yml", emit: versions
 
+    script:
     """
     # generate parameterfile from scratch
     force-parameter -c ./trend_${tile}.prm TSA
@@ -65,6 +67,11 @@ process HIGHER_LEVEL_CONFIG {
     sed -i "/^OUTPUT_POL /c\\OUTPUT_POL = TRUE" \$PARAM
     sed -i "/^OUTPUT_TRO /c\\OUTPUT_TRO = TRUE" \$PARAM
     sed -i "/^OUTPUT_CAO /c\\OUTPUT_CAO = TRUE" \$PARAM
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
     """
 
 }

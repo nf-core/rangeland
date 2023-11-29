@@ -8,9 +8,12 @@ process FORCE_MOSAIC{
     input:
     tuple val( product ), path('trend/*')
     path 'trend/datacube-definition.prj'
+
     output:
     tuple val( product ), path( 'trend/*' ), emit: trend_files
+    path "versions.yml"                    , emit: versions
 
+    script:
     """
     #Move files from trend/<Tile>_<Filename> to trend/<Tile>/<Filename>
     results=`find trend/*.tif*`
@@ -20,6 +23,11 @@ process FORCE_MOSAIC{
     done;
 
     force-mosaic trend/
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        force: \$(force -v | sed 's/.*: //')
+    END_VERSIONS
     """
 
 }
