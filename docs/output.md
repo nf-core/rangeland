@@ -92,8 +92,8 @@ The resulting trend files can be consulted to view trends for individual tiles. 
 <summary>Output files</summary>
 
 - `trend/`
-  - `mosaic/trend/`
-    - `<TILE>/`: Auxiliary files for the mosaic visualization.
+  - `mosaic/<PRODUCT>/`
+    - `<TILE>`: Auxiliary files for the mosaic visualization.
     - `mosaic`: Contains a single virtual raster file that defines the mosaic visualization.
   - `pyramid/<TREND_TYPE>/trend/<TILE>/`: Contains tile-wise pyramid visualizations for every trend analyzed in the workflow.
 
