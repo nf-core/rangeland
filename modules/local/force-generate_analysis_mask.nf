@@ -2,6 +2,8 @@ nextflow.enable.dsl = 2
 
 process FORCE_GENERATE_ANALYSIS_MASK{
 
+    label 'process_single'
+
     container "docker.io/davidfrantz/force:3.7.11"
 
     input:
@@ -12,6 +14,9 @@ process FORCE_GENERATE_ANALYSIS_MASK{
     //Mask for whole region
     path 'mask/*/*.tif', emit: masks
     path "versions.yml", emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

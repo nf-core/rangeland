@@ -14,10 +14,10 @@
             "properties": {
                 "input": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-satellite",
                     "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see ./docs/usage.md ",
-                    "description": "Root directory of all sattelite imagery."
+                    "description": "Root directory of all sattelite imagery.",
+                    "mimetype": "application/x-tar"
                 },
                 "input_tar": {
                     "type": "boolean",
@@ -27,7 +27,6 @@
                 },
                 "dem": {
                     "type": "string",
-                    "default": "None",
                     "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (.tif) and a virtual dataset file (.vrt file) comprising all tile-wise files from the subdirectory.  \n\n\n",
                     "fa_icon": "fas fa-mountain",
                     "description": "Digital elevation model."
@@ -40,7 +39,6 @@
                 },
                 "wvdb": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-burn",
                     "description": "Water vapor dataset.",
                     "help_text": "Directory containg a number text files describing global water vapor data at different timestamps, and a coordinate order (.coo-)file containig the reference system of the water vapor data."
@@ -53,21 +51,18 @@
                 },
                 "data_cube": {
                     "type": "string",
-                    "default": "None",
                     "description": "Datacube definition.",
                     "fa_icon": "fas fa-cube",
                     "help_text": "A single .prj file describing the projection and reference grid of the generated datacube."
                 },
                 "aoi": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-chart-area",
                     "description": "Area of interest.",
                     "help_text": "A single vector file specifying the spacial extend of the targeted area."
                 },
                 "endmember": {
                     "type": "string",
-                    "default": "None",
                     "fa_icon": "fas fa-chart-line",
                     "description": "Endmember definition.",
                     "help_text": "A single text file specifying where lines correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces."

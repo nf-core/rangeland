@@ -2,6 +2,7 @@ nextflow.enable.dsl = 2
 
 process PREPROCESS_CONFIG {
 
+    label 'process_single'
     tag { data.simpleName }
 
     container "docker.io/davidfrantz/force:3.7.11"
@@ -14,9 +15,11 @@ process PREPROCESS_CONFIG {
     path wvdb
 
     output:
-    tuple path("*.prm"), path(data), path(cube), path(tile), path(dem), path(wvdb),  emit: preprocess_config_and_data
-    path "*.prm"
-    path "versions.yml", emit: versions
+    tuple path("*.prm"), path(data), path(cube), path(tile), path(dem), path(wvdb), emit: preprocess_config_and_data
+    path "versions.yml"                                                           , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

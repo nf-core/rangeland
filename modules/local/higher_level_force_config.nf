@@ -2,17 +2,22 @@ nextflow.enable.dsl = 2
 
 process HIGHER_LEVEL_CONFIG {
 
-    container "docker.io/davidfrantz/force:3.7.11"
+    label 'process_single'
     tag { tile }
 
+    container "docker.io/davidfrantz/force:3.7.11"
+
     input:
-    tuple val( tile ), path( "ard/${tile}/*" ), path( "ard/${tile}/*" ), path( "mask/${tile}/aoi.tif" )
+    tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
     path 'ard/datacube-definition.prj'
     path endmember
 
     output:
-    tuple val (tile), path( "trend_${tile}.prm" ), path( "ard/", includeInputs: true  ), path( "mask/", includeInputs: true ), path( 'ard/datacube-definition.prj', includeInputs: true ), path( endmember, includeInputs: true ), emit: higher_level_configs_and_data
+    tuple val (tile), path("trend_${tile}.prm"), path("ard/", includeInputs: true), path("mask/", includeInputs: true), path('ard/datacube-definition.prj', includeInputs: true), path(endmember, includeInputs: true), emit: higher_level_configs_and_data
     path "versions.yml", emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

@@ -1,6 +1,8 @@
 nextflow.enable.dsl=2
 
 process FORCE_PREPROCESS {
+
+    label 'process_medium'
     tag { data.simpleName }
 
     container "docker.io/davidfrantz/force:3.7.11"
@@ -11,8 +13,11 @@ process FORCE_PREPROCESS {
     output:
     path "**/*BOA.tif", optional:true, emit: boa_tiles
     path "**/*QAI.tif", optional:true, emit: qai_tiles
-    path "*.log"
+    path "*.log"                     , emit: log
     path "versions.yml"              , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

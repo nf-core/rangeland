@@ -2,6 +2,8 @@ nextflow.enable.dsl = 2
 
 process CHECK_RESULTS {
 
+    label 'process_low'
+
     container 'docker.io/rocker/geospatial:4.3.1'
 
     input:
@@ -15,6 +17,9 @@ process CHECK_RESULTS {
 
     output:
     path "versions.yml" , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

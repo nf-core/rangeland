@@ -2,15 +2,20 @@ nextflow.enable.dsl = 2
 
 process FORCE_PYRAMID {
 
+    label 'process_low'
     tag { tile }
+
     container "docker.io/davidfrantz/force:3.7.11"
 
     input:
-    tuple val( tile ), path( image )
+    tuple val(tile), path(image)
 
     output:
-    path( '**' ),        emit: trends
+    path('**')         , emit: trends
     path "versions.yml", emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

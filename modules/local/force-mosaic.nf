@@ -2,16 +2,21 @@ nextflow.enable.dsl = 2
 
 process FORCE_MOSAIC{
 
+    label 'process_low'
+
     tag { product }
     container "docker.io/davidfrantz/force:3.7.11"
 
     input:
-    tuple val( product ), path('trend/*')
+    tuple val(product), path('trend/*')
     path 'trend/datacube-definition.prj'
 
     output:
-    tuple val( product ), path( 'trend/*' ), emit: trend_files
-    path "versions.yml"                    , emit: versions
+    tuple val(product), path('trend/*'), emit: trend_files
+    path "versions.yml"                , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

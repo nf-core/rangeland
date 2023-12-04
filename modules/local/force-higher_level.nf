@@ -2,15 +2,20 @@ nextflow.enable.dsl = 2
 
 process FORCE_HIGHER_LEVEL {
 
+    label 'process_high'
+
     container "docker.io/davidfrantz/force:3.7.11"
-    tag {tile}
+    tag { tile }
 
     input:
-    tuple val(tile), path( config ), path( ard ), path( aoi ), path ( datacube ), path ( endmember )
+    tuple val(tile), path(config), path(ard), path(aoi), path (datacube), path (endmember)
 
     output:
     path 'trend/*.tif*', emit: trend_files
     path "versions.yml", emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """

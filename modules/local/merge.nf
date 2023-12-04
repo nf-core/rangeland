@@ -2,18 +2,22 @@ nextflow.enable.dsl = 2
 
 process MERGE {
 
+    label 'process_low'
     tag { id }
 
     container 'docker.io/davidfrantz/force:dev'
 
     input:
-    val ( data_type ) // defines whether qai or boa is merged
-    tuple val( id ), path( 'input/?/*' )
+    val (data_type) // defines whether qai or boa is merged
+    tuple val(id), path('input/?/*')
     path cube
 
     output:
-    tuple val( id ), path( "*.tif" ), emit: tiles_merged
+    tuple val(id), path("*.tif"), emit: tiles_merged
     path "versions.yml"             , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
 
     script:
     """
