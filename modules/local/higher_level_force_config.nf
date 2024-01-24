@@ -5,7 +5,7 @@ process HIGHER_LEVEL_CONFIG {
     label 'process_single'
     tag { tile }
 
-    container "docker.io/davidfrantz/force:3.7.11"
+    container "docker.io/davidfrantz/force:3.7.10"
 
     input:
     tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
