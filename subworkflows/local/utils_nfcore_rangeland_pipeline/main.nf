@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-core/pipeline pipeline
+// Subworkflow with functionality specific to the nf-core/rangeland pipeline
 //
 
 /*
@@ -142,7 +142,9 @@ workflow PIPELINE_COMPLETION {
 ========================================================================================
     FUNCTIONS
 ========================================================================================
-*///
+*/
+
+//
 // Validate channels from input samplesheet
 //
 def validateInputSamplesheet(input) {
@@ -155,7 +157,9 @@ def validateInputSamplesheet(input) {
     }
 
     return [ metas[0], fastqs ]
-}//
+}
+
+//
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
