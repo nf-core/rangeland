@@ -2,7 +2,7 @@ nextflow.enable.dsl = 2
 
 process FORCE_HIGHER_LEVEL {
 
-    label 'process_high'
+    label 'process_medium'
 
     container "docker.io/davidfrantz/force:3.7.10"
     tag { tile }
