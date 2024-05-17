@@ -83,50 +83,61 @@ peak_year_of_change <- peak_rast["YEAR-OF-CHANGE"]
 
 # COMPARE TESTRUN WITH REFERENCE EXECUTION
 #######################################################################
+failure <- FALSE
 
 woody_cover_changes_result <- all.equal(woody_cover_changes, woody_cover_changes_ref)
-if (is.character(woody_cover_changes_result)){
-    stop("Error: ", paste0(woody_cover_changes_result, " for woody cover changes."))
+if (is.character(woody_cover_changes_result)) {
+    print(paste0("Error: ", woody_cover_changes_result, " for woody cover changes."))
+    failure <- TRUE
 } else {
     print("Woody cover change check passed.")
 }
 
 woody_cover_year_of_change_result <- all.equal(woody_cover_year_of_change, woody_cover_year_of_change_ref)
-if (is.character(woody_cover_year_of_change_result)){
-    stop("Error: ", paste0(woody_cover_year_of_change_result, " for woody cover year of change."))
+if (is.character(woody_cover_year_of_change_result)) {
+    print(paste0("Error: ", woody_cover_year_of_change_result, " for woody cover year of change."))
+    failure <- TRUE
 } else {
     print("Woody cover year of change check passed.")
 }
 
 
 herbaceous_cover_changes_result <- all.equal(herbaceous_cover_changes, herbaceous_cover_changes_ref)
-if (is.character(herbaceous_cover_changes_result)){
-    stop("Error: ", paste0(herbaceous_cover_changes_result, " for herbaceous cover changes."))
+if (is.character(herbaceous_cover_changes_result)) {
+    print(paste0("Error: ",herbaceous_cover_changes_result, " for herbaceous cover changes."))
+    failure <- TRUE
 } else {
     print("Herbaceous cover change check passed.")
 }
 
 herbaceous_cover_year_of_change_result <- all.equal(herbaceous_cover_year_of_change, herbaceous_cover_year_of_change_ref)
-if (is.character(herbaceous_cover_year_of_change_result)){
-    stop("Error: ", paste0(herbaceous_cover_year_of_change_result, " for herbaceous cover year of change."))
+if (is.character(herbaceous_cover_year_of_change_result)) {
+    print(paste0("Error: ", herbaceous_cover_year_of_change_result, " for herbaceous cover year of change."))
+    failure <- TRUE
 } else {
     print("Herbaceous cover year of change check passed.")
 }
 
 
 peak_changes_result <- all.equal(peak_changes, peak_changes_ref)
-if (is.character(peak_changes_result)){
-    stop("Error: ", paste0(peak_changes_result, " for peak changes."))
+if (is.character(peak_changes_result)) {
+    print(paste0("Error: ", peak_changes_result, " for peak changes."))
+    failure <- TRUE
 } else {
     print("Peak change check passed.")
 }
 
 
 peak_year_of_change_result <- all.equal(peak_year_of_change, peak_year_of_change_ref)
-if (is.character(peak_year_of_change_result)){
-    stop("Error: ", paste0(peak_year_of_change_result, " for peak year of change."))
+if (is.character(peak_year_of_change_result)) {
+    print(paste0("Error: ", peak_year_of_change_result, " for peak year of change."))
+    failure <- TRUE
 } else {
     print("Peak year of change check passed.")
 }
 
-print("All checks passed.")
+if (failure) {
+    stop("Some test failed.")
+} else {
+    print("All checks passed.")
+}
