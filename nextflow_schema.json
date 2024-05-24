@@ -10,18 +10,62 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": ["input", "dem", "wvdb", "data_cube", "aoi", "endmember", "outdir"],
             "properties": {
                 "input": {
                     "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/rangeland/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
+                    "fa_icon": "fas fa-satellite",
+                    "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see ./docs/usage.md ",
+                    "description": "Root directory of all sattelite imagery.",
+                    "mimetype": "application/x-tar"
+                },
+                "input_tar": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-archive",
+                    "description": "Indicates whether input is a tar archive.",
+                    "help_text": "Set to true if input is a tar archive. The workflow will extract it then."
+                },
+                "dem": {
+                    "type": "string",
+                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (.tif) and a virtual dataset file (.vrt file) comprising all tile-wise files from the subdirectory.  \n\n\n",
+                    "fa_icon": "fas fa-mountain",
+                    "description": "Digital elevation model."
+                },
+                "dem_tar": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-archive",
+                    "description": "Indicates whether dem is a tar archive.",
+                    "help_text": "Set to true if dem is a tar archive. The workflow will extract it then."
+                },
+                "wvdb": {
+                    "type": "string",
+                    "fa_icon": "fas fa-burn",
+                    "description": "Water vapor dataset.",
+                    "help_text": "Directory containg a number text files describing global water vapor data at different timestamps, and a coordinate order (.coo-)file containig the reference system of the water vapor data."
+                },
+                "wvdb_tar": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-archive",
+                    "description": "Indicates whether wvdb is a tar archive.",
+                    "help_text": "Set to true if wvdb is a tar archive. The workflow will extract it then."
+                },
+                "data_cube": {
+                    "type": "string",
+                    "description": "Datacube definition.",
+                    "fa_icon": "fas fa-cube",
+                    "help_text": "A single .prj file describing the projection and reference grid of the generated datacube."
+                },
+                "aoi": {
+                    "type": "string",
+                    "fa_icon": "fas fa-chart-area",
+                    "description": "Area of interest.",
+                    "help_text": "A single vector file specifying the spacial extend of the targeted area."
+                },
+                "endmember": {
+                    "type": "string",
+                    "fa_icon": "fas fa-chart-line",
+                    "description": "Endmember definition.",
+                    "help_text": "A single text file specifying where lines correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces."
                 },
                 "outdir": {
                     "type": "string",
@@ -42,6 +86,88 @@
                     "fa_icon": "fas fa-file-signature"
                 }
             }
+        },
+        "remote_sensing_image_options": {
+            "title": "Remote sensing image options",
+            "type": "object",
+            "description": "Definition of satellite image parameters.",
+            "default": "",
+            "help_text": "These parameters are used to tell pipeline tools which data is expected, how this data has to be incorporated, and which parts of the imagery can be excluded (e.g. due to temporal mismatch). These parameters should be closely aligned with the provided input data.",
+            "properties": {
+                "sensors_level1": {
+                    "type": "string",
+                    "default": "LT04,LT05,LE07,S2A",
+                    "fa_icon": "fas fa-satellite",
+                    "description": "Satellites for which first level data should be processed.",
+                    "help_text": "String containing comma-separated indicators of satellites in FORCE level 1format. Possible options: \n\"LT04\":  Landsat 4 TM,             \n\"LT05\":  Landsat 5 TM, \n\"LE07\":  Landsat 7 ETM+,\n\"LC08\":  Landsat 8 OLI,\n\"S2A\":    Sentinel-2A MSI,\n\"S2B\":    Sentinel-2B MSI"
+                },
+                "sensors_level2": {
+                    "type": "string",
+                    "default": "LND04 LND05 LND07",
+                    "fa_icon": "fas fa-satellite",
+                    "description": "Satellites for which data should be incorporated into higher level processing.",
+                    "help_text": "String containing space-separated indicators of satellites in FORCE level 2 format. Common options:\n\"LND04\":       6-band Landsat 4 TM, \n\"LND05\":       6-band Landsat 5 TM, \n\"LND07\":       6-band Landsat 7 ETM+,\n\"LND08/09\": 6-band Landsat 8-9 OLI, \n\"SEN2A\":      10-band Sentinel-2A, \n\"SEN2B\":      10-band Sentinel-2B,\nall options [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) \n"
+                },
+                "start_date": {
+                    "type": "string",
+                    "default": "1984-01-01",
+                    "fa_icon": "far fa-calendar-alt",
+                    "description": "First day of interest.",
+                    "help_text": "String with format: \"YYYY-MM-DD\"."
+                },
+                "end_date": {
+                    "type": "string",
+                    "default": "2006-12-31",
+                    "fa_icon": "far fa-calendar-alt",
+                    "description": "Last day of interest.",
+                    "help_text": "String with format: \"YYYY-MM-DD\"."
+                },
+                "resolution": {
+                    "type": "integer",
+                    "default": 30,
+                    "fa_icon": "fas fa-expand-arrows-alt",
+                    "description": "Spatial resolution applied in analyses."
+                }
+            },
+            "fa_icon": "fas fa-satellite"
+        },
+        "workflow_configuration": {
+            "title": "Workflow configuration",
+            "type": "object",
+            "description": "Parameters that configure workflow behavior not directly related to FORCE,",
+            "default": "",
+            "properties": {
+                "group_size": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Batch size of  tiles considered for merging.",
+                    "help_text": "Controls trade-off between parallelism and I/O load.\nHigher group_size -> More tiles merged in one process, less I/O load.\nLower group_size -> Less tiles merged in one process, more I/O load. ",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "only_tile": {
+                    "type": "boolean",
+                    "description": "Controls wheter spectral unmixing is applied in higher level processing..",
+                    "fa_icon": "fas fa-project-diagram"
+                }
+            },
+            "help_text": "You can savely use the defaults.",
+            "fa_icon": "fas fa-project-diagram"
+        },
+        "force_parameters": {
+            "title": "FORCE parameters",
+            "type": "object",
+            "description": "Parameters specific to the FORCE tool.",
+            "default": "",
+            "properties": {
+                "force_threads": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Number of threads spawned by FORCE for each higher-level or preprocessing task.",
+                    "fa_icon": "fas fa-microchip"
+                }
+            },
+            "fa_icon": "fas fa-terminal",
+            "help_text": ""
         },
         "institutional_config_options": {
             "title": "Institutional config options",
@@ -248,6 +374,15 @@
     "allOf": [
         {
             "$ref": "#/definitions/input_output_options"
+        },
+        {
+            "$ref": "#/definitions/remote_sensing_image_options"
+        },
+        {
+            "$ref": "#/definitions/workflow_configuration"
+        },
+        {
+            "$ref": "#/definitions/force_parameters"
         },
         {
             "$ref": "#/definitions/institutional_config_options"

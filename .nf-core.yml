@@ -4,3 +4,6 @@ template:
   prefix: nf-core
   skip:
     - igenomes
+lint:
+  files_exist:
+    - conf/igenomes.config
