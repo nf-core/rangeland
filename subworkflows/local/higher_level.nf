@@ -19,11 +19,11 @@ workflow HIGHER_LEVEL {
 
         // create configuration file for higher level processing
         HIGHER_LEVEL_CONFIG( tiles_and_masks, cube_file, endmember_file )
-        ch_versions = ch_versions.mix(HIGHER_LEVEL_CONFIG.out.versions.first().ifEmpty(null))
+        ch_versions = ch_versions.mix(HIGHER_LEVEL_CONFIG.out.versions.first())
 
         // main processing
         FORCE_HIGHER_LEVEL( HIGHER_LEVEL_CONFIG.out.higher_level_configs_and_data )
-        ch_versions = ch_versions.mix(FORCE_HIGHER_LEVEL.out.versions.first().ifEmpty(null))
+        ch_versions = ch_versions.mix(FORCE_HIGHER_LEVEL.out.versions.first())
 
 
         trend_files = FORCE_HIGHER_LEVEL.out.trend_files.flatten().map{ x -> [ x.simpleName.substring(12), x ] }
@@ -32,10 +32,10 @@ workflow HIGHER_LEVEL {
 
         // visualizations
         FORCE_MOSAIC( trend_files_mosaic, cube_file )
-        ch_versions = ch_versions.mix(FORCE_MOSAIC.out.versions.first().ifEmpty(null))
+        ch_versions = ch_versions.mix(FORCE_MOSAIC.out.versions.first())
 
         FORCE_PYRAMID( trend_files.filter { it[1].name.endsWith('.tif')  }.map { [ it[1].simpleName.substring(0,11), it[1] ] } .groupTuple() )
-        ch_versions = ch_versions.mix(FORCE_PYRAMID.out.versions.first().ifEmpty(null))
+        ch_versions = ch_versions.mix(FORCE_PYRAMID.out.versions.first())
 
     emit:
         trend_files = FORCE_MOSAIC.out.trend_files
