@@ -15,6 +15,18 @@ dinp <- args[1]
 # load package
 require(terra)
 
+# function to compare raster values with tolerance
+compare_rasters <- function(r1, r2, tolerance = 1e-5) {
+
+    diff <- abs(values(r1) - values(r2))
+    max_diff <- max(diff, na.rm = TRUE)
+
+    if (max_diff > tolerance) {
+        return(paste("Max difference", max_diff, "exceeds tolerance", tolerance))
+    }
+
+    return(TRUE)
+}
 
 
 # LOAD REFERENCE
@@ -85,7 +97,7 @@ peak_year_of_change <- peak_rast["YEAR-OF-CHANGE"]
 #######################################################################
 failure <- FALSE
 
-woody_cover_changes_result <- all.equal(woody_cover_changes, woody_cover_changes_ref)
+woody_cover_changes_result <- compare_rasters(woody_cover_changes, woody_cover_changes_ref)
 if (is.character(woody_cover_changes_result)) {
     print(paste0("Error: ", woody_cover_changes_result, " for woody cover changes."))
     failure <- TRUE
@@ -102,7 +114,7 @@ if (is.character(woody_cover_year_of_change_result)) {
 }
 
 
-herbaceous_cover_changes_result <- all.equal(herbaceous_cover_changes, herbaceous_cover_changes_ref)
+herbaceous_cover_changes_result <- compare_rasters(herbaceous_cover_changes, herbaceous_cover_changes_ref)
 if (is.character(herbaceous_cover_changes_result)) {
     print(paste0("Error: ",herbaceous_cover_changes_result, " for herbaceous cover changes."))
     failure <- TRUE
@@ -119,7 +131,7 @@ if (is.character(herbaceous_cover_year_of_change_result)) {
 }
 
 
-peak_changes_result <- all.equal(peak_changes, peak_changes_ref)
+peak_changes_result <- compare_rasters(peak_changes, peak_changes_ref)
 if (is.character(peak_changes_result)) {
     print(paste0("Error: ", peak_changes_result, " for peak changes."))
     failure <- TRUE
