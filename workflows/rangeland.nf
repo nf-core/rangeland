@@ -122,12 +122,10 @@ workflow RANGELAND {
     PREPROCESSING(data, dem, wvdb, cube_file, aoi_file)
     ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 
-    preprocessed_data = PREPROCESSING.out.tiles_and_masks.filter { params.only_tile ? it[0] == params.only_tile : true }
-
     //
     // SUBWORKFLOW: Generate trend files and visualization
     //
-    HIGHER_LEVEL( preprocessed_data, cube_file, endmember_file )
+    HIGHER_LEVEL( PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
     grouped_trend_data = HIGHER_LEVEL.out.trend_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )

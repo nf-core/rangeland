@@ -82,7 +82,11 @@ Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://
 
 Higher level processing consist of two parts, generating parameter files and performing various processing task as defined in the parameter files.
 
-Parameter files may be consulted to derive information about the specific processing task performed for a given tile. In this workflow a classification, optionally using spectral unmixing, is conducted. Next, time series analysis for different characteristics is performed.
+Parameter files may be consulted to derive information about the specific processing task performed for a given tile. In this workflow, classification using spectral unmixing is performed.
+
+Spectral unmixing is a common technique to derive sub-pixel classification. Concretely, a set of endmember (provided using `--endmember`) is consulted to determine fractions of different types of vegetation, soil, $\ldots$ for each pixel.
+
+Next, time series analysis for different vegetation characteristics is performed.
 
 The resulting trend files can be consulted to view trends for individual tiles. They are saved as symlinks because of their large size.
 

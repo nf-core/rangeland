@@ -249,16 +249,6 @@ Start and end date can be passed using:
 
 Default values are `'1984-01-01'` for the start date and `'2006-12-31'` for the end date.
 
-### Spectral Unmixing
-
-Spectral unmixing is a common technique to derive sub-pixel classification. Concretely, a set of endmember (provided using `--endmember`) is exploited to determine fractions of different types of vegetation, soil, $\ldots$ for each pixel. In this workflow, we users can enable spectral unmixing-based classification using the `only_tile` parameter. To enable spectral unmixing, user have to set the parameters to `true`, as this feature is disabled by default.
-
-Spectral unmixing can be enabled or disabled using:
-
-```bash
---endmember '[true|false]'
-```
-
 ### Group size
 
 The `group_size` parameters can be ignored in most cases. It defines how many satellite scenes are processed together. The parameters is used to balance the tradeoff between I/O and computational capacities on individual compute nodes. By default, `group_size` is set to 100.

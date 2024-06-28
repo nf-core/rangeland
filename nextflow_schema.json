@@ -143,11 +143,6 @@
                     "description": "Batch size of  tiles considered for merging.",
                     "help_text": "Controls trade-off between parallelism and I/O load.\nHigher group_size -> More tiles merged in one process, less I/O load.\nLower group_size -> Less tiles merged in one process, more I/O load. ",
                     "fa_icon": "fas fa-layer-group"
-                },
-                "only_tile": {
-                    "type": "boolean",
-                    "description": "Controls wheter spectral unmixing is applied in higher level processing..",
-                    "fa_icon": "fas fa-project-diagram"
                 }
             },
             "help_text": "You can savely use the defaults.",
