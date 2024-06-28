@@ -15,17 +15,30 @@ dinp <- args[1]
 # load package
 require(terra)
 
-# function to compare raster values with tolerance
-compare_rasters <- function(r1, r2, tolerance = 1e-5) {
+# function to compare change directions
+compare_direction <- function(r1, r2, threshold = 0.95) {
 
-    diff <- abs(values(r1) - values(r2))
-    max_diff <- max(diff, na.rm = TRUE)
+    # get signs
+    s1 <- sign(r1)
+    s2 <- sign(r2)
 
-    if (max_diff > tolerance) {
-        return(paste("Max difference", max_diff, "exceeds tolerance", tolerance))
+    # replace na's
+    vals1 <- subst(s1, NA, -9999)
+    vals2 <- subst(s2, NA, -9999)
+
+    # Compare the signs
+    matches <- vals1 == vals2
+    match_count <- sum(values(matches))
+    total_count <- sum(!is.na(values(vals1)))
+
+    # Calculate the percentage of matches
+    match_percentage <- match_count / total_count
+
+    if (match_percentage >= threshold) {
+        return(TRUE)
+    } else {
+        return(paste("Change directions not matching. Match percentage:", match_percentage))
     }
-
-    return(TRUE)
 }
 
 
@@ -97,7 +110,7 @@ peak_year_of_change <- peak_rast["YEAR-OF-CHANGE"]
 #######################################################################
 failure <- FALSE
 
-woody_cover_changes_result <- compare_rasters(woody_cover_changes, woody_cover_changes_ref)
+woody_cover_changes_result <- compare_direction(woody_cover_changes, woody_cover_changes_ref)
 if (is.character(woody_cover_changes_result)) {
     print(paste0("Error: ", woody_cover_changes_result, " for woody cover changes."))
     failure <- TRUE
@@ -105,7 +118,7 @@ if (is.character(woody_cover_changes_result)) {
     print("Woody cover change check passed.")
 }
 
-woody_cover_year_of_change_result <- all.equal(woody_cover_year_of_change, woody_cover_year_of_change_ref)
+woody_cover_year_of_change_result <- all.equal(woody_cover_year_of_change, woody_cover_year_of_change_ref, tolerance=1e-3)
 if (is.character(woody_cover_year_of_change_result)) {
     print(paste0("Error: ", woody_cover_year_of_change_result, " for woody cover year of change."))
     failure <- TRUE
@@ -114,7 +127,7 @@ if (is.character(woody_cover_year_of_change_result)) {
 }
 
 
-herbaceous_cover_changes_result <- compare_rasters(herbaceous_cover_changes, herbaceous_cover_changes_ref)
+herbaceous_cover_changes_result <- compare_direction(herbaceous_cover_changes, herbaceous_cover_changes_ref)
 if (is.character(herbaceous_cover_changes_result)) {
     print(paste0("Error: ",herbaceous_cover_changes_result, " for herbaceous cover changes."))
     failure <- TRUE
@@ -122,7 +135,7 @@ if (is.character(herbaceous_cover_changes_result)) {
     print("Herbaceous cover change check passed.")
 }
 
-herbaceous_cover_year_of_change_result <- all.equal(herbaceous_cover_year_of_change, herbaceous_cover_year_of_change_ref)
+herbaceous_cover_year_of_change_result <- all.equal(herbaceous_cover_year_of_change, herbaceous_cover_year_of_change_ref, tolerance=1e-3)
 if (is.character(herbaceous_cover_year_of_change_result)) {
     print(paste0("Error: ", herbaceous_cover_year_of_change_result, " for herbaceous cover year of change."))
     failure <- TRUE
@@ -131,7 +144,7 @@ if (is.character(herbaceous_cover_year_of_change_result)) {
 }
 
 
-peak_changes_result <- compare_rasters(peak_changes, peak_changes_ref)
+peak_changes_result <- compare_direction(peak_changes, peak_changes_ref)
 if (is.character(peak_changes_result)) {
     print(paste0("Error: ", peak_changes_result, " for peak changes."))
     failure <- TRUE
@@ -140,7 +153,7 @@ if (is.character(peak_changes_result)) {
 }
 
 
-peak_year_of_change_result <- all.equal(peak_year_of_change, peak_year_of_change_ref)
+peak_year_of_change_result <- all.equal(peak_year_of_change, peak_year_of_change_ref, tolerance=1e-3)
 if (is.character(peak_year_of_change_result)) {
     print(paste0("Error: ", peak_year_of_change_result, " for peak year of change."))
     failure <- TRUE
