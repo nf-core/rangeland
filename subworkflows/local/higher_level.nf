@@ -31,14 +31,21 @@ workflow HIGHER_LEVEL {
         trend_files_mosaic = trend_files.groupTuple()
 
         // visualizations
-        FORCE_MOSAIC( trend_files_mosaic, cube_file )
-        ch_versions = ch_versions.mix(FORCE_MOSAIC.out.versions.first())
+        mosaic_files = Channel.empty()
+        if (params.mosaic_visualization) {
+            FORCE_MOSAIC( trend_files_mosaic, cube_file )
+            mosaic_files = FORCE_MOSAIC.out.trend_files
+            ch_versions = ch_versions.mix(FORCE_MOSAIC.out.versions.first())
+        }
 
-        FORCE_PYRAMID( trend_files.filter { it[1].name.endsWith('.tif')  }.map { [ it[1].simpleName.substring(0,11), it[1] ] } .groupTuple() )
-        ch_versions = ch_versions.mix(FORCE_PYRAMID.out.versions.first())
+        if (params.pyramid_visualization) {
+            FORCE_PYRAMID( trend_files.filter { it[1].name.endsWith('.tif')  }.map { [ it[1].simpleName.substring(0,11), it[1] ] } .groupTuple() )
+            ch_versions = ch_versions.mix(FORCE_PYRAMID.out.versions.first())
+        }
 
     emit:
-        trend_files = FORCE_MOSAIC.out.trend_files
-        versions    = ch_versions
+        mosaic_files
+
+        versions = ch_versions
 
 }

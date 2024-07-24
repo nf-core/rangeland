@@ -128,7 +128,7 @@ workflow RANGELAND {
     HIGHER_LEVEL( PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
-    grouped_trend_data = HIGHER_LEVEL.out.trend_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
+    grouped_trend_data = HIGHER_LEVEL.out.mosaic_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
 
     //
     // MODULE: Check results

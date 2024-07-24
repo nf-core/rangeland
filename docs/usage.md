@@ -4,8 +4,6 @@
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
-
 ## Input
 
 As most remote sensing workflows, this pipeline relies on numerous sources of data. In the following we will describe the required data and corresponding formats. Mandatory input data consists of satellite data, a digital elevation model, a water vapor database, a data_cube, an area-of-interest specification and an endmember definition.
@@ -257,6 +255,35 @@ The group size can be passed using:
 
 ```bash
 --group_size '[integer]'
+```
+
+### Higher level processing configuration
+
+During the higher level processing stage, time series analyses of different satellite bands and indexes is performed. The concrete bands and indexes can be defined using the `indexes` parameter. Spectral unmixing is performed in any case. Thus, passing an empty `indexes` parameter will restrict time series analyses to the results of spectral unmixing. All available indexes can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) above the `INDEX` parameter. The band/index codes need to be passed in a space-separated string. The default value, `indexes = "NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands. Note that indexes are usually computed based on certain bands. If these bands are not present in the preprocessed data, these indexes can not be computed.
+
+The bands and indexes can be passed using:
+
+```bash
+--indexes '[index-string]'
+```
+
+In so cases, it may be desirable to analyze the the individual images in a time series. To enable such analysis, the parameter `return_tss` can be used. If set to `true`, the pipeline will return time series stacks for each tile and band combination. The option is disabled by default to reduce the output size.
+
+The time series stack output can be enabled using:
+
+```bash
+--return_tss '[boolean]'
+```
+
+### Visualization
+
+The workflow provides two types of results visualization and aggregation. The fine grained mosaic visualization contains all time series analyses results for all tiles in the original resolution. Pyramid visualizations present a broad overview of the same data but at a lower resolution. Both visualizations can be enabled or disabled using the parameters `mosaic_visualization` and `pyramid_visualization`. By default, both visualization methods are enabled. Note that the mosaic visualization is required to be enabled when using the `test` and `test_full` profiles to allow the pipeline to check the correctness of its results (this is the default behavior, make sure to not disable mosaic when using test profiles) .
+
+The visualizations can be enabled using:
+
+```bash
+mosaic_visualization  = '[boolean]'
+pyramid_visualization = '[boolean]'
 ```
 
 ### FORCE configuration

@@ -90,6 +90,8 @@ Next, time series analysis for different vegetation characteristics is performed
 
 The resulting trend files can be consulted to view trends for individual tiles. They are saved as symlinks because of their large size.
 
+If the `return_tss` parameter was set to `true`, the pipeline will also output files with the `TSS` ending. These files contain the time series stack(TSS) for the given tile and index or band. Here, for each date of acquisition, an image is available that contains the values for that date.
+
 ### Visualization
 
 <details markdown="1">
@@ -103,7 +105,7 @@ The resulting trend files can be consulted to view trends for individual tiles. 
 
 </details>
 
-Two types of common visualizations are generated in the last step of the pipeline. They are results of [force-mosaic](https://force-eo.readthedocs.io/en/latest/components/auxilliary/mosaic.html) and [force-pyramid](https://force-eo.readthedocs.io/en/latest/components/auxilliary/pyramid.html). Note that these visualizations do not add more logic to the workflow but rather rearrange the output files of higher-level-processing.
+Two types of common visualizations are generated in the last step of the pipeline. They are results of [force-mosaic](https://force-eo.readthedocs.io/en/latest/components/auxilliary/mosaic.html) and [force-pyramid](https://force-eo.readthedocs.io/en/latest/components/auxilliary/pyramid.html). Note that these visualizations do not add more logic to the workflow but rather rearrange the output files of higher-level-processing. Both visualizations are enabled by default but may be disabled in a certain configuration files. Thus, these outputs are optional.
 
 ### MultiQC
 

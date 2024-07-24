@@ -60,8 +60,8 @@ process HIGHER_LEVEL_CONFIG {
 
 
     # spectral index
-    sed -i "/^INDEX /c\\INDEX = SMA NDVI BLUE GREEN RED NIR SWIR1 SWIR2" \$PARAM
-    sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM
+    sed -i "/^INDEX /c\\INDEX = SMA $params.indexes" \$PARAM
+    ${ params.return_tss ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : '' }
 
     # interpolation
     sed -i "/^INT_DAY /c\\INT_DAY = 8" \$PARAM

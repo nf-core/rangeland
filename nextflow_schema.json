@@ -131,6 +131,50 @@
             },
             "fa_icon": "fas fa-satellite"
         },
+        "higher_level_processing_modification": {
+            "title": "Higher level processing modification",
+            "type": "object",
+            "default": "",
+            "properties": {
+                "indexes": {
+                    "type": "string",
+                    "default": "NDVI BLUE GREEN RED NIR SWIR1 SWIR2",
+                    "help_text": "Space-separated list of indexes and bands that should be considered in time series analyses. They are indicated by using their established abbreviations. The full list of available indexes is available at https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html under the 'INDEX' parameter. Spectral unmixing is a special index and always activated.",
+                    "description": "Select which bands and indexes should be considered in time series analyses.",
+                    "fa_icon": "fas fa-satellite"
+                },
+                "return_tss": {
+                    "type": "boolean",
+                    "description": "Should the full time series stack be returned.",
+                    "help_text": "This parameter enables or disables the output of the time series stack for each tile and band/index. Here, each band shows the values of a single date.",
+                    "fa_icon": "fas fa-layer-group"
+                }
+            },
+            "description": "Modify higher level processing behaviour.",
+            "help_text": "These parameters can be used to modify the behaviour of the time series analyses process in higher level processing.",
+            "fa_icon": "fas fa-microchip"
+        },
+        "visualization": {
+            "title": "Visualization",
+            "type": "object",
+            "description": "Enable or disable visualizations.",
+            "default": "",
+            "properties": {
+                "mosaic_visualization": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Wheter mosaic visualization should be returned.",
+                    "fa_icon": "fas fa-image"
+                },
+                "pyramid_visualization": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether pyramid visualization should be returned.",
+                    "fa_icon": "far fa-image"
+                }
+            },
+            "fa_icon": "fas fa-images"
+        },
         "workflow_configuration": {
             "title": "Workflow configuration",
             "type": "object",
@@ -372,6 +416,12 @@
         },
         {
             "$ref": "#/definitions/remote_sensing_image_options"
+        },
+        {
+            "$ref": "#/definitions/higher_level_processing_modification"
+        },
+        {
+            "$ref": "#/definitions/visualization"
         },
         {
             "$ref": "#/definitions/workflow_configuration"
