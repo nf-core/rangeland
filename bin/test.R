@@ -3,14 +3,16 @@
 args = commandArgs(trailingOnly=TRUE)
 
 
-if (length(args) != 7) {
-    stop("\ngive input directory (mosaic) as 1st arg\ngive reference rasters (*.tif) as 2nd-7th args in order:
+if (length(args) != 7 && length(args) != 2) {
+    stop("\n Error: wrong number of parameters. Usage: \n 1st arg: workflow results directory (mosaic)
+        \n 2nd-7th args:  reference rasters (*.tif) in order:
         woody cover change, woody cover year of change,
         herbaceous cover change, herbaceous cover year of change,
-        peak change, peak year of change, ", call.=FALSE)
+        peak change, peak year of change
+        \nor \n
+        1st arg: workflow results directory (mosaic) \n 2nd arg: reference directory
+        ", call.=FALSE)
 }
-
-dinp <- args[1]
 
 # load package
 require(terra)
@@ -44,18 +46,41 @@ compare_direction <- function(r1, r2, threshold = 0.95) {
 
 # LOAD REFERENCE
 #######################################################################
-woody_cover_changes_ref        <- rast(args[2])
-woody_cover_year_of_change_ref <- rast(args[3])
 
-herbaceous_cover_changes_ref        <- rast(args[4])
-herbaceous_cover_year_of_change_ref <- rast(args[5])
+if (length(args) == 7 ){
+    woody_cover_changes_ref        <- rast(args[2])
+    woody_cover_year_of_change_ref <- rast(args[3])
 
-peak_changes_ref                <- rast(args[6])
-peak_year_of_change_ref         <- rast(args[7])
+    herbaceous_cover_changes_ref        <- rast(args[4])
+    herbaceous_cover_year_of_change_ref <- rast(args[5])
 
+    peak_changes_ref                <- rast(args[6])
+    peak_year_of_change_ref         <- rast(args[7])
+} else {
+    # reference parent dir
+    ref_dir <- args[2]
+
+    vrt_file <- list.files(ref_dir, pattern = "VBL-CAO\\.vrt$", recursive = TRUE, full.names = TRUE)
+    woody_ref <- rast(vrt_file)
+    woody_cover_changes_ref        <- woody_ref$CHANGE
+    woody_cover_year_of_change_ref <- woody_ref["YEAR-OF-CHANGE"]
+
+    vrt_file <- list.files(ref_dir, pattern = "VSA-CAO\\.vrt$", recursive = TRUE, full.names = TRUE)
+    herbaceous_ref <- rast(vrt_file)
+    herbaceous_cover_changes_ref        <- herbaceous_ref$CHANGE
+    herbaceous_cover_year_of_change_ref <- herbaceous_ref["YEAR-OF-CHANGE"]
+
+    vrt_file <- list.files(ref_dir, pattern = "VPS-CAO\\.vrt$", recursive = TRUE, full.names = TRUE)
+    peak_ref <- rast(vrt_file)
+    peak_changes_ref         <- peak_ref$CHANGE
+    peak_year_of_change_ref  <- peak_ref["YEAR-OF-CHANGE"]
+}
 
 # WOODY COVER CHANGE (VALUE OF BASE LEVEL)
 #######################################################################
+
+# input data dir
+dinp <- args[1]
 
 fname <- dir(dinp, ".*HL_TSA_LNDLG_SMA_VBL-CAO.vrt$", full.names=TRUE)
 

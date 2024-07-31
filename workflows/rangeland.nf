@@ -26,8 +26,8 @@ include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level'
 // MODULES
 //
 
-include { CHECK_RESULTS } from '../modules/local/check_results'
-
+include { CHECK_RESULTS }      from '../modules/local/check_results'
+include { CHECK_RESULTS_FULL } from '../modules/local/check_results_full'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -37,7 +37,7 @@ include { CHECK_RESULTS } from '../modules/local/check_results'
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { UNTAR as UNTAR_INPUT; UNTAR as UNTAR_DEM; UNTAR as UNTAR_WVDB } from '../modules/nf-core/untar/main'
+include { UNTAR as UNTAR_INPUT; UNTAR as UNTAR_DEM; UNTAR as UNTAR_WVDB; UNTAR as UNTAR_REF } from '../modules/nf-core/untar/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,7 +114,6 @@ workflow RANGELAND {
         wvdb = file("$params.wvdb")
     }
 
-    ch_versions = ch_versions.mix(tar_versions.first())
 
     //
     // SUBWORKFLOW: Preprocess satellite imagery
@@ -125,7 +124,7 @@ workflow RANGELAND {
     //
     // SUBWORKFLOW: Generate trend files and visualization
     //
-    HIGHER_LEVEL( PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file )
+    HIGHER_LEVEL(PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file)
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
     grouped_trend_data = HIGHER_LEVEL.out.mosaic_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
@@ -133,7 +132,7 @@ workflow RANGELAND {
     //
     // MODULE: Check results
     //
-    if ( params.config_profile_name == 'Test profile' ) {
+    if (params.config_profile_name == 'Test profile') {
         woody_change_ref      = file("$params.woody_change_ref")
         woody_yoc_ref         = file("$params.woody_yoc_ref")
         herbaceous_change_ref = file("$params.herbaceous_change_ref")
@@ -141,9 +140,20 @@ workflow RANGELAND {
         peak_change_ref       = file("$params.peak_change_ref")
         peak_yoc_ref          = file("$params.peak_yoc_ref")
 
-        CHECK_RESULTS( grouped_trend_data, woody_change_ref, woody_yoc_ref, herbaceous_change_ref, herbaceous_yoc_ref, peak_change_ref, peak_yoc_ref)
+        CHECK_RESULTS(grouped_trend_data, woody_change_ref, woody_yoc_ref, herbaceous_change_ref, herbaceous_yoc_ref, peak_change_ref, peak_yoc_ref)
         ch_versions = ch_versions.mix(CHECK_RESULTS.out.versions)
     }
+
+    if (params.config_profile_name == 'Full test profile') {
+        UNTAR_REF([[:], params.reference])
+        ref_path = UNTAR_REF.out.untar.map(it -> it[1])
+        tar_versions.mix(UNTAR_REF.out.versions)
+
+        CHECK_RESULTS_FULL(grouped_trend_data, ref_path)
+        ch_versions = ch_versions.mix(CHECK_RESULTS_FULL.out.versions)
+    }
+
+    ch_versions = ch_versions.mix(tar_versions.first())
 
     //
     // Collate and save software versions
