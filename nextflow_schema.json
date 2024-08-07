@@ -15,45 +15,45 @@
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-satellite",
-                    "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see ./docs/usage.md ",
+                    "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see [usage documentation](https://nf-co.re/rangeland/docs/usage)",
                     "description": "Root directory of all sattelite imagery.",
                     "mimetype": "application/x-tar"
                 },
                 "input_tar": {
                     "type": "boolean",
                     "fa_icon": "fas fa-archive",
-                    "description": "Indicates whether input is a tar archive.",
-                    "help_text": "Set to true if input is a tar archive. The workflow will extract it then."
+                    "description": "Indicates whether `input` is a tar archive.",
+                    "help_text": "Set to `true` if `input` is a tar archive. The workflow will extract it then."
                 },
                 "dem": {
                     "type": "string",
-                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (.tif) and a virtual dataset file (.vrt file) comprising all tile-wise files from the subdirectory.  \n\n\n",
+                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (`.tif`) and a virtual dataset file (`.vrt` file) comprising all tile-wise files from the subdirectory.",
                     "fa_icon": "fas fa-mountain",
                     "description": "Digital elevation model."
                 },
                 "dem_tar": {
                     "type": "boolean",
                     "fa_icon": "fas fa-archive",
-                    "description": "Indicates whether dem is a tar archive.",
-                    "help_text": "Set to true if dem is a tar archive. The workflow will extract it then."
+                    "description": "Indicates whether `dem` is a tar archive.",
+                    "help_text": "Set to `true` if `dem` is a tar archive. The workflow will extract it then."
                 },
                 "wvdb": {
                     "type": "string",
                     "fa_icon": "fas fa-burn",
                     "description": "Water vapor dataset.",
-                    "help_text": "Directory containg a number text files describing global water vapor data at different timestamps, and a coordinate order (.coo-)file containig the reference system of the water vapor data."
+                    "help_text": "Directory containg a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containig the reference system of the water vapor data."
                 },
                 "wvdb_tar": {
                     "type": "boolean",
                     "fa_icon": "fas fa-archive",
-                    "description": "Indicates whether wvdb is a tar archive.",
-                    "help_text": "Set to true if wvdb is a tar archive. The workflow will extract it then."
+                    "description": "Indicates whether `wvdb` is a tar archive.",
+                    "help_text": "Set to `true` if `wvdb` is a tar archive. The workflow will extract it then."
                 },
                 "data_cube": {
                     "type": "string",
                     "description": "Datacube definition.",
                     "fa_icon": "fas fa-cube",
-                    "help_text": "A single .prj file describing the projection and reference grid of the generated datacube."
+                    "help_text": "A single `.prj` file describing the projection and reference grid of the generated datacube."
                 },
                 "aoi": {
                     "type": "string",
@@ -65,7 +65,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-chart-line",
                     "description": "Endmember definition.",
-                    "help_text": "A single text file specifying where lines correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces."
+                    "help_text": "A single text file specifying where rows correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces."
                 },
                 "outdir": {
                     "type": "string",

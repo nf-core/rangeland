@@ -1,13 +1,10 @@
-nextflow.enable.dsl = 2
-
-//includes
 include { FORCE_GENERATE_TILE_ALLOW_LIST }         from '../../modules/local/force-generate_tile_allow_list'
 include { FORCE_GENERATE_ANALYSIS_MASK }           from '../../modules/local/force-generate_analysis_mask'
 include { PREPROCESS_CONFIG }                      from '../../modules/local/preprocess_force_config'
 include { FORCE_PREPROCESS }                       from '../../modules/local/force-preprocess'
 include { MERGE as MERGE_BOA; MERGE as MERGE_QAI } from '../../modules/local/merge'
 
-//Closure to extract the parent directory of a file
+// Closure to extract the parent directory of a file
 def extractDirectory = { it.parent.toString().substring(it.parent.toString().lastIndexOf('/') + 1 ) }
 
 workflow PREPROCESSING {

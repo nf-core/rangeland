@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process MERGE {
 
     label 'process_low'

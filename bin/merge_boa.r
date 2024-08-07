@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+require(raster)
+
 args = commandArgs(trailingOnly=TRUE)
 
 
@@ -10,9 +12,6 @@ if (length(args) < 3) {
 fout <- args[1]
 finp <- args[2:length(args)]
 nf <- length(finp)
-
-require(raster)
-
 
 img <- brick(finp[1])
 nc <- ncell(img)

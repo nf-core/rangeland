@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process FORCE_GENERATE_ANALYSIS_MASK{
 
     label 'process_single'

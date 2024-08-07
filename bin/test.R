@@ -116,21 +116,6 @@ peak_year_of_change <- peak_rast["YEAR-OF-CHANGE"]
 
 
 
-# FOR REFERENCE: SAVE RASTERS
-#######################################################################
-
-#writeRaster(woody_cover_changes,        "woody_cover_chg_ref.tif")
-#writeRaster(woody_cover_year_of_change, "woody_cover_yoc_ref.tif")
-
-#writeRaster(herbaceous_cover_changes,        "herbaceous_cover_chg_ref.tif")
-#writeRaster(herbaceous_cover_year_of_change, "herbaceous_cover_yoc_ref.tif")
-
-#writeRaster(peak_changes,        "peak_chg_ref.tif")
-#writeRaster(peak_year_of_change, "peak_yoc_ref.tif")
-
-
-
-
 # COMPARE TESTRUN WITH REFERENCE EXECUTION
 #######################################################################
 failure <- FALSE

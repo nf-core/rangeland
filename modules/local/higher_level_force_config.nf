@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process HIGHER_LEVEL_CONFIG {
 
     label 'process_single'

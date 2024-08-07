@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process FORCE_PYRAMID {
 
     label 'process_low'

@@ -1,6 +1,3 @@
-nextflow.enable.dsl = 2
-
-//inputs
 include { HIGHER_LEVEL_CONFIG } from '../../modules/local/higher_level_force_config.nf'
 include { FORCE_HIGHER_LEVEL }  from '../../modules/local/force-higher_level.nf'
 include { FORCE_MOSAIC }        from '../../modules/local/force-mosaic.nf'

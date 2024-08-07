@@ -28,8 +28,7 @@
 5. Time series analyses to obtain trends in vegetation dynamics
 6. Create mosaic and pyramid visualizations of the results
 
-7. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-8. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+7. Present QC results ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
 
@@ -41,7 +40,7 @@ To run the pipeline on real data, input data needs to be acquired. Concretely, s
 Now, you can run the pipeline using:
 
 ```bash
-nextflow run nf-core/rangeland/main.nf \
+nextflow run nf-core/rangeland \
    -profile <docker/singularity/.../institute> \
    --input <SATELLITE IMAGES> \
    --dem <DIGITAL ELEVATION MODEL> \

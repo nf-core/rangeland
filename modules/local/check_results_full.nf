@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process CHECK_RESULTS_FULL {
 
     label 'process_low'

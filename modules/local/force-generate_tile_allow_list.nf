@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process FORCE_GENERATE_TILE_ALLOW_LIST{
 
     label 'process_single'

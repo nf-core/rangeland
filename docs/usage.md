@@ -16,7 +16,7 @@ For infos on Landsat, see [here](https://www.usgs.gov/core-science-systems/nli/l
 
 Satellite data should be given as a path to a common root of all imagery. This is a common format used in geographic information systems, including FORCE, which is applied in this pipeline. The expected structure underneath the root directory should follow this example:
 
-```
+```tree
 root
 ├── 181035
 │   └── LE07_L1TP_181035_20061217_20170106_01_T1
@@ -53,7 +53,7 @@ root
 └── ...
 ```
 
-Subdirectories of root contain _path_ and _row_ information as commonly used for Landsat imagery. As an example, the sub directory `181036/` contains imagery for path 18 and row 1036.
+Subdirectories of `root/` contain _path_ and _row_ information as commonly used for Landsat imagery. As an example, the sub directory `181036/` contains imagery for path 18 and row 1036.
 
 The next level of subdirectories contains the data for a specific day and from a specific source. Lets look at the example `LE07_L1TP_181036_20061217_20170105_01_T1`:
 
@@ -68,14 +68,14 @@ The next level of subdirectories contains the data for a specific day and from a
 On the lowest level of the structure, the actual data is stored. Looking at the contents of `LE07_L1TP_181036_20061217_20170105_01_T1`, we see that all files share the same prefix, followed by a specification of the specific files contents. These suffixes include:
 
 - "B" followed by a number _i_ identifying the band of the satellite (band 6 has two files as Landsat 7 has two thermal bands)
-- "BQA" identifying the quality information band
+- "BQA" identifies the quality information band
 - "GCP" identifies ground control point information
 - "ANG" identifies angle of observation and other geometric information information
 - "MTL" identifies meta data
 
-All files within the lowest level of structure belong to a single observation. Files containing imagery (prefix starts with "B") should be .tif files. Files containing auxiliary data are text files.
+All files within the lowest level of structure belong to a single observation. Files containing imagery (prefix starts with "B") should be `.tif` files. Files containing auxiliary data are text files.
 
-This structure is automatically generated when [using force to download the data](https://force-eo.readthedocs.io/en/latest/components/lower-level/level1/level1-csd.html?). We strongly suggest users to download data using FORCE (e.g.). For example, executing the following code (e.g. with [FORCE in docker](https://force-eo.readthedocs.io/en/latest/setup/docker.html)) will download data for Landsat 4,5 and 7, in the time range from 1st January 1984 until 31st December 2006, including pictures with up to 70 percent of cloud coverage:
+This structure is automatically generated when [using force to download the data](https://force-eo.readthedocs.io/en/latest/components/lower-level/level1/level1-csd.html?). We strongly suggest users to download data using FORCE. For example, executing the following code (e.g. with [FORCE in docker](https://force-eo.readthedocs.io/en/latest/setup/docker.html)) will download data for Landsat 4,5 and 7, in the time range from 1st January 1984 until 31st December 2006, including pictures with up to 70 percent of cloud coverage:
 
 ```bash
 mkdir -p meta
@@ -84,7 +84,7 @@ mkdir -p data
 force-level1-csd -s "LT04,LT05,LE07" -d "19840101,20061231" -c 0,70 meta/ data/ queue.txt vector/aoi.gpkg
 ```
 
-Note that you need to pass an area-of-interest file, see the area of interest section [Area of interest](#aoi) for details.
+Note that you need to pass an area-of-interest file, see the area of interest section [Area of interest](#area-of-interest-aoi) for details.
 
 The satellite imagery can be given to the pipeline using:
 
@@ -92,7 +92,7 @@ The satellite imagery can be given to the pipeline using:
 --input '[path to imagery root]'
 ```
 
-The satellite imagery can also be provide as a tar archive. In this case it is mandatory to set `--input_tar` to true. Moreover, within the tar archive, the structure explained above has to be in place. In the example above `181036/` and `181035/` would need to be in the top level of the archive.
+The satellite imagery can also be provide as a tar archive. In this case it is mandatory to set `--input_tar` to `true`. Moreover, within the tar archive, the structure explained above has to be in place. In the example above `181036/` and `181035/` would need to be in the top level of the archive.
 
 ### Digital Elevation Model (DEM)
 
@@ -100,7 +100,7 @@ A DEM is necessary for topographic correction of Landsat data, and helps to dist
 
 The pipeline expects a path to the Digital Elevation Model root directory as a parameter. Concretely, the expected structure would look like this:
 
-```
+```tree
 dem
 ├── <dem_file>.vrt
 └── <dem_tifs>/
@@ -115,7 +115,7 @@ The DEM can be given to the pipeline using:
 --dem '[path to dem root]'
 ```
 
-The digital elevation model can also be provide as a tar archive. In this case it is mandatory to set `--dem_tar` to true. Moreover, within the tar archive, the structure explained above has to be in place. In the example above `<dem_file>.vrt` and `<dem_tifs>/` would need to be in the top level of the archive.
+The digital elevation model can also be provide as a tar archive. In this case it is mandatory to set `--dem_tar` to `true`. Moreover, within the tar archive, the structure explained above has to be in place. In the example above `<dem_file>.vrt` and `<dem_tifs>/` would need to be in the top level of the archive.
 
 ### Water Vapor Database (WVDB)
 
@@ -138,7 +138,7 @@ The WVDB can be given to the pipeline using:
 --wvdb '[path to wvdb dir]'
 ```
 
-The water vapor database can also be provide as a tar archive. In this case it is mandatory to set `--wvdb_tar` to true. All files of the wvdb would need to be in the top level of the archive.
+The water vapor database can also be provide as a tar archive. In this case it is mandatory to set `--wvdb_tar` to `true`. All files of the wvdb would need to be in the top level of the archive.
 
 ### Datacube
 
@@ -152,11 +152,9 @@ The datacube definition is passed as a single file using:
 
 ### Area of interest (AOI)
 
-<a id="aoi"></a>
-
 The area of interest is a geospatial vector dataset that holds the boundary of the targeted area.
 
-AOI is passed as a single using:
+AOI is passed as a single file using:
 
 ```bash
 --aoi '[path to area of interest file]'
@@ -168,7 +166,7 @@ For unmixing satellite-observed reflectance into sub-pixel fractions of land sur
 
 An example endmember definition (developed in [Hostert et al. 2003](https://www.sciencedirect.com/science/article/abs/pii/S0034425703001457)) looks like this:
 
-```
+```tsv
 320  730  2620 0
 560  1450 3100 0
 450  2240 3340 0
@@ -213,7 +211,7 @@ More details on available satellite identifiers can be found [here](https://forc
 
 Note that the identifiers specified for both processing levels have to match the data made available to the workflow. In other words, satellite data for e.g. Landsat 5 can't be processed if it was not supplied using the `input` parameter.
 
-Both parameters can be passed as using:
+Both parameters can be passed as follows:
 
 ```bash
 --sensors_level1 = '[preprocessing satellite identifier string]'
@@ -232,7 +230,7 @@ A custom resolution can be passed using:
 --resolution '[integer]'
 ```
 
-The default value is 30, as most Landsat satellite natively provide this resolution.
+The default value is `30`, as most Landsat satellite natively provide this resolution.
 
 ### Temporal extent
 
@@ -245,11 +243,9 @@ Start and end date can be passed using:
 --end_date   '[YYYY-MM-DD]'
 ```
 
-Default values are `'1984-01-01'` for the start date and `'2006-12-31'` for the end date.
-
 ### Group size
 
-The `group_size` parameters can be ignored in most cases. It defines how many satellite scenes are processed together. The parameters is used to balance the tradeoff between I/O and computational capacities on individual compute nodes. By default, `group_size` is set to 100.
+The `group_size` parameters can be ignored in most cases. It defines how many satellite scenes are processed together. The parameters is used to balance the tradeoff between I/O and computational capacities on individual compute nodes. By default, `group_size` is set to `100`.
 
 The group size can be passed using:
 
@@ -277,7 +273,7 @@ The time series stack output can be enabled using:
 
 ### Visualization
 
-The workflow provides two types of results visualization and aggregation. The fine grained mosaic visualization contains all time series analyses results for all tiles in the original resolution. Pyramid visualizations present a broad overview of the same data but at a lower resolution. Both visualizations can be enabled or disabled using the parameters `mosaic_visualization` and `pyramid_visualization`. By default, both visualization methods are enabled. Note that the mosaic visualization is required to be enabled when using the `test` and `test_full` profiles to allow the pipeline to check the correctness of its results (this is the default behavior, make sure to not disable mosaic when using test profiles) .
+The workflow provides two types of results visualization and aggregation. The fine grained mosaic visualization contains all time series analyses results for all tiles in the original resolution. Pyramid visualizations present a broad overview of the same data but at a lower resolution. Both visualizations can be enabled or disabled using the parameters `mosaic_visualization` and `pyramid_visualization`. By default, both visualization methods are enabled. Note that the mosaic visualization is required to be enabled when using the `test` and `test_full` profiles to allow the pipeline to check the correctness of its results.
 
 The visualizations can be enabled using:
 

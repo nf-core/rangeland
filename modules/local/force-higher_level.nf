@@ -1,5 +1,3 @@
-nextflow.enable.dsl = 2
-
 process FORCE_HIGHER_LEVEL {
 
     label 'process_medium'
