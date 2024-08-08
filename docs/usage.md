@@ -294,6 +294,17 @@ The number of threads can be passed using:
 
 The default value is 2.
 
+### Intermediate data publishing
+
+By default, preprocessing and higher level processing steps do not publish the `.tif` files that they generate to avoid bloating the available memory. However, analysis-ready-data (aka. ARD or level-2 data) and the results of time series analyses (aka. level-3 data) maybe be interesting to certain users. The files for preprocessing and higher level processing can, therefore, be published by setting the `save_ard` and `save_tsa` to `true`, respectively.
+
+Publishing of intermediate data can be enabled using:
+
+```bash
+save_ard  = '[boolean]'
+save_tsa  = '[boolean]'
+```
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:

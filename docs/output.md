@@ -11,10 +11,10 @@ The directories listed below will be created in the results directory after the 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 - [untar](#untar) - Optionally extract input files
-- [Preparation](#preparation)- Create a masks and boundaries for further analyses.
+- [Preparation](#preparation) - Create a masks and boundaries for further analyses.
 - [Preprocessing](#preprocessing) - Preprocessing of satellite imagery.
 - [Higher-level-Processing](#higher-level-processing) - Classify preprocessed imagery and perform time series analyses.
-- [Visualization](#visualization). Create two visualizations of the results.
+- [Visualization](#visualization) - Create two visualizations of the results.
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -67,7 +67,7 @@ Preprocessing consist of two parts, generating parameter files and actual prepro
 
 The parameter files created through [force-parameter](https://force-eo.readthedocs.io/en/latest/components/auxilliary/parameter.html#force-parameter) can be viewed to understand concrete preprocessing techniques applied for a given tile.
 
-Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html) command. Logs can be consulted for debugging purposes. ARD may be collected as a basis for other remote sensing workflows. Moreover, ARD contains two .tif files per initial input image, a quality data file and the atmospherically corrected satellite data, that can be viewed using geographic information systems (GISs). Note that ARD data is only published as symbolic links due to the amount and size of the files.
+Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html) command. Logs can be consulted for debugging purposes. ARD may be collected as a basis for other remote sensing workflows. The ARD in `level2_ard/` consist two `.tif` files per initial input image, a quality data file and the atmospherically corrected satellite data. Note that the `.tif` files are only published when the `save_ard` parameter is set to `true` to avoid bloating the memory.
 
 ### Higher-level-Processing
 
@@ -84,11 +84,11 @@ Higher level processing consist of two parts, generating parameter files and per
 
 Parameter files may be consulted to derive information about the specific processing task performed for a given tile. In this workflow, classification using spectral unmixing is performed.
 
-Spectral unmixing is a common technique to derive sub-pixel classification. Concretely, a set of endmember (provided using `--endmember`) is consulted to determine fractions of different types of vegetation, soil, ... for each pixel.
+Spectral unmixing is a common technique to derive sub-pixel classification. Concretely, a set of endmember (provided using `--endmember`) is exploited to determine fractions of different types of vegetation, soil, ... for each pixel.
 
 Next, time series analysis for different vegetation characteristics is performed.
 
-The resulting trend files can be consulted to view trends for individual tiles. They are saved as symlinks because of their large size.
+The resulting trend files in `trend_files/` can be investigated to view trends for individual tiles. However, these files are only published if the `save_tsa` parameter is set to `true`.
 
 If the `return_tss` parameter was set to `true`, the pipeline will also output files with the `TSS` ending. These files contain the time series stack(TSS) for the given tile and index or band. Here, for each date of acquisition, an image is available that contains the values for that date.
 

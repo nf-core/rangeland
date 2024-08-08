@@ -181,6 +181,18 @@
             "description": "Parameters that configure workflow behavior not directly related to FORCE,",
             "default": "",
             "properties": {
+                "save_ard": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-database",
+                    "description": "Whether analysis ready data should be published to the output directory.",
+                    "help_text": "By default, the results of preprocessing (aka. analyses ready data or level-2 data) are not published. Setting this parameter to `true` enforces that these files are published to the output directory."
+                },
+                "save_tsa": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-database",
+                    "description": "Whether the results of time series analyses should be published to the output directory.",
+                    "help_text": "By default, the results of higher level processing (aka. level-3 data) are not published. Setting this parameter to `true` enforces that these files are published to the output directory."
+                },
                 "group_size": {
                     "type": "integer",
                     "default": 100,
