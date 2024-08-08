@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+# Script to verify pipeline results from test and test_full profiles.
+
 args = commandArgs(trailingOnly=TRUE)
 
 

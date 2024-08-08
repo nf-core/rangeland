@@ -1,5 +1,8 @@
 #!/usr/bin/env Rscript
 
+# Script for merging bottom of atmosphere (boa) .tif raster files.
+# This can improve the performance of downstream tasks.
+
 require(raster)
 
 args = commandArgs(trailingOnly=TRUE)
