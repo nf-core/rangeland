@@ -18,8 +18,8 @@ Satellite data should be given as a path to a common root of all imagery. This i
 
 ```tree
 root
-├── 181035
-│   └── LE07_L1TP_181035_20061217_20170106_01_T1
+├── 181035 # path/row id
+│   └── LE07_L1TP_181035_20061217_20170106_01_T1 # satellite, path/row id, date of acquisition, date of processing, product number, collection tier
 │   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_ANG.txt
 │   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B1.TIF
 │   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B2.TIF
@@ -34,8 +34,8 @@ root
 │   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_GCP.txt
 │   |   └── LE07_L1TP_181035_20061217_20170106_01_T1_MTL.txt
 |   └── ...
-├── 181036
-│   └── LE07_L1TP_181036_20061217_20170105_01_T1
+├── 181036 # path/row id
+│   └── LE07_L1TP_181036_20061217_20170105_01_T1 # satellite, path/row id, date of acquisition, date of processing, product number, collection tier
 │   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_ANG.txt
 │   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B1.TIF
 │   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B2.TIF
@@ -75,7 +75,7 @@ On the lowest level of the structure, the actual data is stored. Looking at the 
 
 All files within the lowest level of structure belong to a single observation. Files containing imagery (prefix starts with "B") should be `.tif` files. Files containing auxiliary data are text files.
 
-This structure is automatically generated when [using force to download the data](https://force-eo.readthedocs.io/en/latest/components/lower-level/level1/level1-csd.html?). We strongly suggest users to download data using FORCE. For example, executing the following code (e.g. with [FORCE in docker](https://force-eo.readthedocs.io/en/latest/setup/docker.html)) will download data for Landsat 4,5 and 7, in the time range from 1st January 1984 until 31st December 2006, including pictures with up to 70 percent of cloud coverage:
+This structure is automatically generated when [using FORCE to download the data](https://force-eo.readthedocs.io/en/latest/components/lower-level/level1/level1-csd.html?). We strongly suggest users to download data using FORCE. For example, executing the following code (e.g. with [FORCE in docker](https://force-eo.readthedocs.io/en/latest/setup/docker.html)) will download data for Landsat 4,5 and 7, in the time range from 1st January 1984 until 31st December 2006, including pictures with up to 70 percent of cloud coverage:
 
 ```bash
 mkdir -p meta
@@ -222,7 +222,7 @@ Note that both parameters are optional and are by default set to: `"LT04,LT05,LE
 
 ### Resolution
 
-Resolution of satellite imagery defines the real size of a single pixel. As an example, a resolution of 30 meters indicates that a single pixel in the data covers a 30x30 meters square of the earths surface. Users can customize the resolution that FORCE should assume. This does not necessarily have to match the resolution of the supplied data. FORCE will treat imagery as having the specified resolution. However, passing a resolution not matching the satellite data might lead to unexpected results. Resolution is specified in meters.
+Resolution of satellite imagery defines the real size of a single pixel. As an example, a resolution of 30 meters indicates that a single pixel in the data covers a 30x30 meters square of the earth's surface. Users can customize the resolution that FORCE should assume. This does not necessarily have to match the resolution of the supplied data. FORCE will treat imagery as having the specified resolution. However, passing a resolution not matching the satellite data might lead to unexpected results. Resolution is specified in meters.
 
 A custom resolution can be passed using:
 

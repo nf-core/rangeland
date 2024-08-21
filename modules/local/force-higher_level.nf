@@ -1,9 +1,8 @@
 process FORCE_HIGHER_LEVEL {
-
+    tag { tile }
     label 'process_medium'
 
     container "docker.io/davidfrantz/force:3.7.10"
-    tag { tile }
 
     input:
     tuple val(tile), path(config), path(ard), path(aoi), path (datacube), path (endmember)

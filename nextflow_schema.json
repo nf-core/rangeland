@@ -16,7 +16,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-satellite",
                     "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see [usage documentation](https://nf-co.re/rangeland/docs/usage)",
-                    "description": "Root directory of all sattelite imagery.",
+                    "description": "Root directory of all satellite imagery.",
                     "mimetype": "application/x-tar"
                 },
                 "input_tar": {
@@ -41,7 +41,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-burn",
                     "description": "Water vapor dataset.",
-                    "help_text": "Directory containg a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containig the reference system of the water vapor data."
+                    "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data."
                 },
                 "wvdb_tar": {
                     "type": "boolean",
@@ -59,7 +59,7 @@
                     "type": "string",
                     "fa_icon": "fas fa-chart-area",
                     "description": "Area of interest.",
-                    "help_text": "A single vector file specifying the spacial extend of the targeted area."
+                    "help_text": "A single vector file specifying the spatial extend of the targeted area."
                 },
                 "endmember": {
                     "type": "string",
@@ -196,7 +196,7 @@
                 "group_size": {
                     "type": "integer",
                     "default": 100,
-                    "description": "Batch size of  tiles considered for merging.",
+                    "description": "Batch size of tiles considered for merging.",
                     "help_text": "Controls trade-off between parallelism and I/O load.\nHigher group_size -> More tiles merged in one process, less I/O load.\nLower group_size -> Less tiles merged in one process, more I/O load. ",
                     "fa_icon": "fas fa-layer-group"
                 }

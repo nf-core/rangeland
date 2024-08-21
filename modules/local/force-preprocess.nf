@@ -1,7 +1,6 @@
 process FORCE_PREPROCESS {
-
-    label 'process_medium'
     tag { data.simpleName }
+    label 'process_medium'
 
     container "docker.io/davidfrantz/force:3.7.10"
 

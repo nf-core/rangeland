@@ -46,7 +46,7 @@ include { UNTAR as UNTAR_INPUT; UNTAR as UNTAR_DEM; UNTAR as UNTAR_WVDB; UNTAR a
 */
 
 
-// check wether provided input is within provided time range
+// check whether provided input is within provided time range
 def inRegion = input -> {
     Integer date  = input.simpleName.split("_")[3]    as Integer
     Integer start = params.start_date.replace('-','') as Integer
@@ -75,9 +75,9 @@ workflow RANGELAND {
     data           = null
     dem            = null
     wvdb           = null
-    cube_file      = file( "$params.data_cube" )
-    aoi_file       = file( "$params.aoi" )
-    endmember_file = file( "$params.endmember" )
+    cube_file      = file( params.data_cube )
+    aoi_file       = file( params.aoi )
+    endmember_file = file( params.endmember )
 
     //
     // MODULE: untar
@@ -88,12 +88,12 @@ workflow RANGELAND {
         base_path = UNTAR_INPUT.out.untar.map(it -> it[1])
 
         data = base_path.map(it -> file("$it/*/*", type: 'dir')).flatten()
-        data = data.flatten().filter{ inRegion(it) }
+        data = data.filter{ inRegion(it) }
 
         tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
     } else {
-        data = Channel.fromPath( "${params.input}/*/*", type: 'dir') .flatten()
-        data = data.flatten().filter{ inRegion(it) }
+        data = Channel.fromPath( "${params.input}/*/*", type: 'dir').flatten()
+        data = data.filter{ inRegion(it) }
     }
 
     if (params.dem_tar) {
@@ -133,12 +133,12 @@ workflow RANGELAND {
     // MODULE: Check results
     //
     if (params.config_profile_name == 'Test profile') {
-        woody_change_ref      = file("$params.woody_change_ref")
-        woody_yoc_ref         = file("$params.woody_yoc_ref")
-        herbaceous_change_ref = file("$params.herbaceous_change_ref")
-        herbaceous_yoc_ref    = file("$params.herbaceous_yoc_ref")
-        peak_change_ref       = file("$params.peak_change_ref")
-        peak_yoc_ref          = file("$params.peak_yoc_ref")
+        woody_change_ref      = file( params.woody_change_ref )
+        woody_yoc_ref         = file( params.woody_yoc_ref )
+        herbaceous_change_ref = file( params.herbaceous_change_ref )
+        herbaceous_yoc_ref    = file( params.herbaceous_yoc_ref )
+        peak_change_ref       = file( params.peak_change_ref )
+        peak_yoc_ref          = file( params.peak_yoc_ref )
 
         CHECK_RESULTS(grouped_trend_data, woody_change_ref, woody_yoc_ref, herbaceous_change_ref, herbaceous_yoc_ref, peak_change_ref, peak_yoc_ref)
         ch_versions = ch_versions.mix(CHECK_RESULTS.out.versions)

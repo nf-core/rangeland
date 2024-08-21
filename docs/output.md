@@ -10,7 +10,7 @@ The directories listed below will be created in the results directory after the 
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-- [untar](#untar) - Optionally extract input files
+- [Untar](#untar) - Optionally extract input files
 - [Preparation](#preparation) - Create a masks and boundaries for further analyses.
 - [Preprocessing](#preprocessing) - Preprocessing of satellite imagery.
 - [Higher-level-Processing](#higher-level-processing) - Classify preprocessed imagery and perform time series analyses.

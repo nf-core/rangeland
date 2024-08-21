@@ -48,6 +48,7 @@ workflow PREPROCESSING {
                                 .toSortedList{ a,b -> a[1][0].simpleName <=> b[1][0].simpleName }
                                 .flatMap{it}
                                 .groupTuple( remainder : true, size : params.group_size ).map{ [ it[0], it[1] .flatten() ] }
+
         qai_tiles_to_merge = qai_tiles.filter{ x -> x[1].size() > 1 }
                                 .map{ [ it[0].substring( 0, 11 ), it[1] ] }
                                 //Sort to ensure the same groups if you use resume
@@ -76,5 +77,4 @@ workflow PREPROCESSING {
     emit:
         tiles_and_masks = boa_tiles.join( qai_tiles ).join( masks )
         versions        = ch_versions
-
 }

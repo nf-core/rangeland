@@ -1,5 +1,4 @@
 process FORCE_GENERATE_ANALYSIS_MASK{
-
     label 'process_single'
 
     container "docker.io/davidfrantz/force:3.7.10"

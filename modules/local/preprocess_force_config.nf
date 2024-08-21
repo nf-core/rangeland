@@ -1,7 +1,6 @@
 process PREPROCESS_CONFIG {
-
-    label 'process_single'
     tag { data.simpleName }
+    label 'process_single'
 
     container "docker.io/davidfrantz/force:3.7.10"
 

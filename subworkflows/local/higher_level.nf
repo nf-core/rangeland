@@ -22,7 +22,6 @@ workflow HIGHER_LEVEL {
         FORCE_HIGHER_LEVEL( HIGHER_LEVEL_CONFIG.out.higher_level_configs_and_data )
         ch_versions = ch_versions.mix(FORCE_HIGHER_LEVEL.out.versions.first())
 
-
         trend_files = FORCE_HIGHER_LEVEL.out.trend_files.flatten().map{ x -> [ x.simpleName.substring(12), x ] }
 
         trend_files_mosaic = trend_files.groupTuple()
@@ -42,7 +41,5 @@ workflow HIGHER_LEVEL {
 
     emit:
         mosaic_files
-
         versions = ch_versions
-
 }

@@ -1,7 +1,6 @@
 process MERGE {
-
-    label 'process_low'
     tag { id }
+    label 'process_low'
 
     container "docker.io/davidfrantz/force:3.7.10"
 
