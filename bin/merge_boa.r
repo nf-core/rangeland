@@ -1,5 +1,8 @@
 #!/usr/bin/env Rscript
 
+## Originally written by Felix Kummer and released under the MIT license.
+## See git repository (https://github.com/nf-core/rangeland) for full license text.
+
 # Script for merging bottom of atmosphere (boa) .tif raster files.
 # This can improve the performance of downstream tasks.
 

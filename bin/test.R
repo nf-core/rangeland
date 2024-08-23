@@ -1,5 +1,8 @@
 #!/usr/bin/env Rscript
 
+## Originally written by David Frantz and Felix Kummer and released under the MIT license.
+## See git repository (https://github.com/nf-core/rangeland) for full license text.
+
 # Script to verify pipeline results from test and test_full profiles.
 
 args = commandArgs(trailingOnly=TRUE)
