@@ -189,18 +189,7 @@ Users can specify additional parameters to configure how the underlying workflow
 
 ### Sensor Levels
 
-Data from different satellites can be processed within this workflow. Users may wish to include different satellites in preprocessing and in higher level processing. To control this behavior, two parameters can be set when the pipeline is launched.
-The first parameter - `sensors_level1` - controls the selection of satellites for preprocessing. This parameter should follow the FORCE notation for level 1 processing of satellites. Concretely, a string containing comma-separated satellite identifiers has to be supplied (e.g. `"LT04,LT05"` to include Landsat 4 and 5). Available options for satellite identifiers are:
-
-- `"LT04"`: Landsat 4 TM
-- `"LT05"`: Landsat 5 TM
-- `"LE07"`: Landsat 7 ETM+
-- `"LC08"`: Landsat 8 OLI
-- `"S2A"`: Sentinel-2A MSI
-- `"S2B"`: Sentinel-2B MSI
-
-The second parameter - `sensors_level2` - controls the selection of satellites for the higher level processing steps. The parameter has to follow the FORCE notation for level 2 processing. In particular, a string containing space-separated satellite identifiers has to be supplied (e.g. `"LND04 LND05"` to include Landsat 4 and 5). Note that these identifiers differ from those used for the `sensors_level1` parameter.
-More details on available satellite identifiers can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html), some common options include:
+Data from different satellites can be processed within this workflow. Users may wish to include different satellites in preprocessing and in higher level processing. All input imagery is preprocessed. The `sensors_level2` parameter controls the selection of satellites for the higher level processing steps. The parameter has to follow the FORCE notation for level 2 processing. In particular, a string containing space-separated satellite identifiers has to be supplied (e.g. `"LND04 LND05"` to include Landsat 4 and 5). More details on available satellite identifiers can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html), some common options include:
 
 - `"LND04"`: 6-band Landsat 4 TM
 - `"LND05"`: 6-band Landsat 5 TM
@@ -209,16 +198,15 @@ More details on available satellite identifiers can be found [here](https://forc
 - `"SEN2A"`: 10-band Sentinel-2A
 - `"SEN2B"`: 10-band Sentinel-2B
 
-Note that the identifiers specified for both processing levels have to match the data made available to the workflow. In other words, satellite data for e.g. Landsat 5 can't be processed if it was not supplied using the `input` parameter.
+Note that the specified identifiers have to match the data made available to the workflow. In other words, satellite data for e.g. Landsat 5 can't be processed if it was not supplied using the `input` parameter.
 
-Both parameters can be passed as follows:
+The satellite identifiers can be passed as follows:
 
 ```bash
---sensors_level1 = '[preprocessing satellite identifier string]'
 --sensors_level2 = '[higher level processing satellite identifier string]'
 ```
 
-Note that both parameters are optional and are by default set to: `"LT04,LT05,LE07,S2A"` and `"LND04 LND05 LND07"`. Therefore, by default, the pipeline will use Landsat 4,5,7, and Sentinel 2 for preprocessing, while using Landsat 4,5 and 7 for higher level processing.
+Note that the parameter is optional and the default value is: `"LND04 LND05 LND07"`. Therefore, by default, the pipeline will use Landsat 4,5 and 7 imagery in higher level processing.
 
 ### Resolution
 

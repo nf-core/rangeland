@@ -94,13 +94,6 @@
             "default": "",
             "help_text": "These parameters are used to tell pipeline tools which data is expected, how this data has to be incorporated, and which parts of the imagery can be excluded (e.g. due to temporal mismatch). These parameters should be closely aligned with the provided input data.",
             "properties": {
-                "sensors_level1": {
-                    "type": "string",
-                    "default": "LT04,LT05,LE07,S2A",
-                    "fa_icon": "fas fa-satellite",
-                    "description": "Satellites for which first level data should be processed.",
-                    "help_text": "String containing comma-separated indicators of satellites in FORCE level 1format. Possible options: \n\"LT04\":  Landsat 4 TM,             \n\"LT05\":  Landsat 5 TM, \n\"LE07\":  Landsat 7 ETM+,\n\"LC08\":  Landsat 8 OLI,\n\"S2A\":    Sentinel-2A MSI,\n\"S2B\":    Sentinel-2B MSI"
-                },
                 "sensors_level2": {
                     "type": "string",
                     "default": "LND04 LND05 LND07",
