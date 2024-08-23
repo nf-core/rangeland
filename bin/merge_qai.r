@@ -3,38 +3,36 @@
 # Script for merging quality information (qai) .tif raster files.
 # This can improve the performance of downstream tasks.
 
-require(raster)
+require(terra)
 
-args = commandArgs(trailingOnly=TRUE)
+args <- commandArgs(trailingOnly = TRUE)
 
 
 if (length(args) < 3) {
-    stop("\nthis program needs at least 3 inputs\n1: output filename\n2-*: input files", call.=FALSE)
+    stop("\nError: this program needs at least 3 inputs\n1: output filename\n2-*: input files", call.=FALSE)
 }
 
 fout <- args[1]
 finp <- args[2:length(args)]
-nf <- length(finp)
 
-img <- raster(finp[1])
-nc <- ncell(img)
+# load raster files into single SpatRaster
+rasters <- rast(finp)
 
+# Merge rasters by maintaining the last non-NA value
+merged_raster <- app(rasters, function(x) {
+    non_na_values <- na.omit(x)
+    if (length(non_na_values) == 0) {
+        return(1)
+    }
+    return(tail(non_na_values, 1)[1])
+})
 
-last <- rep(1, nc)
-
-for (i in 1:nf){
-
-    data <- raster(finp[i])[]
-
-    last[!is.na(data)] <- data[!is.na(data)]
-
-}
-
-img[] <- last
-
-
-writeRaster(img, filename = fout, format = "GTiff", datatype = "INT2S",
-            options = c("INTERLEAVE=BAND", "COMPRESS=LZW", "PREDICTOR=2",
-            "NUM_THREADS=ALL_CPUS", "BIGTIFF=YES",
-            sprintf("BLOCKXSIZE=%s", img@file@blockcols[1]),
-            sprintf("BLOCKYSIZE=%s", img@file@blockrows[1])))
+# Write merged raster
+writeRaster(merged_raster,
+            filename = fout,
+            filetype = "GTiff",
+            datatype = "INT2S",
+            gdal     = c("INTERLEAVE=BAND", "COMPRESS=LZW", "PREDICTOR=2",
+                        "NUM_THREADS=ALL_CPUS", "BIGTIFF=YES",
+                        sprintf("BLOCKXSIZE=%s", ncol(merged_raster)),
+                        sprintf("BLOCKYSIZE=%s", nrow(merged_raster))))
