@@ -39,7 +39,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 [untar](https://nf-co.re/modules/untar) is a nf-core module used to extract files from tar archives.
 
-Invokation of untar depends on certain parameters (i.e `input_tar`, `dem_tar` and `wvdb_tar`).
+Invocation of untar depends on certain parameters (i.e `--input_tar`, `--dem_tar` and `--wvdb_tar`).
 Thus, the outputs files are only generated when these are set to `true`.
 
 ### Preparation
@@ -87,7 +87,7 @@ Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://
 Logs can be consulted for debugging purposes.
 ARD may be collected as a basis for other remote sensing workflows.
 The ARD in `level2_ard/` consist two `.tif` files per initial input image, a quality data file and the atmospherically corrected satellite data.
-Note that the `.tif` files are only published when the `save_ard` parameter is set to `true` to avoid bloating the storage.
+Note that the `.tif` files are only published when the `--save_ard` parameter is set to `true` to avoid bloating the storage.
 
 ### Higher-level-Processing
 
@@ -111,9 +111,9 @@ Concretely, a set of endmember (provided using `--endmember`) is exploited to de
 Next, time series analysis for different vegetation characteristics is performed.
 
 The resulting trend files in `trend_files/` can be investigated to view trends for individual tiles.
-However, these files are only published if the `save_tsa` parameter is set to `true`.
+However, these files are only published if the `--save_tsa` parameter is set to `true`.
 
-If the `return_tss` parameter was set to `true`, the pipeline will also output files with the `TSS` ending.
+If the `--return_tss` parameter was set to `true`, the pipeline will also output files with the `TSS` ending.
 These files contain the time series stack(TSS) for the given tile and index or band.
 Here, for each date of acquisition, an image is available that contains the values for that date.
 

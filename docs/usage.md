@@ -116,7 +116,7 @@ In the example above `181036/` and `181035/` would need to be in the top level o
 A DEM is necessary for topographic correction of Landsat data, and helps to distinguish between cloud, shadows and water surfaces.
 Common sources for digital elevation models are [Copernicus](https://www.copernicus.eu/en),[Shuttle Radar Topography Mission](https://www2.jpl.nasa.gov/srtm/) (SRTM), or [Advanced Spaceborne Thermal Emission and Reflection Radiometer](https://asterweb.jpl.nasa.gov/) (ASTER).
 
-The pipeline expects a path to the Digital Elevation Model root directory as a parameter.
+The pipeline expects a path to the digital elevation model root directory as the `--dem` parameter.
 Concretely, the expected structure would look like this:
 
 ```tree
@@ -218,7 +218,7 @@ Users can specify additional parameters to configure how the underlying workflow
 Data from different satellites can be processed within this workflow.
 Users may wish to include different satellites in preprocessing and in higher level processing.
 All input imagery is preprocessed.
-The `sensors_level2` parameter controls the selection of satellites for the higher level processing steps.
+The `--sensors_level2` parameter controls the selection of satellites for the higher level processing steps.
 The parameter has to follow the FORCE notation for level 2 processing.
 In particular, a string containing space-separated satellite identifiers has to be supplied (e.g. `"LND04 LND05"` to include Landsat 4 and 5).
 More details on available satellite identifiers can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html), some common options include:
@@ -231,7 +231,7 @@ More details on available satellite identifiers can be found [here](https://forc
 - `"SEN2B"`: 10-band Sentinel-2B
 
 Note that the specified identifiers have to match the data made available to the workflow.
-In other words, satellite data for e.g. Landsat 5 can't be processed if it was not supplied using the `input` parameter.
+In other words, satellite data for e.g. Landsat 5 can't be processed if it was not supplied using the `--input` parameter.
 
 The satellite identifiers can be passed as follows:
 
@@ -274,10 +274,10 @@ Start and end date can be passed using:
 
 ### Group size
 
-The `group_size` parameters can be ignored in most cases.
+The `--group_size` parameter can be ignored in most cases.
 It defines how many satellite scenes are processed together.
-The parameters is used to balance the tradeoff between I/O and computational capacities on individual compute nodes.
-By default, `group_size` is set to `100`.
+The parameter is used to balance the tradeoff between I/O and computational capacities on individual compute nodes.
+By default, `--group_size` is set to `100`.
 
 The group size can be passed using:
 
@@ -288,12 +288,12 @@ The group size can be passed using:
 ### Higher level processing configuration
 
 During the higher level processing stage, time series analyses of different satellite bands and indexes is performed.
-The concrete bands and indexes can be defined using the `indexes` parameter.
+The concrete bands and indexes can be defined using the `--indexes` parameter.
 Spectral unmixing is performed in any case.
-Thus, passing an empty `indexes` parameter will restrict time series analyses to the results of spectral unmixing.
-All available indexes can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) above the `INDEX` parameter.
+Thus, passing an empty `--indexes` parameter will restrict time series analyses to the results of spectral unmixing.
+All available indexes can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) above the `INDEX` entry.
 The band/index codes need to be passed in a space-separated string.
-The default value, `indexes = "NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands.
+The default value, `--indexes = "NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands.
 Note that indexes are usually computed based on certain bands.
 If these bands are not present in the preprocessed data, these indexes can not be computed.
 
@@ -304,7 +304,7 @@ The bands and indexes can be passed using:
 ```
 
 In so cases, it may be desirable to analyze the the individual images in a time series.
-To enable such analysis, the parameter `return_tss` can be used.
+To enable such analysis, the parameter `--return_tss` can be used.
 If set to `true`, the pipeline will return time series stacks for each tile and band combination.
 The option is disabled by default to reduce the output size.
 
@@ -319,22 +319,22 @@ The time series stack output can be enabled using:
 The workflow provides two types of results visualization and aggregation.
 The fine grained mosaic visualization contains all time series analyses results for all tiles in the original resolution.
 Pyramid visualizations present a broad overview of the same data but at a lower resolution.
-Both visualizations can be enabled or disabled using the parameters `mosaic_visualization` and `pyramid_visualization`.
+Both visualizations can be enabled or disabled using the parameters `--mosaic_visualization` and `--pyramid_visualization`.
 By default, both visualization methods are enabled.
 Note that the mosaic visualization is required to be enabled when using the `test` and `test_full` profiles to allow the pipeline to check the correctness of its results.
 
 The visualizations can be enabled using:
 
 ```bash
-mosaic_visualization  = '[boolean]'
-pyramid_visualization = '[boolean]'
+--mosaic_visualization  = '[boolean]'
+--pyramid_visualization = '[boolean]'
 ```
 
 ### FORCE configuration
 
 FORCE supports parallel computations.
 Users can specify the number of threads FORCE can spawn for a single preprocessing, or higher level processing process.
-This is achieved through the `force_threads` parameter.
+This is achieved through the `--force_threads` parameter.
 
 The number of threads can be passed using:
 
@@ -348,13 +348,13 @@ The default value is 2.
 
 By default, preprocessing and higher level processing steps do not publish the `.tif` files that they generate to avoid bloating the available storage.
 However, analysis-ready-data (aka. ARD or level-2 data) and the results of time series analyses (aka. level-3 data) maybe be interesting to certain users.
-The files for preprocessing and higher level processing can, therefore, be published by setting the `save_ard` and `save_tsa` to `true`, respectively.
+The files for preprocessing and higher level processing can, therefore, be published by setting the `--save_ard` and `--save_tsa` to `true`, respectively.
 
 Publishing of intermediate data can be enabled using:
 
 ```bash
-save_ard  = '[boolean]'
-save_tsa  = '[boolean]'
+--save_ard  = '[boolean]'
+--save_tsa  = '[boolean]'
 ```
 
 ## Running the pipeline
