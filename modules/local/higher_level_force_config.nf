@@ -1,6 +1,7 @@
 process HIGHER_LEVEL_CONFIG {
     tag { tile }
     label 'process_single'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 

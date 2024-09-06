@@ -1,6 +1,7 @@
 process FORCE_PREPROCESS {
     tag { data.simpleName }
     label 'process_medium'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 

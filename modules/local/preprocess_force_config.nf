@@ -1,6 +1,7 @@
 process PREPROCESS_CONFIG {
     tag { data.simpleName }
     label 'process_single'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 

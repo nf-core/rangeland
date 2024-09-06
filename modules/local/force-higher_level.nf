@@ -1,6 +1,7 @@
 process FORCE_HIGHER_LEVEL {
     tag { tile }
     label 'process_medium'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 
