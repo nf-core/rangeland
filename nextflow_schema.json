@@ -118,7 +118,8 @@
                     "fa_icon": "far fa-calendar-alt",
                     "description": "First day of interest.",
                     "help_text": "String with format: \"YYYY-MM-DD\".",
-                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
                 },
                 "end_date": {
                     "type": "string",
@@ -126,7 +127,8 @@
                     "fa_icon": "far fa-calendar-alt",
                     "description": "Last day of interest.",
                     "help_text": "String with format: \"YYYY-MM-DD\".",
-                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
                 },
                 "resolution": {
                     "type": "integer",
