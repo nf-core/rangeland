@@ -97,6 +97,7 @@ Note that the `.tif` files are only published when the `--save_ard` parameter is
 - `higher-level/<TILE>/`
   - `param_files/`: Parameter files used in [force-higher-level](https://force-eo.readthedocs.io/en/latest/components/higher-level/index.html).
   - `trend_files/`: Symlinks to trend files that are the result of higher-level processing.
+    This may optionally contain the time series stack.
 
 </details>
 
@@ -113,9 +114,10 @@ Next, time series analysis for different vegetation characteristics is performed
 The resulting trend files in `trend_files/` can be investigated to view trends for individual tiles.
 However, these files are only published if the `--save_tsa` parameter is set to `true`.
 
-If the `--return_tss` parameter was set to `true`, the pipeline will also output files with the `TSS` ending.
+If the `--return_tss` parameter was set to `true`, the pipeline will also output `.tif` files with the `TSS` in their name.
 These files contain the time series stack(TSS) for the given tile and index or band.
 Here, for each date of acquisition, an image is available that contains the values for that date.
+TSS files will not be returned if `--save_tsa` is set to `false`.
 
 ### Visualization
 
