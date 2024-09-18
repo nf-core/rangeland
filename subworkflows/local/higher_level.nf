@@ -1,7 +1,7 @@
-include { HIGHER_LEVEL_CONFIG } from '../../modules/local/higher_level_force_config.nf'
-include { FORCE_HIGHER_LEVEL }  from '../../modules/local/force-higher_level.nf'
-include { FORCE_MOSAIC }        from '../../modules/local/force-mosaic.nf'
-include { FORCE_PYRAMID }       from '../../modules/local/force-pyramid.nf'
+include { HIGHER_LEVEL_CONFIG } from '../../modules/local/higher_level_force_config/main'
+include { FORCE_HIGHER_LEVEL }  from '../../modules/local/force-higher_level/main'
+include { FORCE_MOSAIC }        from '../../modules/local/force-mosaic/main'
+include { FORCE_PYRAMID }       from '../../modules/local/force-pyramid/main'
 
 workflow HIGHER_LEVEL {
 

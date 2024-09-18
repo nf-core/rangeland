@@ -26,8 +26,8 @@ include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level'
 // MODULES
 //
 
-include { CHECK_RESULTS }      from '../modules/local/check_results'
-include { CHECK_RESULTS_FULL } from '../modules/local/check_results_full'
+include { CHECK_RESULTS }      from '../modules/local/check_results/main'
+include { CHECK_RESULTS_FULL } from '../modules/local/check_results_full/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
