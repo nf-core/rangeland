@@ -178,6 +178,7 @@ The datacube definition is passed as a single file using:
 ### Area of interest (AOI)
 
 The area of interest is a geospatial vector dataset that holds the boundary of the targeted area.
+The file must be a shapefile or geopackage vector file.
 
 AOI is passed as a single file using:
 

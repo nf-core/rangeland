@@ -17,7 +17,8 @@
                     "fa_icon": "fas fa-satellite",
                     "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see [usage documentation](https://nf-co.re/rangeland/docs/usage)",
                     "description": "Root directory of all satellite imagery.",
-                    "mimetype": "application/x-tar"
+                    "mimetype": "application/x-tar",
+                    "format": "path"
                 },
                 "input_tar": {
                     "type": "boolean",
@@ -29,7 +30,8 @@
                     "type": "string",
                     "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (`.tif`) and a virtual dataset file (`.vrt` file) comprising all tile-wise files from the subdirectory.",
                     "fa_icon": "fas fa-mountain",
-                    "description": "Digital elevation model."
+                    "description": "Digital elevation model.",
+                    "format": "path"
                 },
                 "dem_tar": {
                     "type": "boolean",
@@ -41,7 +43,8 @@
                     "type": "string",
                     "fa_icon": "fas fa-burn",
                     "description": "Water vapor dataset.",
-                    "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data."
+                    "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data.",
+                    "format": "path"
                 },
                 "wvdb_tar": {
                     "type": "boolean",
@@ -53,19 +56,26 @@
                     "type": "string",
                     "description": "Datacube definition.",
                     "fa_icon": "fas fa-cube",
-                    "help_text": "A single `.prj` file describing the projection and reference grid of the generated datacube."
+                    "help_text": "A single `.prj` file describing the projection and reference grid of the generated datacube.",
+                    "pattern": "^\\S+\\.prj$",
+                    "format": "file-path"
                 },
                 "aoi": {
                     "type": "string",
                     "fa_icon": "fas fa-chart-area",
                     "description": "Area of interest.",
-                    "help_text": "A single vector file specifying the spatial extend of the targeted area."
+                    "help_text": "A single vector file specifying the spatial extend of the targeted area.",
+                    "pattern": "^\\S+\\.(gpkg|shp)$",
+                    "format": "file-path"
                 },
                 "endmember": {
                     "type": "string",
                     "fa_icon": "fas fa-chart-line",
                     "description": "Endmember definition.",
-                    "help_text": "A single text file specifying where rows correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces."
+                    "help_text": "A single text file specifying where rows correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces.",
+                    "pattern": "^\\S+\\.txt$",
+                    "format": "file-path",
+                    "mimetype": "text/plain"
                 },
                 "outdir": {
                     "type": "string",
@@ -99,21 +109,24 @@
                     "default": "LND04 LND05 LND07",
                     "fa_icon": "fas fa-satellite",
                     "description": "Satellites for which data should be incorporated into higher level processing.",
-                    "help_text": "String containing space-separated indicators of satellites in FORCE level 2 format. Common options:\n\"LND04\":       6-band Landsat 4 TM, \n\"LND05\":       6-band Landsat 5 TM, \n\"LND07\":       6-band Landsat 7 ETM+,\n\"LND08/09\": 6-band Landsat 8-9 OLI, \n\"SEN2A\":      10-band Sentinel-2A, \n\"SEN2B\":      10-band Sentinel-2B,\nall options [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) \n"
+                    "help_text": "String containing space-separated indicators of satellites in FORCE level 2 format. Common options:\n\"LND04\":       6-band Landsat 4 TM, \n\"LND05\":       6-band Landsat 5 TM, \n\"LND07\":       6-band Landsat 7 ETM+,\n\"LND08/09\": 6-band Landsat 8-9 OLI, \n\"SEN2A\":      10-band Sentinel-2A, \n\"SEN2B\":      10-band Sentinel-2B,\nall options [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) \n",
+                    "pattern": "^((LND04|LND05|LND07|LND08|LND09|SEN2A|SEN2B|sen2a|sen2b|S1AIA|S1BIA|S1AID|S1BID|MOD01|MOD02|LNDLG|SEN2L|SEN2H|R-G-B|VVVHP|MODIS)(\\s|$))+$"
                 },
                 "start_date": {
                     "type": "string",
                     "default": "1984-01-01",
                     "fa_icon": "far fa-calendar-alt",
                     "description": "First day of interest.",
-                    "help_text": "String with format: \"YYYY-MM-DD\"."
+                    "help_text": "String with format: \"YYYY-MM-DD\".",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                 },
                 "end_date": {
                     "type": "string",
                     "default": "2006-12-31",
                     "fa_icon": "far fa-calendar-alt",
                     "description": "Last day of interest.",
-                    "help_text": "String with format: \"YYYY-MM-DD\"."
+                    "help_text": "String with format: \"YYYY-MM-DD\".",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                 },
                 "resolution": {
                     "type": "integer",
@@ -134,7 +147,8 @@
                     "default": "NDVI BLUE GREEN RED NIR SWIR1 SWIR2",
                     "help_text": "Space-separated list of indexes and bands that should be considered in time series analyses. They are indicated by using their established abbreviations. The full list of available indexes is available at https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html under the 'INDEX' parameter. Spectral unmixing is a special index and always activated.",
                     "description": "Select which bands and indexes should be considered in time series analyses.",
-                    "fa_icon": "fas fa-satellite"
+                    "fa_icon": "fas fa-satellite",
+                    "pattern": "((BLUE|GREEN|RED|NIR|SWIR1|SWIR2|RE1|RE2|RE3|BNIR|NDVI|EVI|NBR|NDTI|ARVI|SAVI|SARVI|TC-BRIGHT|TC-GREEN|TC-WET|TC-DI|NDBI|NDWI|MNDWI|NDMI|NDSI|SMA|kNDVI|NDRE1|NDRE2|CIre|NDVIre1|NDVIre2|NDVIre3|NDVIre1n|NDVIre2n|NDVIre3n|MSRre|MSRren,CCI)(\\s|$))+"
                 },
                 "return_tss": {
                     "type": "boolean",
@@ -207,7 +221,8 @@
                     "type": "integer",
                     "default": 2,
                     "description": "Number of threads spawned by FORCE for each higher-level or preprocessing task.",
-                    "fa_icon": "fas fa-microchip"
+                    "fa_icon": "fas fa-microchip",
+                    "minimum": 1
                 }
             },
             "fa_icon": "fas fa-terminal",
