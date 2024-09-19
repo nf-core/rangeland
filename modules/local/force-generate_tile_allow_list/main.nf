@@ -1,4 +1,5 @@
 process FORCE_GENERATE_TILE_ALLOW_LIST{
+    tag { aoi.simpleName }
     label 'process_single'
 
     container "docker.io/davidfrantz/force:3.7.10"

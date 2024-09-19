@@ -1,4 +1,5 @@
 process CHECK_RESULTS {
+    tag 'check'
     label 'process_low'
 
     container 'docker.io/rocker/geospatial:4.3.1'
