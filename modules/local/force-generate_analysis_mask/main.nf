@@ -7,6 +7,7 @@ process FORCE_GENERATE_ANALYSIS_MASK{
     input:
     path aoi
     path 'mask/datacube-definition.prj'
+    val resolution
 
     output:
     //Mask for whole region
@@ -18,7 +19,7 @@ process FORCE_GENERATE_ANALYSIS_MASK{
 
     script:
     """
-    force-cube -o mask/ -s $params.resolution $aoi
+    force-cube -o mask/ -s $resolution $aoi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

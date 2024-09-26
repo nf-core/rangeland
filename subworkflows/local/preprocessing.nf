@@ -15,6 +15,8 @@ workflow PREPROCESSING {
         wvdb
         cube_file
         aoi_file
+        group_size
+        resolution
 
     main:
 
@@ -23,7 +25,7 @@ workflow PREPROCESSING {
         FORCE_GENERATE_TILE_ALLOW_LIST( aoi_file, cube_file )
         ch_versions = ch_versions.mix(FORCE_GENERATE_TILE_ALLOW_LIST.out.versions)
 
-        FORCE_GENERATE_ANALYSIS_MASK( aoi_file, cube_file )
+        FORCE_GENERATE_ANALYSIS_MASK( aoi_file, cube_file, resolution )
         ch_versions = ch_versions.mix(FORCE_GENERATE_ANALYSIS_MASK.out.versions)
 
         //Group masks by tile
@@ -47,14 +49,14 @@ workflow PREPROCESSING {
                                 //Sort to ensure the same groups if you use resume
                                 .toSortedList{ a,b -> a[1][0].simpleName <=> b[1][0].simpleName }
                                 .flatMap{it}
-                                .groupTuple( remainder : true, size : params.group_size ).map{ [ it[0], it[1] .flatten() ] }
+                                .groupTuple( remainder : true, size : group_size ).map{ [ it[0], it[1] .flatten() ] }
 
         qai_tiles_to_merge = qai_tiles.filter{ x -> x[1].size() > 1 }
                                 .map{ [ it[0].substring( 0, 11 ), it[1] ] }
                                 //Sort to ensure the same groups if you use resume
                                 .toSortedList{ a,b -> a[1][0].simpleName <=> b[1][0].simpleName }
                                 .flatMap{it}
-                                .groupTuple( remainder : true, size : params.group_size ).map{ [ it[0], it[1] .flatten() ] }
+                                .groupTuple( remainder : true, size : group_size ).map{ [ it[0], it[1] .flatten() ] }
 
         //Find tiles with only one file
         boa_tiles_done = boa_tiles.filter{ x -> x[1].size() == 1 }.map{ x -> [ x[0] .substring( 0, 11 ), x[1][0] ] }

@@ -9,6 +9,12 @@ process HIGHER_LEVEL_CONFIG {
     tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
     path 'ard/datacube-definition.prj'
     path endmember
+    val resolution
+    val sensors_level2
+    val start_date
+    val end_date
+    val indexes
+    val return_tss
 
     output:
     tuple val (tile), path("trend_${tile}.prm"), path("ard/", includeInputs: true), path("mask/", includeInputs: true), path('ard/datacube-definition.prj', includeInputs: true), path(endmember, includeInputs: true), emit: higher_level_configs_and_data
@@ -40,20 +46,20 @@ process HIGHER_LEVEL_CONFIG {
     sed -i "/^Y_TILE_RANGE /c\\Y_TILE_RANGE = \$Y \$Y" \$PARAM
 
     # resolution
-    sed -i "/^RESOLUTION /c\\RESOLUTION = $params.resolution" \$PARAM
+    sed -i "/^RESOLUTION /c\\RESOLUTION = $resolution" \$PARAM
 
 
     # sensors
-    sed -i "/^SENSORS /c\\SENSORS = $params.sensors_level2" \$PARAM
+    sed -i "/^SENSORS /c\\SENSORS = $sensors_level2" \$PARAM
 
 
     # date range
-    sed -i "/^DATE_RANGE /c\\DATE_RANGE = $params.start_date $params.end_date" \$PARAM
+    sed -i "/^DATE_RANGE /c\\DATE_RANGE = $start_date $end_date" \$PARAM
 
 
     # spectral index
-    sed -i "/^INDEX /c\\INDEX = SMA $params.indexes" \$PARAM
-    ${ params.return_tss ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : '' }
+    sed -i "/^INDEX /c\\INDEX = SMA $indexes" \$PARAM
+    ${ return_tss ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : '' }
 
     # interpolation
     sed -i "/^INT_DAY /c\\INT_DAY = 8" \$PARAM

@@ -118,13 +118,33 @@ workflow RANGELAND {
     //
     // SUBWORKFLOW: Preprocess satellite imagery
     //
-    PREPROCESSING(data, dem, wvdb, cube_file, aoi_file)
+    PREPROCESSING (
+        data,
+        dem,
+        wvdb,
+        cube_file,
+        aoi_file,
+        params.group_size,
+        params.resolution
+    )
     ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 
     //
     // SUBWORKFLOW: Generate trend files and visualization
     //
-    HIGHER_LEVEL(PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file)
+    HIGHER_LEVEL(
+        PREPROCESSING.out.tiles_and_masks,
+        cube_file,
+        endmember_file,
+        params.mosaic_visualization,
+        params.pyramid_visualization,
+        params.resolution,
+        params.sensors_level2,
+        params.start_date,
+        params.end_date,
+        params.indexes,
+        params.return_tss
+    )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
     grouped_trend_data = HIGHER_LEVEL.out.mosaic_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
