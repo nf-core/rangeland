@@ -52,12 +52,16 @@ workflow HIGHER_LEVEL {
             ch_versions = ch_versions.mix(FORCE_MOSAIC.out.versions.first())
         }
 
+        pyramid_files = Channel.empty()
         if (pyramid_visualization) {
             FORCE_PYRAMID( trend_files.filter { it[1].name.endsWith('.tif')  }.map { [ it[1].simpleName.substring(0,11), it[1] ] } .groupTuple() )
+            pyramid_files = FORCE_PYRAMID.out.trends
             ch_versions = ch_versions.mix(FORCE_PYRAMID.out.versions.first())
         }
 
     emit:
-        mosaic_files
+        mosaic   = mosaic_files
+        pyramid  = pyramid_files
+        trends   = FORCE_HIGHER_LEVEL.out.trend_files
         versions = ch_versions
 }

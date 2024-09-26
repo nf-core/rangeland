@@ -40,6 +40,10 @@ workflow NFCORE_RANGELAND {
     RANGELAND ()
 
     emit:
+    level2_ard     = RANGELAND.out.level2_ard
+    mosaic         = RANGELAND.out.mosaic
+    pyramid        = RANGELAND.out.pyramid
+    trends         = RANGELAND.out.trends
     multiqc_report = RANGELAND.out.multiqc_report // channel: /path/to/multiqc_report.html
 
 }

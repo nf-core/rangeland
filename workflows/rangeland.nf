@@ -147,7 +147,7 @@ workflow RANGELAND {
     )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
-    grouped_trend_data = HIGHER_LEVEL.out.mosaic_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
+    grouped_trend_data = HIGHER_LEVEL.out.mosaic.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
 
     //
     // MODULE: Check results
@@ -226,6 +226,10 @@ workflow RANGELAND {
     )
 
     emit:
+    level2_ard     = PREPROCESSING.out.tiles_and_masks
+    mosaic         = HIGHER_LEVEL.out.mosaic
+    pyramid        = HIGHER_LEVEL.out.pyramid
+    trends         = HIGHER_LEVEL.out.trends
     multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
