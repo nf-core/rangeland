@@ -21,7 +21,7 @@ process FORCE_HIGHER_LEVEL {
 
     mkdir trend
 
-    # set provenance
+    # set provenance directory
     mkdir prov
     sed -i "/^DIR_PROVENANCE /c\\DIR_PROVENANCE = prov/" \$PARAM
 

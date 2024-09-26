@@ -47,7 +47,6 @@ process PREPROCESS_CONFIG {
     sed -i "/^ORIGIN_LON /c\\ORIGIN_LON = \$ORIGINX" \$PARAM
     sed -i "/^ORIGIN_LAT /c\\ORIGIN_LAT = \$ORIGINY" \$PARAM
     sed -i "/^PROJECTION /c\\PROJECTION = \$CRS" \$PARAM
-    sed -i "/^NTHREAD /c\\NTHREAD = $params.force_threads" \$PARAM
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

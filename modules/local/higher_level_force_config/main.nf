@@ -25,18 +25,12 @@ process HIGHER_LEVEL_CONFIG {
 
     # set parameters
 
-    #Replace pathes
+    # Replace paths
     sed -i "/^DIR_LOWER /c\\DIR_LOWER = ard/" \$PARAM
     sed -i "/^DIR_HIGHER /c\\DIR_HIGHER = trend/" \$PARAM
     sed -i "/^DIR_MASK /c\\DIR_MASK = mask/" \$PARAM
     sed -i "/^BASE_MASK /c\\BASE_MASK = aoi.tif" \$PARAM
     sed -i "/^FILE_ENDMEM /c\\FILE_ENDMEM = $endmember" \$PARAM
-
-    # threading
-    sed -i "/^NTHREAD_READ /c\\NTHREAD_READ = 1" \$PARAM              # might need some modification
-    sed -i "/^NTHREAD_COMPUTE /c\\NTHREAD_COMPUTE = $params.force_threads" \$PARAM  # might need some modification
-    sed -i "/^NTHREAD_WRITE /c\\NTHREAD_WRITE = 1" \$PARAM            # might need some modification
-
 
     # replace Tile to process
     TILE="$tile"

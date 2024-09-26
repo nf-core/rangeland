@@ -331,20 +331,6 @@ The visualizations can be enabled using:
 --pyramid_visualization = '[boolean]'
 ```
 
-### FORCE configuration
-
-FORCE supports parallel computations.
-Users can specify the number of threads FORCE can spawn for a single preprocessing, or higher level processing process.
-This is achieved through the `--force_threads` parameter.
-
-The number of threads can be passed using:
-
-```bash
---force_threads '[integer]'
-```
-
-The default value is 2.
-
 ### Intermediate data publishing
 
 By default, preprocessing and higher level processing steps do not publish the `.tif` files that they generate to avoid bloating the available storage.

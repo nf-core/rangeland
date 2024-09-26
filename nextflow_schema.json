@@ -213,23 +213,6 @@
             "help_text": "You can savely use the defaults.",
             "fa_icon": "fas fa-project-diagram"
         },
-        "force_parameters": {
-            "title": "FORCE parameters",
-            "type": "object",
-            "description": "Parameters specific to the FORCE tool.",
-            "default": "",
-            "properties": {
-                "force_threads": {
-                    "type": "integer",
-                    "default": 2,
-                    "description": "Number of threads spawned by FORCE for each higher-level or preprocessing task.",
-                    "fa_icon": "fas fa-microchip",
-                    "minimum": 1
-                }
-            },
-            "fa_icon": "fas fa-terminal",
-            "help_text": ""
-        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -447,9 +430,6 @@
         },
         {
             "$ref": "#/definitions/workflow_configuration"
-        },
-        {
-            "$ref": "#/definitions/force_parameters"
         },
         {
             "$ref": "#/definitions/institutional_config_options"
