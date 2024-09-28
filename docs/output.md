@@ -39,8 +39,9 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 [untar](https://nf-co.re/modules/untar) is a nf-core module used to extract files from tar archives.
 
-Invocation of untar depends on certain parameters (i.e `--input_tar`, `--dem_tar` and `--wvdb_tar`).
-Thus, the outputs files are only generated when these are set to `true`.
+[untar](https://nf-co.re/modules/untar) is automatically executed when certain input parameters where given as `.tar` or `.tar.gz` files.
+The parameters `--input`, `--dem` and `--wvdb` are supported.
+See [Usage](usage.md) for details.
 
 ### Preparation
 

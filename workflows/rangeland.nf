@@ -67,14 +67,14 @@ workflow RANGELAND {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions      = Channel.empty()
     ch_multiqc_files = Channel.empty()
     //
     // Stage and validate input files
     //
-    data           = null
-    dem            = null
-    wvdb           = null
+    data           = Channel.empty()
+    dem            = Channel.empty()
+    wvdb           = Channel.empty()
     cube_file      = file( params.data_cube )
     aoi_file       = file( params.aoi )
     endmember_file = file( params.endmember )
@@ -83,37 +83,57 @@ workflow RANGELAND {
     // MODULE: untar
     //
     tar_versions = Channel.empty()
-    if (params.input_tar) {
-        UNTAR_INPUT([[:], params.input])
-        base_path = UNTAR_INPUT.out.untar.map(it -> it[1])
 
-        data = base_path.map(it -> file("$it/*/*", type: 'dir')).flatten()
-        data = data.filter{ inRegion(it) }
-
-        tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
-    } else {
-        data = Channel.fromPath( "${params.input}/*/*", type: 'dir').flatten()
-        data = data.filter{ inRegion(it) }
+    // Determine type of params.input and extract when neccessary
+    ch_input = Channel.of(file(params.input))
+    ch_input.branch { it
+        archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
+            return tuple([:], it)
+        dirs: true
+            return it
     }
+    .set{ ch_input_types }
 
-    if (params.dem_tar) {
-        UNTAR_DEM([[:], params.dem])
-        dem = UNTAR_DEM.out.untar.map(it -> file(it[1]))
+    UNTAR_INPUT(ch_input_types.archives)
+    ch_untared_inputs = UNTAR_INPUT.out.untar.map(it -> it[1])
+    tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
 
-        tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
-    } else {
-        dem = file("$params.dem")
+    data = data
+        .mix(ch_untared_inputs, ch_input_types.dirs)
+        .map(it -> file("$it/*/*", type: 'dir')).flatten()
+        .filter{ inRegion(it) }
+
+    // Determine type of params.dem and extract when neccessary
+    ch_dem = Channel.of(file(params.dem))
+    ch_dem.branch { it
+        archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
+            return tuple([:], it)
+        dirs: true
+            return file(it)
     }
+    .set{ ch_dem_types }
 
-    if (params.wvdb_tar) {
-        UNTAR_WVDB([[:], params.wvdb])
-        wvdb = UNTAR_WVDB.out.untar.map(it -> file(it[1]))
+    UNTAR_DEM(ch_dem_types.archives)
+    ch_untared_dem = UNTAR_DEM.out.untar.map(it -> it[1])
+    tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
 
-        tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
-    } else {
-        wvdb = file("$params.wvdb")
+    dem = dem.mix(ch_untared_dem, ch_dem_types.dirs).first()
+
+    // Determine type of params.wvdb and extract when neccessary
+    ch_wvdb = Channel.of(file(params.wvdb))
+    ch_wvdb.branch { it
+        archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
+            return tuple([:], it)
+        dirs: true
+            return file(it)
     }
+    .set{ ch_wvdb_types }
 
+    UNTAR_WVDB(ch_wvdb_types.archives)
+    ch_untared_wvdb = UNTAR_WVDB.out.untar.map(it -> it[1])
+    tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
+
+    wvdb = wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first()
 
     //
     // SUBWORKFLOW: Preprocess satellite imagery

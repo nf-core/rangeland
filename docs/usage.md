@@ -106,9 +106,10 @@ The satellite imagery can be given to the pipeline using:
 --input '[path to imagery root]'
 ```
 
-The satellite imagery can also be provide as a tar archive.
-In this case it is mandatory to set `--input_tar` to `true`.
-Moreover, within the tar archive, the structure explained above has to be in place.
+The satellite imagery can also be provide as a tarball (`.tar` or `.tar.gz` files).
+These files will be automatically extracted.
+Providing tarballs can be specifically helpful when using foreign files as inputs.
+In this case, it is mandatory to have the structure explained above in place.
 In the example above `181036/` and `181035/` would need to be in the top level of the archive.
 
 ### Digital Elevation Model (DEM)
@@ -134,9 +135,10 @@ The DEM can be given to the pipeline using:
 --dem '[path to dem root]'
 ```
 
-The digital elevation model can also be provide as a tar archive.
-In this case it is mandatory to set `--dem_tar` to `true`.
-Moreover, within the tar archive, the structure explained above has to be in place.
+The digital elevation model can also be provide as a tarball (`.tar` or `.tar.gz` files).
+These files will be automatically extracted.
+Providing tarballs can be specifically helpful when using foreign files as inputs.
+In this case, it is mandatory to have the structure explained above in place.
 In the example above `<dem_file>.vrt` and `<dem_tifs>/` would need to be in the top level of the archive.
 
 ### Water Vapor Database (WVDB)
@@ -160,8 +162,10 @@ The WVDB can be given to the pipeline using:
 --wvdb '[path to wvdb dir]'
 ```
 
-The water vapor database can also be provide as a tar archive.
-In this case it is mandatory to set `--wvdb_tar` to `true`.
+The water vapor database can also be provide as a tarball (`.tar` or `.tar.gz` files).
+These files will be automatically extracted.
+Providing tarballs can be specifically helpful when using foreign files as inputs.
+In this case, it is mandatory to have the structure explained above in place.
 All files of the wvdb would need to be in the top level of the archive.
 
 ### Datacube
