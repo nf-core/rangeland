@@ -16,10 +16,8 @@ process FORCE_PYRAMID {
 
     script:
     """
-    files="*.tif"
-    for file in \$files; do
-        force-pyramid \$file
-    done;
+    file="*.tif"
+    force-pyramid \$file
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

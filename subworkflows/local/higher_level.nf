@@ -54,7 +54,7 @@ workflow HIGHER_LEVEL {
 
         pyramid_files = Channel.empty()
         if (pyramid_visualization) {
-            FORCE_PYRAMID( trend_files.filter { it[1].name.endsWith('.tif')  }.map { [ it[1].simpleName.substring(0,11), it[1] ] } .groupTuple() )
+            FORCE_PYRAMID( trend_files.filter { it[1].name.endsWith('.tif')  }.map { [ it[1].simpleName.substring(0,11), it[1] ] } )
             pyramid_files = FORCE_PYRAMID.out.trends
             ch_versions = ch_versions.mix(FORCE_PYRAMID.out.versions.first())
         }
