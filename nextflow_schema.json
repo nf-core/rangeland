@@ -352,6 +352,7 @@
         {
             "$ref": "#/$defs/input_output_options"
         },
+
         {
             "$ref": "#/$defs/remote_sensing_image_options"
         },
