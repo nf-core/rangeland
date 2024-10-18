@@ -3,7 +3,7 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { FASTQC                 } from '../modules/nf-core/fastqc/main'
+
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -12,26 +12,148 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_rang
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT LOCAL MODULES/SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
+//
+include { PREPROCESSING } from '../subworkflows/local/preprocessing'
+include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level'
+
+//
+// MODULES
+//
+
+include { CHECK_RESULTS }      from '../modules/local/check_results'
+include { CHECK_RESULTS_FULL } from '../modules/local/check_results_full'
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT NF-CORE MODULES/SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// MODULE: Installed directly from nf-core/modules
+//
+include { UNTAR as UNTAR_INPUT; UNTAR as UNTAR_DEM; UNTAR as UNTAR_WVDB; UNTAR as UNTAR_REF } from '../modules/nf-core/untar/main'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    HELPER FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+
+// check wether provided input is within provided time range
+def inRegion = input -> {
+    Integer date  = input.simpleName.split("_")[3]    as Integer
+    Integer start = params.start_date.replace('-','') as Integer
+    Integer end   = params.end_date.replace('-','')   as Integer
+
+    return date >= start && date <= end
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+
+
 workflow RANGELAND {
 
-    take:
-    ch_samplesheet // channel: samplesheet read in from --input
     main:
 
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
     //
-    // MODULE: Run FastQC
+    // Stage and validate input files
     //
-    FASTQC (
-        ch_samplesheet
-    )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+    data           = null
+    dem            = null
+    wvdb           = null
+    cube_file      = file( "$params.data_cube" )
+    aoi_file       = file( "$params.aoi" )
+    endmember_file = file( "$params.endmember" )
+
+    //
+    // MODULE: untar
+    //
+    tar_versions = Channel.empty()
+    if (params.input_tar) {
+        UNTAR_INPUT([[:], params.input])
+        base_path = UNTAR_INPUT.out.untar.map(it -> it[1])
+
+        data = base_path.map(it -> file("$it/*/*", type: 'dir')).flatten()
+        data = data.flatten().filter{ inRegion(it) }
+
+        tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
+    } else {
+        data = Channel.fromPath( "${params.input}/*/*", type: 'dir') .flatten()
+        data = data.flatten().filter{ inRegion(it) }
+    }
+
+    if (params.dem_tar) {
+        UNTAR_DEM([[:], params.dem])
+        dem = UNTAR_DEM.out.untar.map(it -> file(it[1]))
+
+        tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
+    } else {
+        dem = file("$params.dem")
+    }
+
+    if (params.wvdb_tar) {
+        UNTAR_WVDB([[:], params.wvdb])
+        wvdb = UNTAR_WVDB.out.untar.map(it -> file(it[1]))
+
+        tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
+    } else {
+        wvdb = file("$params.wvdb")
+    }
+
+
+    //
+    // SUBWORKFLOW: Preprocess satellite imagery
+    //
+    PREPROCESSING(data, dem, wvdb, cube_file, aoi_file)
+    ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
+
+    //
+    // SUBWORKFLOW: Generate trend files and visualization
+    //
+    HIGHER_LEVEL(PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file)
+    ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
+
+    grouped_trend_data = HIGHER_LEVEL.out.mosaic_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
+
+    //
+    // MODULE: Check results
+    //
+    if (params.config_profile_name == 'Test profile') {
+        woody_change_ref      = file("$params.woody_change_ref")
+        woody_yoc_ref         = file("$params.woody_yoc_ref")
+        herbaceous_change_ref = file("$params.herbaceous_change_ref")
+        herbaceous_yoc_ref    = file("$params.herbaceous_yoc_ref")
+        peak_change_ref       = file("$params.peak_change_ref")
+        peak_yoc_ref          = file("$params.peak_yoc_ref")
+
+        CHECK_RESULTS(grouped_trend_data, woody_change_ref, woody_yoc_ref, herbaceous_change_ref, herbaceous_yoc_ref, peak_change_ref, peak_yoc_ref)
+        ch_versions = ch_versions.mix(CHECK_RESULTS.out.versions)
+    }
+
+    if (params.config_profile_name == 'Full test profile') {
+        UNTAR_REF([[:], params.reference])
+        ref_path = UNTAR_REF.out.untar.map(it -> it[1])
+        tar_versions.mix(UNTAR_REF.out.versions)
+
+        CHECK_RESULTS_FULL(grouped_trend_data, ref_path)
+        ch_versions = ch_versions.mix(CHECK_RESULTS_FULL.out.versions)
+    }
+
+    ch_versions = ch_versions.mix(tar_versions.first())
 
     //
     // Collate and save software versions
