@@ -4,60 +4,306 @@
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
-## Introduction
+## Input
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+As most remote sensing workflows, this pipeline relies on numerous sources of data. In the following we will describe the required data and corresponding formats. Mandatory input data consists of satellite data, a digital elevation model, a water vapor database, a data_cube, an area-of-interest specification and an endmember definition.
 
-## Samplesheet input
+### Satellite data
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+This pipeline operates on Landsat data. Landsat is a joint NASA/U.S. Geolical Survey satellite mission that provides continuous Earth obersvation data since 1984 at 30m spatial resolution with a temporal revisit frequency of 8-16 days.
+Landsast carries multispectral optical instruments that observe the land surface in the visible to shortwave infrared spectrum.
+For infos on Landsat, see [here](https://www.usgs.gov/core-science-systems/nli/landsat).
+
+Satellite data should be given as a path to a common root of all imagery. This is a common format used in geographic information systems, including FORCE, which is applied in this pipeline. The expected structure underneath the root directory should follow this example:
+
+```
+root
+├── 181035
+│   └── LE07_L1TP_181035_20061217_20170106_01_T1
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_ANG.txt
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B1.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B2.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B3.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B4.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B5.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B6_VCID_1.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B6_VCID_2.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B7.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_B8.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_BQA.TIF
+│   |   ├── LE07_L1TP_181035_20061217_20170106_01_T1_GCP.txt
+│   |   └── LE07_L1TP_181035_20061217_20170106_01_T1_MTL.txt
+|   └── ...
+├── 181036
+│   └── LE07_L1TP_181036_20061217_20170105_01_T1
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_ANG.txt
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B1.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B2.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B3.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B4.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B5.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B6_VCID_1.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B6_VCID_2.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B7.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_B8.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_BQA.TIF
+│   |   ├── LE07_L1TP_181036_20061217_20170105_01_T1_GCP.txt
+│   |   └── LE07_L1TP_181036_20061217_20170105_01_T1_MTL.txt
+|   └── ...
+└── ...
+```
+
+Subdirectories of root contain _path_ and _row_ information as commonly used for Landsat imagery. As an example, the sub directory `181036/` contains imagery for path 18 and row 1036.
+
+The next level of subdirectories contains the data for a specific day and from a specific source. Lets look at the example `LE07_L1TP_181036_20061217_20170105_01_T1`:
+
+- "LE07" corresponds to Landsat 7 Enhanced
+- "L1TP" corresponds to Level-1 Terrain Corrected imagery
+- "181036" corresponds to the path and row of the imagery, this should match the subdirectory
+- "20061217" identifies the 17th December 2006 as the date of acquisition
+- "20170105" identifies the 5th January 2017 as the date of (re)processing
+- "01" corresponds to version number of the remote sensing product
+- "T1" corresponds to the Tier of the data collection, which indicates the Tier 1 landsat collection in this case
+
+On the lowest level of the structure, the actual data is stored. Looking at the contents of `LE07_L1TP_181036_20061217_20170105_01_T1`, we see that all files share the same prefix, followed by a specification of the specific files contents. These suffixes include:
+
+- "B" followed by a number _i_ identifying the band of the satellite (band 6 has two files as Landsat 7 has two thermal bands)
+- "BQA" identifying the quality information band
+- "GCP" identifies ground control point information
+- "ANG" identifies angle of observation and other geometric information information
+- "MTL" identifies meta data
+
+All files within the lowest level of structure belong to a single observation. Files containing imagery (prefix starts with "B") should be .tif files. Files containing auxiliary data are text files.
+
+This structure is automatically generated when [using force to download the data](https://force-eo.readthedocs.io/en/latest/components/lower-level/level1/level1-csd.html?). We strongly suggest users to download data using FORCE (e.g.). For example, executing the following code (e.g. with [FORCE in docker](https://force-eo.readthedocs.io/en/latest/setup/docker.html)) will download data for Landsat 4,5 and 7, in the time range from 1st January 1984 until 31st December 2006, including pictures with up to 70 percent of cloud coverage:
 
 ```bash
---input '[path to samplesheet file]'
+mkdir -p meta
+force-level1-csd -u -s "LT04,LT05,LE07" meta
+mkdir -p data
+force-level1-csd -s "LT04,LT05,LE07" -d "19840101,20061231" -c 0,70 meta/ data/ queue.txt vector/aoi.gpkg
 ```
 
-### Multiple runs of the same sample
+Note that you need to pass an area-of-interest file, see the area of interest section [Area of interest](#aoi) for details.
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+The satellite imagery can be given to the pipeline using:
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+```bash
+--input '[path to imagery root]'
 ```
 
-### Full samplesheet
+The satellite imagery can also be provide as a tar archive. In this case it is mandatory to set `--input_tar` to true. Moreover, within the tar archive, the structure explained above has to be in place. In the example above `181036/` and `181035/` would need to be in the top level of the archive.
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+### Digital Elevation Model (DEM)
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+A DEM is necessary for topographic correction of Landsat data, and helps to distinguish between cloud, shadows and water surfaces. Common sources for digital elevation models are [Copernicus](https://www.copernicus.eu/en),[Shuttle Radar Topography Mission](https://www2.jpl.nasa.gov/srtm/) (SRTM), or [Advanced Spaceborne Thermal Emission and Reflection Radiometer](https://asterweb.jpl.nasa.gov/) (ASTER).
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+The pipeline expects a path to the Digital Elevation Model root directory as a parameter. Concretely, the expected structure would look like this:
+
+```
+dem
+├── <dem_file>.vrt
+└── <dem_tifs>/
+    └── ...
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+Here, `<dem_file>.vrt` orchestrates the single digital elevation files in the `<dem_tifs>` directory.
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+The DEM can be given to the pipeline using:
+
+```bash
+--dem '[path to dem root]'
+```
+
+The digital elevation model can also be provide as a tar archive. In this case it is mandatory to set `--dem_tar` to true. Moreover, within the tar archive, the structure explained above has to be in place. In the example above `<dem_file>.vrt` and `<dem_tifs>/` would need to be in the top level of the archive.
+
+### Water Vapor Database (WVDB)
+
+For atmospheric correction of Landsat data, information on the atmospheric water vapor content is necessary.
+
+The expected format for the wvdb is a directory containing daily water vapor measurements for the area of interest.
+
+We recommend using a precompiled water vapor database, like [this one](https://zenodo.org/record/4468701).
+This global water vapor database can be downloaded by executing this code:
+
+```bash
+wget -O wvp-global.tar.gz https://zenodo.org/record/4468701/files/wvp-global.tar.gz?download=1
+tar -xzf wvp-global.tar.gz --directory wvdb/
+rm wvp-global.tar.gz
+```
+
+The WVDB can be given to the pipeline using:
+
+```bash
+--wvdb '[path to wvdb dir]'
+```
+
+The water vapor database can also be provide as a tar archive. In this case it is mandatory to set `--wvdb_tar` to true. All files of the wvdb would need to be in the top level of the archive.
+
+### Datacube
+
+The datacube definition stores information about the projection and reference grid of the generated datacube. For details see the [FORCE main paper](https://www.mdpi.com/2072-4292/11/9/1124).
+
+The datacube definition is passed as a single file using:
+
+```bash
+--data_cube '[path to datacube definition file]'
+```
+
+### Area of interest (AOI)
+
+<a id="aoi"></a>
+
+The area of interest is a geospatial vector dataset that holds the boundary of the targeted area.
+
+AOI is passed as a single using:
+
+```bash
+--aoi '[path to area of interest file]'
+```
+
+### Endmember
+
+For unmixing satellite-observed reflectance into sub-pixel fractions of land surface components (e.g. photosynthetic active vegetation), endmember spectra are necessary.
+
+An example endmember definition (developed in [Hostert et al. 2003](https://www.sciencedirect.com/science/article/abs/pii/S0034425703001457)) looks like this:
+
+```
+320  730  2620 0
+560  1450 3100 0
+450  2240 3340 0
+3670 2750 4700 0
+1700 4020 7240 0
+710  3220 5490 0
+```
+
+Each colum represents a different endmember. Columns represent Landsat bands (R,G,B, NIR, SWIR1, SWIR2).
+
+The endmembers can be passed in a single text-file using:
+
+```bash
+--endmember '[path to endmember]'
+```
+
+## Pipeline configuration
+
+Users can specify additional parameters to configure how the underlying workflow tools handle the provided data.
+
+### Sensor Levels
+
+Data from different satellites can be processed within this workflow. Users may wish to include different satellites in preprocessing and in higher level processing. To control this behavior, two parameters can be set when the pipeline is launched.
+The first parameter - `sensors_level1` - controls the selection of satellites for preprocessing. This parameter should follow the FORCE notation for level 1 processing of satellites. Concretely, a string containing comma-separated satellite identifiers has to be supplied (e.g. `"LT04,LT05"` to include Landsat 4 and 5). Available options for satellite identifiers are:
+
+- `"LT04"`: Landsat 4 TM
+- `"LT05"`: Landsat 5 TM
+- `"LE07"`: Landsat 7 ETM+
+- `"LC08"`: Landsat 8 OLI
+- `"S2A"`: Sentinel-2A MSI
+- `"S2B"`: Sentinel-2B MSI
+
+The second parameter - `sensors_level2` - controls the selection of satellites for the higher level processing steps. The parameter has to follow the FORCE notation for level 2 processing. In particular, a string containing space-separated satellite identifiers has to be supplied (e.g. `"LND04 LND05"` to include Landsat 4 and 5). Note that these identifiers differ from those used for the `sensors_level1` parameter.
+More details on available satellite identifiers can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html), some common options include:
+
+- `"LND04"`: 6-band Landsat 4 TM
+- `"LND05"`: 6-band Landsat 5 TM
+- `"LND07"`: 6-band Landsat 7 ETM+
+- `"LND08/09"`: 6-band Landsat 8-9 OLI
+- `"SEN2A"`: 10-band Sentinel-2A
+- `"SEN2B"`: 10-band Sentinel-2B
+
+Note that the identifiers specified for both processing levels have to match the data made available to the workflow. In other words, satellite data for e.g. Landsat 5 can't be processed if it was not supplied using the `input` parameter.
+
+Both parameters can be passed as using:
+
+```bash
+--sensors_level1 = '[preprocessing satellite identifier string]'
+--sensors_level2 = '[higher level processing satellite identifier string]'
+```
+
+Note that both parameters are optional and are by default set to: `"LT04,LT05,LE07,S2A"` and `"LND04 LND05 LND07"`. Therefore, by default, the pipeline will use Landsat 4,5,7, and Sentinel 2 for preprocessing, while using Landsat 4,5 and 7 for higher level processing.
+
+### Resolution
+
+Resolution of satellite imagery defines the real size of a single pixel. As an example, a resolution of 30 meters indicates that a single pixel in the data covers a 30x30 meters square of the earths surface. Users can customize the resolution that FORCE should assume. This does not necessarily have to match the resolution of the supplied data. FORCE will treat imagery as having the specified resolution. However, passing a resolution not matching the satellite data might lead to unexpected results. Resolution is specified in meters.
+
+A custom resolution can be passed using:
+
+```bash
+--resolution '[integer]'
+```
+
+The default value is 30, as most Landsat satellite natively provide this resolution.
+
+### Temporal extent
+
+In some scenarios, user may be interested to limit the temporal extent of analysis. To enables this, users can specify both start and end date in a string with this syntax: `'YYYY-MM-DD'`.
+
+Start and end date can be passed using:
+
+```bash
+--start_date '[YYYY-MM-DD]'
+--end_date   '[YYYY-MM-DD]'
+```
+
+Default values are `'1984-01-01'` for the start date and `'2006-12-31'` for the end date.
+
+### Group size
+
+The `group_size` parameters can be ignored in most cases. It defines how many satellite scenes are processed together. The parameters is used to balance the tradeoff between I/O and computational capacities on individual compute nodes. By default, `group_size` is set to 100.
+
+The group size can be passed using:
+
+```bash
+--group_size '[integer]'
+```
+
+### Higher level processing configuration
+
+During the higher level processing stage, time series analyses of different satellite bands and indexes is performed. The concrete bands and indexes can be defined using the `indexes` parameter. Spectral unmixing is performed in any case. Thus, passing an empty `indexes` parameter will restrict time series analyses to the results of spectral unmixing. All available indexes can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) above the `INDEX` parameter. The band/index codes need to be passed in a space-separated string. The default value, `indexes = "NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands. Note that indexes are usually computed based on certain bands. If these bands are not present in the preprocessed data, these indexes can not be computed.
+
+The bands and indexes can be passed using:
+
+```bash
+--indexes '[index-string]'
+```
+
+In so cases, it may be desirable to analyze the the individual images in a time series. To enable such analysis, the parameter `return_tss` can be used. If set to `true`, the pipeline will return time series stacks for each tile and band combination. The option is disabled by default to reduce the output size.
+
+The time series stack output can be enabled using:
+
+```bash
+--return_tss '[boolean]'
+```
+
+### Visualization
+
+The workflow provides two types of results visualization and aggregation. The fine grained mosaic visualization contains all time series analyses results for all tiles in the original resolution. Pyramid visualizations present a broad overview of the same data but at a lower resolution. Both visualizations can be enabled or disabled using the parameters `mosaic_visualization` and `pyramid_visualization`. By default, both visualization methods are enabled. Note that the mosaic visualization is required to be enabled when using the `test` and `test_full` profiles to allow the pipeline to check the correctness of its results (this is the default behavior, make sure to not disable mosaic when using test profiles) .
+
+The visualizations can be enabled using:
+
+```bash
+mosaic_visualization  = '[boolean]'
+pyramid_visualization = '[boolean]'
+```
+
+### FORCE configuration
+
+FORCE supports parallel computations. Users can specify the number of threads FORCE can spawn for a single preprocessing, or higher level processing process. This is archived through the `force_threads` parameter.
+
+The number of threads can be passed using:
+
+```bash
+--force_threads '[integer]'
+```
+
+The default value is 2.
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/rangeland --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/rangeland --input <SATELLITE_DATA_DIR> --dem <DIGITAL_ELEVATION_DIR> --wvdb <WATOR_VAPOR_DIR> --data_cube <DATACUBE_FILE> --aoi <AREA_OF_INTEREST_FILE> --endmember <ENDMEMBER_FILE> --outdir <OUTDIR>  -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -88,9 +334,13 @@ nextflow run nf-core/rangeland -profile docker -params-file params.yaml
 with:
 
 ```yaml title="params.yaml"
-input: './samplesheet.csv'
+input: '<PATH_TO_SATELLITE_IMAGERY>'
+dem: '<PATH_TO_DEM>'
+wvdb: '<PATH_TO_WVDB>'
+data_cube: '<PATH_TO_DATACUBE_DEFINITION>'
+aoi: '<PATH_TO_AOI_FILE>'
+endmember: '<PATH_TO_ENDMEMBER_FILE>'
 outdir: './results/'
-genome: 'GRCh37'
 <...>
 ```
 
