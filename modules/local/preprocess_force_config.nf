@@ -5,7 +5,7 @@ process PREPROCESS_CONFIG {
     label 'process_single'
     tag { data.simpleName }
 
-    container "docker.io/davidfrantz/force:3.7.11"
+    container "docker.io/davidfrantz/force:3.7.10"
 
     input:
     path data

@@ -4,7 +4,7 @@ process FORCE_GENERATE_TILE_ALLOW_LIST{
 
     label 'process_single'
 
-    container "docker.io/davidfrantz/force:3.7.11"
+    container "docker.io/davidfrantz/force:3.7.10"
 
     input:
     path aoi

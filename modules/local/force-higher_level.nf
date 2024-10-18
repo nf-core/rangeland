@@ -2,16 +2,16 @@ nextflow.enable.dsl = 2
 
 process FORCE_HIGHER_LEVEL {
 
-    label 'process_high'
+    label 'process_medium'
 
-    container "docker.io/davidfrantz/force:3.7.11"
+    container "docker.io/davidfrantz/force:3.7.10"
     tag { tile }
 
     input:
     tuple val(tile), path(config), path(ard), path(aoi), path (datacube), path (endmember)
 
     output:
-    path 'trend/*.tif*', emit: trend_files
+    path 'trend/*.tif*', optional:true, emit: trend_files
     path "versions.yml", emit: versions
 
     when:

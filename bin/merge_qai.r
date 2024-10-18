@@ -4,7 +4,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 
 if (length(args) < 3) {
-  stop("\nthis program needs at least 3 inputs\n1: output filename\n2-*: input files", call.=FALSE)
+    stop("\nthis program needs at least 3 inputs\n1: output filename\n2-*: input files", call.=FALSE)
 }
 
 fout <- args[1]

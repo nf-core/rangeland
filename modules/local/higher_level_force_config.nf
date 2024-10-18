@@ -5,7 +5,7 @@ process HIGHER_LEVEL_CONFIG {
     label 'process_single'
     tag { tile }
 
-    container "docker.io/davidfrantz/force:3.7.11"
+    container "docker.io/davidfrantz/force:3.7.10"
 
     input:
     tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
@@ -60,8 +60,8 @@ process HIGHER_LEVEL_CONFIG {
 
 
     # spectral index
-    sed -i "/^INDEX /c\\INDEX = SMA${params.only_tile ? ' NDVI BLUE GREEN RED NIR SWIR1 SWIR2' : ''}" \$PARAM
-    ${ params.only_tile ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : ''}
+    sed -i "/^INDEX /c\\INDEX = SMA $params.indexes" \$PARAM
+    ${ params.return_tss ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : '' }
 
     # interpolation
     sed -i "/^INT_DAY /c\\INT_DAY = 8" \$PARAM

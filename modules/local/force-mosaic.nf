@@ -5,7 +5,7 @@ process FORCE_MOSAIC{
     label 'process_low'
 
     tag { product }
-    container "docker.io/davidfrantz/force:3.7.11"
+    container "docker.io/davidfrantz/force:3.7.10"
 
     input:
     tuple val(product), path('trend/*')

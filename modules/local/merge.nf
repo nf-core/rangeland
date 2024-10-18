@@ -5,7 +5,7 @@ process MERGE {
     label 'process_low'
     tag { id }
 
-    container 'docker.io/davidfrantz/force:dev'
+    container "docker.io/davidfrantz/force:3.7.10"
 
     input:
     val (data_type) // defines whether qai or boa is merged
