@@ -1,17 +1,17 @@
-nextflow.enable.dsl = 2
-
-process FORCE_PYRAMID {
-
-    label 'process_low'
-    tag { tile }
+process FORCE_GENERATE_ANALYSIS_MASK{
+    tag { aoi.simpleName }
+    label 'process_single'
 
     container "docker.io/davidfrantz/force:3.7.10"
 
     input:
-    tuple val(tile), path(image)
+    path aoi
+    path 'mask/datacube-definition.prj'
+    val resolution
 
     output:
-    path('**')         , emit: trends
+    //Mask for whole region
+    path 'mask/*/*.tif', emit: masks
     path "versions.yml", emit: versions
 
     when:
@@ -19,10 +19,7 @@ process FORCE_PYRAMID {
 
     script:
     """
-    files="*.tif"
-    for file in \$files; do
-        force-pyramid \$file
-    done;
+    force-cube -o mask/ -s $resolution $aoi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

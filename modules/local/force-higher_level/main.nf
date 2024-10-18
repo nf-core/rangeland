@@ -1,11 +1,9 @@
-nextflow.enable.dsl = 2
-
 process FORCE_HIGHER_LEVEL {
-
+    tag { tile }
     label 'process_medium'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
-    tag { tile }
 
     input:
     tuple val(tile), path(config), path(ard), path(aoi), path (datacube), path (endmember)
@@ -23,7 +21,7 @@ process FORCE_HIGHER_LEVEL {
 
     mkdir trend
 
-    # set provenance
+    # set provenance directory
     mkdir prov
     sed -i "/^DIR_PROVENANCE /c\\DIR_PROVENANCE = prov/" \$PARAM
 

@@ -1,9 +1,7 @@
-nextflow.enable.dsl=2
-
 process FORCE_PREPROCESS {
-
-    label 'process_medium'
     tag { data.simpleName }
+    label 'process_medium'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 

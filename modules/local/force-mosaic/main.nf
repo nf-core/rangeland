@@ -1,10 +1,7 @@
-nextflow.enable.dsl = 2
-
 process FORCE_MOSAIC{
-
+    tag { product }
     label 'process_low'
 
-    tag { product }
     container "docker.io/davidfrantz/force:3.7.10"
 
     input:

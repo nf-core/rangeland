@@ -1,9 +1,7 @@
-nextflow.enable.dsl = 2
-
 process HIGHER_LEVEL_CONFIG {
-
-    label 'process_single'
     tag { tile }
+    label 'process_single'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 
@@ -11,6 +9,12 @@ process HIGHER_LEVEL_CONFIG {
     tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
     path 'ard/datacube-definition.prj'
     path endmember
+    val resolution
+    val sensors_level2
+    val start_date
+    val end_date
+    val indexes
+    val return_tss
 
     output:
     tuple val (tile), path("trend_${tile}.prm"), path("ard/", includeInputs: true), path("mask/", includeInputs: true), path('ard/datacube-definition.prj', includeInputs: true), path(endmember, includeInputs: true), emit: higher_level_configs_and_data
@@ -27,18 +31,12 @@ process HIGHER_LEVEL_CONFIG {
 
     # set parameters
 
-    #Replace pathes
+    # Replace paths
     sed -i "/^DIR_LOWER /c\\DIR_LOWER = ard/" \$PARAM
     sed -i "/^DIR_HIGHER /c\\DIR_HIGHER = trend/" \$PARAM
     sed -i "/^DIR_MASK /c\\DIR_MASK = mask/" \$PARAM
     sed -i "/^BASE_MASK /c\\BASE_MASK = aoi.tif" \$PARAM
     sed -i "/^FILE_ENDMEM /c\\FILE_ENDMEM = $endmember" \$PARAM
-
-    # threading
-    sed -i "/^NTHREAD_READ /c\\NTHREAD_READ = 1" \$PARAM              # might need some modification
-    sed -i "/^NTHREAD_COMPUTE /c\\NTHREAD_COMPUTE = $params.force_threads" \$PARAM  # might need some modification
-    sed -i "/^NTHREAD_WRITE /c\\NTHREAD_WRITE = 1" \$PARAM            # might need some modification
-
 
     # replace Tile to process
     TILE="$tile"
@@ -48,20 +46,20 @@ process HIGHER_LEVEL_CONFIG {
     sed -i "/^Y_TILE_RANGE /c\\Y_TILE_RANGE = \$Y \$Y" \$PARAM
 
     # resolution
-    sed -i "/^RESOLUTION /c\\RESOLUTION = $params.resolution" \$PARAM
+    sed -i "/^RESOLUTION /c\\RESOLUTION = $resolution" \$PARAM
 
 
     # sensors
-    sed -i "/^SENSORS /c\\SENSORS = $params.sensors_level2" \$PARAM
+    sed -i "/^SENSORS /c\\SENSORS = $sensors_level2" \$PARAM
 
 
     # date range
-    sed -i "/^DATE_RANGE /c\\DATE_RANGE = $params.start_date $params.end_date" \$PARAM
+    sed -i "/^DATE_RANGE /c\\DATE_RANGE = $start_date $end_date" \$PARAM
 
 
     # spectral index
-    sed -i "/^INDEX /c\\INDEX = SMA $params.indexes" \$PARAM
-    ${ params.return_tss ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : '' }
+    sed -i "/^INDEX /c\\INDEX = SMA $indexes" \$PARAM
+    ${ return_tss ? 'sed -i "/^OUTPUT_TSS /c\\OUTPUT_TSS = TRUE" \$PARAM' : '' }
 
     # interpolation
     sed -i "/^INT_DAY /c\\INT_DAY = 8" \$PARAM
