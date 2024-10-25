@@ -5,7 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.0 - [date]
 
-Initial release of nf-core/rangeland, created with the [nf-core](https://nf-co.re/) template.
+First release of `nf-core/rangeland`.
+This work is a continuation, and nf-core port, of the [original version of this pipeline](https://github.com/CRC-FONDA/FORCE2NXF-Rangeland).
 
 ### `Added`
 
