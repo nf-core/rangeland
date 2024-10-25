@@ -15,6 +15,7 @@
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-satellite",
+                    "exists": true,
                     "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see [usage documentation](https://nf-co.re/rangeland/docs/usage).\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "description": "Root directory or tarball of all satellite imagery.",
                     "mimetype": "image/tiff, application/x-tar",
@@ -24,12 +25,14 @@
                     "type": "string",
                     "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (`.tif`) and a virtual dataset file (`.vrt` file) comprising all tile-wise files from the subdirectory. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "fa_icon": "fas fa-mountain",
+                    "exists": true,
                     "description": "Digital elevation model.",
                     "format": "path"
                 },
                 "wvdb": {
                     "type": "string",
                     "fa_icon": "fas fa-burn",
+                    "exists": true,
                     "description": "Water vapor dataset.",
                     "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data.  See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "format": "path"
@@ -38,6 +41,7 @@
                     "type": "string",
                     "description": "Datacube definition.",
                     "fa_icon": "fas fa-cube",
+                    "exists": true,
                     "help_text": "A single `.prj` file describing the projection and reference grid of the generated datacube.",
                     "pattern": "^\\S+\\.prj$",
                     "format": "file-path"
@@ -45,6 +49,7 @@
                 "aoi": {
                     "type": "string",
                     "fa_icon": "fas fa-chart-area",
+                    "exists": true,
                     "description": "Area of interest.",
                     "help_text": "A single vector file specifying the spatial extend of the targeted area.",
                     "pattern": "^\\S+\\.(gpkg|shp)$",
@@ -53,6 +58,7 @@
                 "endmember": {
                     "type": "string",
                     "fa_icon": "fas fa-chart-line",
+                    "exists": true,
                     "description": "Endmember definition.",
                     "help_text": "A single text file specifying where rows correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces.",
                     "pattern": "^\\S+\\.txt$",
@@ -63,7 +69,8 @@
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "exists": true
                 },
                 "email": {
                     "type": "string",
@@ -116,7 +123,8 @@
                     "type": "integer",
                     "default": 30,
                     "fa_icon": "fas fa-expand-arrows-alt",
-                    "description": "Spatial resolution applied in analyses."
+                    "description": "Spatial resolution applied in analyses.",
+                    "minimum": 1
                 }
             },
             "fa_icon": "fas fa-satellite"
