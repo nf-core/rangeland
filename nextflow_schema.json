@@ -17,7 +17,7 @@
                     "fa_icon": "fas fa-satellite",
                     "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see [usage documentation](https://nf-co.re/rangeland/docs/usage).\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "description": "Root directory or tarball of all satellite imagery.",
-                    "mimetype": "application/x-tar",
+                    "mimetype": "image/tiff, application/x-tar",
                     "format": "path"
                 },
                 "dem": {
@@ -339,7 +339,6 @@
         {
             "$ref": "#/$defs/input_output_options"
         },
-
         {
             "$ref": "#/$defs/remote_sensing_image_options"
         },
