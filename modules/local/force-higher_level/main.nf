@@ -25,14 +25,12 @@ process FORCE_HIGHER_LEVEL {
     mkdir prov
     sed -i "/^DIR_PROVENANCE /c\\DIR_PROVENANCE = prov/" \$PARAM
 
-
+    # higher level processing
     force-higher-level \$PARAM
 
-    #Rename files: /trend/<Tile>/<Filename> to <Tile>_<Filename>, otherwise we can not reextract the tile name later
+    # Rename files: /trend/<Tile>/<Filename> to <Tile>_<Filename>, otherwise we can not reextract the tile name later
     results=`find trend -name '*.tif*'`
-    for path in \$results; do
-        mv \$path \${path%/*}_\${path##*/}
-    done;
+    parallel -j $task.cpus 'mv {} {//}_{/}' ::: \$results
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
