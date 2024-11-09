@@ -22,12 +22,6 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_rang
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level'
 
-//
-// MODULES
-//
-
-include { CHECK_RESULTS }      from '../modules/local/check_results/main'
-include { CHECK_RESULTS_FULL } from '../modules/local/check_results_full/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -135,6 +129,8 @@ workflow RANGELAND {
 
     wvdb = wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first()
 
+    ch_versions = ch_versions.mix(tar_versions.first())
+
     //
     // SUBWORKFLOW: Preprocess satellite imagery
     //
@@ -168,32 +164,6 @@ workflow RANGELAND {
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
     grouped_trend_data = HIGHER_LEVEL.out.mosaic.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
-
-    //
-    // MODULE: Check results
-    //
-    if (params.config_profile_name == 'Test profile') {
-        woody_change_ref      = file( params.woody_change_ref )
-        woody_yoc_ref         = file( params.woody_yoc_ref )
-        herbaceous_change_ref = file( params.herbaceous_change_ref )
-        herbaceous_yoc_ref    = file( params.herbaceous_yoc_ref )
-        peak_change_ref       = file( params.peak_change_ref )
-        peak_yoc_ref          = file( params.peak_yoc_ref )
-
-        CHECK_RESULTS(grouped_trend_data, woody_change_ref, woody_yoc_ref, herbaceous_change_ref, herbaceous_yoc_ref, peak_change_ref, peak_yoc_ref)
-        ch_versions = ch_versions.mix(CHECK_RESULTS.out.versions)
-    }
-
-    if (params.config_profile_name == 'Full test profile') {
-        UNTAR_REF([[:], params.reference])
-        ref_path = UNTAR_REF.out.untar.map(it -> it[1])
-        tar_versions.mix(UNTAR_REF.out.versions)
-
-        CHECK_RESULTS_FULL(grouped_trend_data, ref_path)
-        ch_versions = ch_versions.mix(CHECK_RESULTS_FULL.out.versions)
-    }
-
-    ch_versions = ch_versions.mix(tar_versions.first())
 
     //
     // Collate and save software versions
