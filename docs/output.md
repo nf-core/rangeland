@@ -7,6 +7,8 @@ This document describes the output produced by the pipeline.
 The directories listed below will be created in the results directory after the pipeline has finished.
 All paths are relative to the top-level results directory.
 
+Note that running this pipeline with `--publish_dir_enabled false` will prevent any module from publishing its output. See [Usage](usage.md#module-output-publishing) for details
+
 ## Pipeline overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:

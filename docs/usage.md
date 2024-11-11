@@ -348,6 +348,19 @@ Publishing of intermediate data can be enabled using:
 --save_tsa  = '[boolean]'
 ```
 
+### Module output publishing
+
+Certain users may not be interested in the pipeline's outputs.
+To disable all modules from publishing their outputs, the `--publish_dir_enabled` can be set to `false`.
+Note that this affects _all modules_.
+By default all modules publish their outputs according to the other parameters.
+
+Publishing of all module's outputs can be enabled or disabled using:
+
+```bash
+--publish_dir_enabled  = '[boolean]'
+```
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:

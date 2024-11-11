@@ -198,6 +198,13 @@
                     "description": "Batch size of tiles considered for merging.",
                     "help_text": "Controls trade-off between parallelism and I/O load.\nHigher group_size -> More tiles merged in one process, less I/O load.\nLower group_size -> Less tiles merged in one process, more I/O load. ",
                     "fa_icon": "fas fa-layer-group"
+                },
+                "publish_dir_enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Publish pipeline outputs.",
+                    "help_text": "Set to `false` to prevent *all* modules from publishing their results.",
+                    "fa_icon": "fas fa-database"
                 }
             },
             "help_text": "You can savely use the defaults.",
