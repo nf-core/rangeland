@@ -11,7 +11,7 @@ process FORCE_PREPROCESS {
     output:
     path "**/*BOA.tif", optional:true, emit: boa_tiles
     path "**/*QAI.tif", optional:true, emit: qai_tiles
-    path "*.log"                     , emit: log
+    path "**.log"                    , emit: log
     path "versions.yml"              , emit: versions
 
     when:
@@ -36,7 +36,7 @@ process FORCE_PREPROCESS {
 
     FILEPATH=$data
     BASE=\$(basename $data)
-    force-l2ps \$FILEPATH \$PARAM > level2_log\$BASE.log
+    force-l2ps \$FILEPATH \$PARAM > level2_log/\$BASE.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
