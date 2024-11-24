@@ -1,4 +1,4 @@
-// WARNING: This test requires approximately 400GB of free disk space.
+// WARNING: This test requires approximately 400GB of free space.
 // It is excluded from default test runs due to its high resource demands.
 // Run with caution.
 
@@ -14,7 +14,7 @@ nextflow_process {
     process "CHECK_RESULTS_FULL"
     config "../conf/test_full.config"
 
-    test("Checking pipeline results for: -profile test_full") {
+    test("Checking pipeline results for: -profile test_full | requires 400GB free space") {
 
         setup {
             run("NFCORE_RANGELAND") {
