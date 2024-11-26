@@ -316,7 +316,7 @@ The option is disabled by default to reduce the output size.
 The time series stack output can be enabled using:
 
 ```bash
---return_tss '[boolean]'
+--return_tss true
 ```
 
 ### Visualization
@@ -331,8 +331,8 @@ Note that the mosaic visualization is required to be enabled when using the `tes
 The visualizations can be enabled using:
 
 ```bash
---mosaic_visualization  = '[boolean]'
---pyramid_visualization = '[boolean]'
+--mosaic_visualization  = true
+--pyramid_visualization = true
 ```
 
 ### Intermediate data publishing
@@ -344,8 +344,8 @@ The files for preprocessing and higher level processing can, therefore, be publi
 Publishing of intermediate data can be enabled using:
 
 ```bash
---save_ard  = '[boolean]'
---save_tsa  = '[boolean]'
+--save_ard  = true
+--save_tsa  = true
 ```
 
 ### Module output publishing
@@ -355,10 +355,10 @@ To disable all modules from publishing their outputs, the `--publish_dir_enabled
 Note that this affects _all modules_.
 By default all modules publish their outputs according to the other parameters.
 
-Publishing of all module's outputs can be enabled or disabled using:
+Publishing of all module's outputs can be disabled using:
 
 ```bash
---publish_dir_enabled  = '[boolean]'
+--publish_dir_enabled  = false
 ```
 
 ## Running the pipeline
