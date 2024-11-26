@@ -1,5 +1,10 @@
 #!/usr/bin/env Rscript
 
+## Originally written by David Frantz and Felix Kummer and released under the MIT license.
+## See git repository (https://github.com/nf-core/rangeland) for full license text.
+
+# Script to verify pipeline results from test and test_full profiles.
+
 args = commandArgs(trailingOnly=TRUE)
 
 
@@ -113,21 +118,6 @@ peak_rast <- rast(fname)
 
 peak_changes        <- peak_rast$CHANGE
 peak_year_of_change <- peak_rast["YEAR-OF-CHANGE"]
-
-
-
-# FOR REFERENCE: SAVE RASTERS
-#######################################################################
-
-#writeRaster(woody_cover_changes,        "woody_cover_chg_ref.tif")
-#writeRaster(woody_cover_year_of_change, "woody_cover_yoc_ref.tif")
-
-#writeRaster(herbaceous_cover_changes,        "herbaceous_cover_chg_ref.tif")
-#writeRaster(herbaceous_cover_year_of_change, "herbaceous_cover_yoc_ref.tif")
-
-#writeRaster(peak_changes,        "peak_chg_ref.tif")
-#writeRaster(peak_year_of_change, "peak_yoc_ref.tif")
-
 
 
 

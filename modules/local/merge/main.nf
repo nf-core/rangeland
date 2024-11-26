@@ -1,9 +1,7 @@
-nextflow.enable.dsl = 2
-
 process MERGE {
-
-    label 'process_low'
     tag { id }
+    label 'process_low'
+    label 'error_retry'
 
     container "docker.io/davidfrantz/force:3.7.10"
 
@@ -21,19 +19,19 @@ process MERGE {
 
     script:
     """
+    # get files to merge
     files=`find -L input/ -type f -printf "%f\\n" | sort | uniq`
     numberFiles=`echo \$files | wc -w`
-    currentFile=0
 
-    for file in \$files
-    do
-        currentFile=\$((currentFile+1))
-        echo "Merging \$file (\$currentFile of \$numberFiles)"
+    # merge function
+    merge() {
+        file=\$1
+        echo "Merging \$file (\$2 of \$numberFiles)"
 
         onefile=`ls -- */*/\${file} | head -1`
-
-        #merge together
         matchingFiles=`ls -- */*/\${file}`
+
+        # merge script execution depending on file type
         if [ "$data_type" = "boa" ]; then
             merge_boa.r \$file \${matchingFiles}
         elif [ "$data_type" = "qai" ]; then
@@ -42,8 +40,12 @@ process MERGE {
 
         #apply meta
         force-mdcp \$onefile \$file
+    }
+    export -f merge
+    export numberFiles
 
-    done;
+    # start merging in parallel
+    parallel -j $task.cpus merge {} {#} ::: \$files
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -22,12 +22,6 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_rang
 include { PREPROCESSING } from '../subworkflows/local/preprocessing'
 include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level'
 
-//
-// MODULES
-//
-
-include { CHECK_RESULTS }      from '../modules/local/check_results'
-include { CHECK_RESULTS_FULL } from '../modules/local/check_results_full'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT NF-CORE MODULES/SUBWORKFLOWS
@@ -46,7 +40,7 @@ include { UNTAR as UNTAR_INPUT; UNTAR as UNTAR_DEM; UNTAR as UNTAR_WVDB; UNTAR a
 */
 
 
-// check wether provided input is within provided time range
+// check whether provided input is within provided time range
 def inRegion = input -> {
     Integer date  = input.simpleName.split("_")[3]    as Integer
     Integer start = params.start_date.replace('-','') as Integer
@@ -67,93 +61,109 @@ workflow RANGELAND {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions      = Channel.empty()
     ch_multiqc_files = Channel.empty()
     //
     // Stage and validate input files
     //
-    data           = null
-    dem            = null
-    wvdb           = null
-    cube_file      = file( "$params.data_cube" )
-    aoi_file       = file( "$params.aoi" )
-    endmember_file = file( "$params.endmember" )
+    data           = Channel.empty()
+    dem            = Channel.empty()
+    wvdb           = Channel.empty()
+    cube_file      = file( params.data_cube )
+    aoi_file       = file( params.aoi )
+    endmember_file = file( params.endmember )
 
     //
     // MODULE: untar
     //
     tar_versions = Channel.empty()
-    if (params.input_tar) {
-        UNTAR_INPUT([[:], params.input])
-        base_path = UNTAR_INPUT.out.untar.map(it -> it[1])
 
-        data = base_path.map(it -> file("$it/*/*", type: 'dir')).flatten()
-        data = data.flatten().filter{ inRegion(it) }
-
-        tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
-    } else {
-        data = Channel.fromPath( "${params.input}/*/*", type: 'dir') .flatten()
-        data = data.flatten().filter{ inRegion(it) }
+    // Determine type of params.input and extract when neccessary
+    ch_input = Channel.of(file(params.input))
+    ch_input.branch { it
+        archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
+            return tuple([:], it)
+        dirs: true
+            return it
     }
+    .set{ ch_input_types }
 
-    if (params.dem_tar) {
-        UNTAR_DEM([[:], params.dem])
-        dem = UNTAR_DEM.out.untar.map(it -> file(it[1]))
+    UNTAR_INPUT(ch_input_types.archives)
+    ch_untared_inputs = UNTAR_INPUT.out.untar.map(it -> it[1])
+    tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
 
-        tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
-    } else {
-        dem = file("$params.dem")
+    data = data
+        .mix(ch_untared_inputs, ch_input_types.dirs)
+        .map(it -> file("$it/*/*", type: 'dir')).flatten()
+        .filter{ inRegion(it) }
+
+    // Determine type of params.dem and extract when neccessary
+    ch_dem = Channel.of(file(params.dem))
+    ch_dem.branch { it
+        archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
+            return tuple([:], it)
+        dirs: true
+            return file(it)
     }
+    .set{ ch_dem_types }
 
-    if (params.wvdb_tar) {
-        UNTAR_WVDB([[:], params.wvdb])
-        wvdb = UNTAR_WVDB.out.untar.map(it -> file(it[1]))
+    UNTAR_DEM(ch_dem_types.archives)
+    ch_untared_dem = UNTAR_DEM.out.untar.map(it -> it[1])
+    tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
 
-        tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
-    } else {
-        wvdb = file("$params.wvdb")
+    dem = dem.mix(ch_untared_dem, ch_dem_types.dirs).first()
+
+    // Determine type of params.wvdb and extract when neccessary
+    ch_wvdb = Channel.of(file(params.wvdb))
+    ch_wvdb.branch { it
+        archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
+            return tuple([:], it)
+        dirs: true
+            return file(it)
     }
+    .set{ ch_wvdb_types }
 
+    UNTAR_WVDB(ch_wvdb_types.archives)
+    ch_untared_wvdb = UNTAR_WVDB.out.untar.map(it -> it[1])
+    tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
+
+    wvdb = wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first()
+
+    ch_versions = ch_versions.mix(tar_versions.first())
 
     //
     // SUBWORKFLOW: Preprocess satellite imagery
     //
-    PREPROCESSING(data, dem, wvdb, cube_file, aoi_file)
+    PREPROCESSING (
+        data,
+        dem,
+        wvdb,
+        cube_file,
+        aoi_file,
+        params.group_size,
+        params.resolution
+    )
     ch_versions = ch_versions.mix(PREPROCESSING.out.versions)
 
     //
     // SUBWORKFLOW: Generate trend files and visualization
     //
-    HIGHER_LEVEL(PREPROCESSING.out.tiles_and_masks, cube_file, endmember_file)
+    HIGHER_LEVEL(
+        PREPROCESSING.out.tiles_and_masks,
+        cube_file,
+        endmember_file,
+        params.mosaic_visualization,
+        params.pyramid_visualization,
+        params.resolution,
+        params.sensors_level2,
+        params.start_date,
+        params.end_date,
+        params.indexes,
+        params.return_tss
+    )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
-    grouped_trend_data = HIGHER_LEVEL.out.mosaic_files.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
-
-    //
-    // MODULE: Check results
-    //
-    if (params.config_profile_name == 'Test profile') {
-        woody_change_ref      = file("$params.woody_change_ref")
-        woody_yoc_ref         = file("$params.woody_yoc_ref")
-        herbaceous_change_ref = file("$params.herbaceous_change_ref")
-        herbaceous_yoc_ref    = file("$params.herbaceous_yoc_ref")
-        peak_change_ref       = file("$params.peak_change_ref")
-        peak_yoc_ref          = file("$params.peak_yoc_ref")
-
-        CHECK_RESULTS(grouped_trend_data, woody_change_ref, woody_yoc_ref, herbaceous_change_ref, herbaceous_yoc_ref, peak_change_ref, peak_yoc_ref)
-        ch_versions = ch_versions.mix(CHECK_RESULTS.out.versions)
-    }
-
-    if (params.config_profile_name == 'Full test profile') {
-        UNTAR_REF([[:], params.reference])
-        ref_path = UNTAR_REF.out.untar.map(it -> it[1])
-        tar_versions.mix(UNTAR_REF.out.versions)
-
-        CHECK_RESULTS_FULL(grouped_trend_data, ref_path)
-        ch_versions = ch_versions.mix(CHECK_RESULTS_FULL.out.versions)
-    }
-
-    ch_versions = ch_versions.mix(tar_versions.first())
+    grouped_trend_data = HIGHER_LEVEL.out.mosaic.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
 
     //
     // Collate and save software versions
@@ -207,7 +217,12 @@ workflow RANGELAND {
         []
     )
 
-    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    emit:
+    level2_ard     = PREPROCESSING.out.tiles_and_masks
+    mosaic         = HIGHER_LEVEL.out.mosaic
+    pyramid        = HIGHER_LEVEL.out.pyramid
+    trends         = HIGHER_LEVEL.out.trends
+    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 
 }

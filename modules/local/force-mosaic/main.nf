@@ -1,10 +1,7 @@
-nextflow.enable.dsl = 2
-
 process FORCE_MOSAIC{
-
+    tag { product }
     label 'process_low'
 
-    tag { product }
     container "docker.io/davidfrantz/force:3.7.10"
 
     input:
@@ -20,13 +17,18 @@ process FORCE_MOSAIC{
 
     script:
     """
-    #Move files from trend/<Tile>_<Filename> to trend/<Tile>/<Filename>
-    results=`find trend/*.tif*`
-    for path in \$results; do
+    move_file() {
+        path=\$1
         mkdir -p \${path%_$product*}
         mv \$path \${path%_$product*}/${product}.\${path#*.}
-    done;
+    }
+    export -f move_file
 
+    # Move files from trend/<Tile>_<Filename> to trend/<Tile>/<Filename>
+    results=`find trend/*.tif*`
+    parallel -j $task.cpus move_file ::: \$results
+
+    # start mosaic computation
     force-mosaic trend/
 
     cat <<-END_VERSIONS > versions.yml
