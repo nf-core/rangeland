@@ -366,7 +366,7 @@ Publishing of all module's outputs can be enabled or disabled using:
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/rangeland --input <SATELLITE_DATA_DIR> --dem <DIGITAL_ELEVATION_DIR> --wvdb <WATOR_VAPOR_DIR> --data_cube <DATACUBE_FILE> --aoi <AREA_OF_INTEREST_FILE> --endmember <ENDMEMBER_FILE> --outdir <OUTDIR>  -profile docker
+nextflow run nf-core/rangeland -profile docker --input <SATELLITE_DATA_DIR> --dem <DIGITAL_ELEVATION_DIR> --wvdb <WATOR_VAPOR_DIR> --data_cube <DATACUBE_FILE> --aoi <AREA_OF_INTEREST_FILE> --endmember <ENDMEMBER_FILE> --outdir <OUTDIR>
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
