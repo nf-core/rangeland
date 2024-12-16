@@ -22,14 +22,18 @@
 **nf-core/rangeland** is a geographical best-practice analysis pipeline for remotely sensed imagery.
 The pipeline processes satellite imagery alongside auxiliary data in multiple steps to arrive at a set of trend files related to land-cover changes. The main pipeline steps are:
 
-1. Read satellite imagery, digital elevation model, endmember definition, water vapor database and area of interest definition
+1. Read satellite imagery, digital elevation model (dem), endmember definition, water vapor database (wvdb), datacube definition and area of interest definition (aoi)
 2. Generate allow list and analysis mask to determine which pixels from the satellite data can be used
-3. Preprocess data to obtain atmospherically corrected images alongside quality assurance information
-4. Classify pixels by applying linear spectral unmixing
-5. Time series analyses to obtain trends in vegetation dynamics
-6. Create mosaic and pyramid visualizations of the results
+3. Preprocess data to obtain atmospherically corrected images alongside quality assurance information (aka. level 2 analysis read data)
+4. Merge spatially and temporally overlapping preprocessed data
+5. Classify pixels by applying linear spectral unmixing
+6. Time series analyses to obtain trends in vegetation dynamics to derive level 3 data
+7. Create mosaic and pyramid visualizations of the results
+8. Version reporting with MultiQC ([`MultiQC`](http://multiqc.info/))
 
-7. Present QC results ([`MultiQC`](http://multiqc.info/))
+<p align="center">
+    <img title="nf-core/rangeland diagram" src="docs/images/rangeland_diagram.png" width=95%>
+</p>
 
 ## Usage
 
@@ -37,8 +41,7 @@ The pipeline processes satellite imagery alongside auxiliary data in multiple st
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow.
 > Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-To run the pipeline on real data, input data needs to be acquired.
-Concretely, satellite imagery, water vapor data, a digital elevation model, endmember definitions, a datacube specification, and a area-of-interest specification are required.
+To run, satellite imagery, water vapor data, a digital elevation model, endmember definitions, a datacube specification, and a area-of-interest specification are required as input data.
 Please refer to the [usage documentation](https://nf-co.re/rangeland/usage) for details on the input structure.
 
 Now, you can run the pipeline using:

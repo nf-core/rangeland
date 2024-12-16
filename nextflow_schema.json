@@ -34,7 +34,7 @@
                     "fa_icon": "fas fa-burn",
                     "exists": true,
                     "description": "Water vapor dataset.",
-                    "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data.  See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
+                    "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "format": "path"
                 },
                 "data_cube": {
@@ -137,7 +137,7 @@
                 "indexes": {
                     "type": "string",
                     "default": "NDVI BLUE GREEN RED NIR SWIR1 SWIR2",
-                    "help_text": "Space-separated list of indexes and bands that should be considered in time series analyses. They are indicated by using their established abbreviations. The full list of available indexes is available at https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html under the 'INDEX' parameter. Spectral unmixing is a special index and always activated.",
+                    "help_text": "Space-separated list of indexes and bands that should be considered in time series analyses. They are indicated by using their established abbreviations. The full list of available indexes is available at [https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) under the 'INDEX' parameter. Spectral unmixing is a special index and always activated.",
                     "description": "Select which bands and indexes should be considered in time series analyses.",
                     "fa_icon": "fas fa-satellite",
                     "pattern": "((BLUE|GREEN|RED|NIR|SWIR1|SWIR2|RE1|RE2|RE3|BNIR|NDVI|EVI|NBR|NDTI|ARVI|SAVI|SARVI|TC-BRIGHT|TC-GREEN|TC-WET|TC-DI|NDBI|NDWI|MNDWI|NDMI|NDSI|SMA|kNDVI|NDRE1|NDRE2|CIre|NDVIre1|NDVIre2|NDVIre3|NDVIre1n|NDVIre2n|NDVIre3n|MSRre|MSRren,CCI)(\\s|$))+"
