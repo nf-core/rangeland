@@ -4,9 +4,6 @@ include { PREPROCESS_CONFIG }                      from '../../modules/local/pre
 include { FORCE_PREPROCESS }                       from '../../modules/local/force-preprocess/main'
 include { MERGE as MERGE_BOA; MERGE as MERGE_QAI } from '../../modules/local/merge/main'
 
-// Closure to extract the parent directory of a file
-def extractDirectory = { it.parent.toString().substring(it.parent.toString().lastIndexOf('/') + 1 ) }
-
 workflow PREPROCESSING {
 
     take:
@@ -19,6 +16,9 @@ workflow PREPROCESSING {
         resolution
 
     main:
+
+        // Closure to extract the parent directory of a file
+        def extractDirectory = { it.parent.toString().substring(it.parent.toString().lastIndexOf('/') + 1 ) }
 
         ch_versions = Channel.empty()
 
