@@ -84,9 +84,17 @@ workflow RANGELAND {
     tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
 
     data = data
-        .mix(ch_untared_inputs, ch_input_types.dirs)
-        .map{ file("$it/*/*", type: 'dir') }.flatten()
-        .filter{ inRegion(it) }
+    .mix(ch_untared_inputs, ch_input_types.dirs)
+    .map{ dirs -> file("${dirs.toUriString()}/*/*", type: 'dir', checkIfExists: true) }.flatten()
+    .filter{ dir -> inRegion(dir) }
+    .map { dir ->
+        log.debug "Found ${dir}"
+        dir
+    }
+
+    data.ifEmpty {
+        error "No directories found!"
+    }
 
     // Determine type of params.dem and extract when neccessary
     ch_dem = Channel.of(file(params.dem))
