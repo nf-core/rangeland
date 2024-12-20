@@ -61,7 +61,7 @@
                 "multiqc/multiqc_data/multiqc_sources.txt",
                 "multiqc/multiqc_report.html",
                 "pipeline_info",
-                "pipeline_info/nf_core_pipeline_software_mqc_versions.yml",
+                "pipeline_info/nf_core_rangeland_software_mqc_versions.yml",
                 "preparation",
                 "preparation/mask",
                 "preparation/mask/X0103_Y0101",
@@ -895,8 +895,8 @@
         ],
         "meta": {
             "nf-test": "0.9.1",
-            "nextflow": "24.10.0"
+            "nextflow": "24.10.3"
         },
-        "timestamp": "2024-12-19T17:42:56.624607279"
+        "timestamp": "2024-12-20T16:32:22.473690225"
     }
 }
