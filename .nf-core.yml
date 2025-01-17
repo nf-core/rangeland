@@ -1,8 +1,19 @@
-repository_type: pipeline
-template:
-  prefix: nf-core
-  skip:
-    - igenomes
 lint:
   files_exist:
     - conf/igenomes.config
+    - conf/igenomes_ignored.config
+nf_core_version: 3.1.1
+repository_type: pipeline
+template:
+  author: Fabian Lehmann, David Frantz, Felix Kummer
+  description: Long-term vegetation trend analysis pipeline for rangeland systems
+    using satellite imagery.
+  force: false
+  is_nfcore: true
+  name: rangeland
+  org: nf-core
+  outdir: .
+  skip_features:
+    - igenomes
+    - fastqc
+  version: 1.0.0

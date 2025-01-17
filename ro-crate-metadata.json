@@ -1,0 +1,349 @@
+{
+    "@context": [
+        "https://w3id.org/ro/crate/1.1/context",
+        {
+            "GithubService": "https://w3id.org/ro/terms/test#GithubService",
+            "JenkinsService": "https://w3id.org/ro/terms/test#JenkinsService",
+            "PlanemoEngine": "https://w3id.org/ro/terms/test#PlanemoEngine",
+            "TestDefinition": "https://w3id.org/ro/terms/test#TestDefinition",
+            "TestInstance": "https://w3id.org/ro/terms/test#TestInstance",
+            "TestService": "https://w3id.org/ro/terms/test#TestService",
+            "TestSuite": "https://w3id.org/ro/terms/test#TestSuite",
+            "TravisService": "https://w3id.org/ro/terms/test#TravisService",
+            "definition": "https://w3id.org/ro/terms/test#definition",
+            "engineVersion": "https://w3id.org/ro/terms/test#engineVersion",
+            "instance": "https://w3id.org/ro/terms/test#instance",
+            "resource": "https://w3id.org/ro/terms/test#resource",
+            "runsOn": "https://w3id.org/ro/terms/test#runsOn"
+        }
+    ],
+    "@graph": [
+        {
+            "@id": "./",
+            "@type": "Dataset",
+            "creativeWorkStatus": "Stable",
+            "datePublished": "2024-12-20T14:45:52+00:00",
+            "description": "<h1>\n  <picture>\n    <source media=\"(prefers-color-scheme: dark)\" srcset=\"docs/images/nf-core-rangeland_logo_dark.png\">\n    <img alt=\"nf-core/rangeland\" src=\"docs/images/nf-core-rangeland_logo_light.png\">\n  </picture>\n</h1>[![GitHub Actions CI Status](https://github.com/nf-core/rangeland/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/rangeland/actions/workflows/ci.yml)\n[![GitHub Actions Linting Status](https://github.com/nf-core/rangeland/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/rangeland/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/rangeland/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)\n[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)\n\n[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)\n[![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)\n[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)\n[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)\n[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/nf-core/rangeland)\n\n[![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23rangeland-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/rangeland)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)\n\n## Introduction\n\n**nf-core/rangeland** is a geographical best-practice analysis pipeline for remotely sensed imagery.\nThe pipeline processes satellite imagery alongside auxiliary data in multiple steps to arrive at a set of trend files related to land-cover changes. The main pipeline steps are:\n\n1. Read satellite imagery, digital elevation model (dem), endmember definition, water vapor database (wvdb), datacube definition and area of interest definition (aoi)\n2. Generate allow list and analysis mask to determine which pixels from the satellite data can be used\n3. Preprocess data to obtain atmospherically corrected images alongside quality assurance information (aka. level 2 analysis read data)\n4. Merge spatially and temporally overlapping preprocessed data\n5. Classify pixels by applying linear spectral unmixing\n6. Time series analyses to obtain trends in vegetation dynamics to derive level 3 data\n7. Create mosaic and pyramid visualizations of the results\n8. Version reporting with MultiQC ([`MultiQC`](http://multiqc.info/))\n\n<p align=\"center\">\n    <img title=\"nf-core/rangeland diagram\" src=\"docs/images/rangeland_diagram.png\" width=95%>\n</p>\n\n## Usage\n\n> [!NOTE]\n> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow.Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.\n\nTo run, satellite imagery, water vapor data, a digital elevation model, endmember definitions, a datacube specification, and a area-of-interest specification are required as input data.\nPlease refer to the [usage documentation](https://nf-co.re/rangeland/usage) for details on the input structure.\n\nNow, you can run the pipeline using:\n\n```bash\nnextflow run nf-core/rangeland \\\n   -profile <docker/singularity/.../institute> \\\n   --input <SATELLITE IMAGES> \\\n   --dem <DIGITAL ELEVATION MODEL> \\\n   --wvdb <WATER VAPOR DATA> \\\n   --data_cube <DATA CUBE> \\\n   --aoi <AREA OF INTEREST> \\\n   --endmember <ENDMEMBER SPECIFICATION> \\\n   --outdir <OUTDIR>\n```\n\n> [!WARNING]\n> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).\n\nFor more details and further functionality, please refer to the [usage documentation](https://nf-co.re/rangeland/usage) and the [parameter documentation](https://nf-co.re/rangeland/parameters).\n\n## Pipeline output\n\nTo see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/rangeland/results) tab on the nf-core website pipeline page.\nFor more details about the output files and reports, please refer to the\n[output documentation](https://nf-co.re/rangeland/output).\n\n## Credits\n\nThe rangeland workflow was originally written by:\n\n- [Fabian Lehmann](https://github.com/Lehmann-Fabian)\n- [David Frantz](https://github.com/davidfrantz)\n\nThe original workflow can be found on [github](https://github.com/CRC-FONDA/FORCE2NXF-Rangeland).\n\nTransformation to nf-core/rangeland was conducted by [Felix Kummer](https://github.com/Felix-Kummer).\nnf-core alignment started on the [nf-core branch of the original repository](https://github.com/CRC-FONDA/FORCE2NXF-Rangeland/tree/nf-core).\n\nWe thank the following people for their extensive assistance in the development of this pipeline:\n\n- [Fabian Lehmann](https://github.com/Lehmann-Fabian)\n- [Katarzyna Ewa Lewinska](https://github.com/kelewinska).\n\n## Acknowledgements\n\nThis pipeline was developed and aligned with nf-core as part of the [Foundations of Workflows for Large-Scale Scientific Data Analysis (FONDA)](https://fonda.hu-berlin.de/) initiative.\n\n[![FONDA](docs/images/fonda_logo2_cropped.png)](https://fonda.hu-berlin.de/)\n\nFONDA can be cited as follows:\n\n> **The Collaborative Research Center FONDA.**\n>\n> Ulf Leser, Marcus Hilbrich, Claudia Draxl, Peter Eisert, Lars Grunske, Patrick Hostert, Dagmar Kainm\u00fcller, Odej Kao, Birte Kehr, Timo Kehrer, Christoph Koch, Volker Markl, Henning Meyerhenke, Tilmann Rabl, Alexander Reinefeld, Knut Reinert, Kerstin Ritter, Bj\u00f6rn Scheuermann, Florian Schintke, Nicole Schweikardt, Matthias Weidlich.\n>\n> _Datenbank Spektrum_ 2021 doi: [10.1007/s13222-021-00397-5](https://doi.org/10.1007/s13222-021-00397-5)\n\n## Contributions and Support\n\nIf you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).\n\nFor further information or help, don't hesitate to get in touch on the [Slack `#rangeland` channel](https://nfcore.slack.com/channels/rangeland) (you can join with [this invite](https://nf-co.re/join/slack)).\n\n## Citations\n\n<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->\n<!-- If you use nf-core/rangeland for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->\n\nAn extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.\n\nYou can cite the `nf-core` publication as follows:\n\n> **The nf-core framework for community-curated bioinformatics pipelines.**\n>\n> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.\n>\n> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).\n\nThis pipeline is based one the publication listed below.\nThe publication can be cited as follows:\n\n> **FORCE on Nextflow: Scalable Analysis of Earth Observation Data on Commodity Clusters**\n>\n> [Lehmann, F., Frantz, D., Becker, S., Leser, U., Hostert, P. (2021). FORCE on Nextflow: Scalable Analysis of Earth Observation Data on Commodity Clusters. In CIKM Workshops.](https://www.informatik.hu-berlin.de/de/forschung/gebiete/wbi/research/publications/2021/force_nextflow.pdf/@@download/file/force_nextflow.pdf)\n",
+            "hasPart": [
+                {
+                    "@id": "main.nf"
+                },
+                {
+                    "@id": "assets/"
+                },
+                {
+                    "@id": "bin/"
+                },
+                {
+                    "@id": "conf/"
+                },
+                {
+                    "@id": "docs/"
+                },
+                {
+                    "@id": "docs/images/"
+                },
+                {
+                    "@id": "modules/"
+                },
+                {
+                    "@id": "modules/local/"
+                },
+                {
+                    "@id": "modules/nf-core/"
+                },
+                {
+                    "@id": "workflows/"
+                },
+                {
+                    "@id": "subworkflows/"
+                },
+                {
+                    "@id": "nextflow.config"
+                },
+                {
+                    "@id": "README.md"
+                },
+                {
+                    "@id": "nextflow_schema.json"
+                },
+                {
+                    "@id": "CHANGELOG.md"
+                },
+                {
+                    "@id": "LICENSE"
+                },
+                {
+                    "@id": "CODE_OF_CONDUCT.md"
+                },
+                {
+                    "@id": "CITATIONS.md"
+                },
+                {
+                    "@id": "modules.json"
+                },
+                {
+                    "@id": "docs/usage.md"
+                },
+                {
+                    "@id": "docs/output.md"
+                },
+                {
+                    "@id": ".nf-core.yml"
+                },
+                {
+                    "@id": ".pre-commit-config.yaml"
+                },
+                {
+                    "@id": ".prettierignore"
+                }
+            ],
+            "isBasedOn": "https://github.com/nf-core/rangeland",
+            "license": "MIT",
+            "mainEntity": {
+                "@id": "main.nf"
+            },
+            "mentions": [
+                {
+                    "@id": "#ef20dac5-c495-414e-b454-5262623b063f"
+                }
+            ],
+            "name": "nf-core/rangeland"
+        },
+        {
+            "@id": "ro-crate-metadata.json",
+            "@type": "CreativeWork",
+            "about": {
+                "@id": "./"
+            },
+            "conformsTo": [
+                {
+                    "@id": "https://w3id.org/ro/crate/1.1"
+                },
+                {
+                    "@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0"
+                }
+            ]
+        },
+        {
+            "@id": "main.nf",
+            "@type": [
+                "File",
+                "SoftwareSourceCode",
+                "ComputationalWorkflow"
+            ],
+            "creator": [
+                {
+                    "@id": "#felix.kummer@hu-berlin.de"
+                }
+            ],
+            "dateCreated": "",
+            "dateModified": "2024-12-20T15:45:52Z",
+            "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
+            "keywords": [
+                "nf-core",
+                "nextflow",
+                "earth-observation",
+                "landsat",
+                "satellite-imagery",
+                "spectral-unmixing",
+                "trend-analysis",
+                "trends"
+            ],
+            "license": [
+                "MIT"
+            ],
+            "maintainer": [
+                {
+                    "@id": "#felix.kummer@hu-berlin.de"
+                }
+            ],
+            "name": [
+                "nf-core/rangeland"
+            ],
+            "programmingLanguage": {
+                "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
+            },
+            "sdPublisher": {
+                "@id": "https://nf-co.re/"
+            },
+            "url": [
+                "https://github.com/nf-core/rangeland",
+                "https://nf-co.re/rangeland/1.0.0/"
+            ],
+            "version": [
+                "1.0.0"
+            ]
+        },
+        {
+            "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
+            "@type": "ComputerLanguage",
+            "identifier": {
+                "@id": "https://www.nextflow.io/"
+            },
+            "name": "Nextflow",
+            "url": {
+                "@id": "https://www.nextflow.io/"
+            },
+            "version": "!>=24.04.2"
+        },
+        {
+            "@id": "#ef20dac5-c495-414e-b454-5262623b063f",
+            "@type": "TestSuite",
+            "instance": [
+                {
+                    "@id": "#c395eb9b-579d-4fe8-9f81-fcb8eb9226b8"
+                }
+            ],
+            "mainEntity": {
+                "@id": "main.nf"
+            },
+            "name": "Test suite for nf-core/rangeland"
+        },
+        {
+            "@id": "#c395eb9b-579d-4fe8-9f81-fcb8eb9226b8",
+            "@type": "TestInstance",
+            "name": "GitHub Actions workflow for testing nf-core/rangeland",
+            "resource": "repos/nf-core/rangeland/actions/workflows/ci.yml",
+            "runsOn": {
+                "@id": "https://w3id.org/ro/terms/test#GithubService"
+            },
+            "url": "https://api.github.com"
+        },
+        {
+            "@id": "https://w3id.org/ro/terms/test#GithubService",
+            "@type": "TestService",
+            "name": "Github Actions",
+            "url": {
+                "@id": "https://github.com"
+            }
+        },
+        {
+            "@id": "assets/",
+            "@type": "Dataset",
+            "description": "Additional files"
+        },
+        {
+            "@id": "bin/",
+            "@type": "Dataset",
+            "description": "Scripts that must be callable from a pipeline process"
+        },
+        {
+            "@id": "conf/",
+            "@type": "Dataset",
+            "description": "Configuration files"
+        },
+        {
+            "@id": "docs/",
+            "@type": "Dataset",
+            "description": "Markdown files for documenting the pipeline"
+        },
+        {
+            "@id": "docs/images/",
+            "@type": "Dataset",
+            "description": "Images for the documentation files"
+        },
+        {
+            "@id": "modules/",
+            "@type": "Dataset",
+            "description": "Modules used by the pipeline"
+        },
+        {
+            "@id": "modules/local/",
+            "@type": "Dataset",
+            "description": "Pipeline-specific modules"
+        },
+        {
+            "@id": "modules/nf-core/",
+            "@type": "Dataset",
+            "description": "nf-core modules"
+        },
+        {
+            "@id": "workflows/",
+            "@type": "Dataset",
+            "description": "Main pipeline workflows to be executed in main.nf"
+        },
+        {
+            "@id": "subworkflows/",
+            "@type": "Dataset",
+            "description": "Smaller subworkflows"
+        },
+        {
+            "@id": "nextflow.config",
+            "@type": "File",
+            "description": "Main Nextflow configuration file"
+        },
+        {
+            "@id": "README.md",
+            "@type": "File",
+            "description": "Basic pipeline usage information"
+        },
+        {
+            "@id": "nextflow_schema.json",
+            "@type": "File",
+            "description": "JSON schema for pipeline parameter specification"
+        },
+        {
+            "@id": "CHANGELOG.md",
+            "@type": "File",
+            "description": "Information on changes made to the pipeline"
+        },
+        {
+            "@id": "LICENSE",
+            "@type": "File",
+            "description": "The license - should be MIT"
+        },
+        {
+            "@id": "CODE_OF_CONDUCT.md",
+            "@type": "File",
+            "description": "The nf-core code of conduct"
+        },
+        {
+            "@id": "CITATIONS.md",
+            "@type": "File",
+            "description": "Citations needed when using the pipeline"
+        },
+        {
+            "@id": "modules.json",
+            "@type": "File",
+            "description": "Version information for modules from nf-core/modules"
+        },
+        {
+            "@id": "docs/usage.md",
+            "@type": "File",
+            "description": "Usage documentation"
+        },
+        {
+            "@id": "docs/output.md",
+            "@type": "File",
+            "description": "Output documentation"
+        },
+        {
+            "@id": ".nf-core.yml",
+            "@type": "File",
+            "description": "nf-core configuration file, configuring template features and linting rules"
+        },
+        {
+            "@id": ".pre-commit-config.yaml",
+            "@type": "File",
+            "description": "Configuration file for pre-commit hooks"
+        },
+        {
+            "@id": ".prettierignore",
+            "@type": "File",
+            "description": "Ignore file for prettier"
+        },
+        {
+            "@id": "https://nf-co.re/",
+            "@type": "Organization",
+            "name": "nf-core",
+            "url": "https://nf-co.re/"
+        },
+        {
+            "@id": "#felix.kummer@hu-berlin.de",
+            "@type": "Person",
+            "email": "felix.kummer@hu-berlin.de",
+            "name": "Felix Kummer"
+        }
+    ]
+}

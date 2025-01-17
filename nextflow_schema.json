@@ -1,10 +1,10 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/rangeland/master/nextflow_schema.json",
     "title": "nf-core/rangeland pipeline parameters",
-    "description": "",
+    "description": "Long-term vegetation trend analysis pipeline for rangeland systems using satellite imagery.",
     "type": "object",
-    "definitions": {
+    "$defs": {
         "input_output_options": {
             "title": "Input/output options",
             "type": "object",
@@ -15,63 +15,62 @@
                 "input": {
                     "type": "string",
                     "fa_icon": "fas fa-satellite",
-                    "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see ./docs/usage.md ",
-                    "description": "Root directory of all sattelite imagery.",
-                    "mimetype": "application/x-tar"
-                },
-                "input_tar": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-archive",
-                    "description": "Indicates whether input is a tar archive.",
-                    "help_text": "Set to true if input is a tar archive. The workflow will extract it then."
+                    "exists": true,
+                    "help_text": "Set this to the root directory of all satellite imagery. Directory structure should match format of data downloaded with '$ force-level1-csd\n' For concrete directory structure see [usage documentation](https://nf-co.re/rangeland/docs/usage).\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
+                    "description": "Root directory or tarball of all satellite imagery.",
+                    "mimetype": "image/tiff, application/x-tar",
+                    "format": "path"
                 },
                 "dem": {
                     "type": "string",
-                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (.tif) and a virtual dataset file (.vrt file) comprising all tile-wise files from the subdirectory.  \n\n\n",
+                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (`.tif`) and a virtual dataset file (`.vrt` file) comprising all tile-wise files from the subdirectory. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "fa_icon": "fas fa-mountain",
-                    "description": "Digital elevation model."
-                },
-                "dem_tar": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-archive",
-                    "description": "Indicates whether dem is a tar archive.",
-                    "help_text": "Set to true if dem is a tar archive. The workflow will extract it then."
+                    "exists": true,
+                    "description": "Digital elevation model.",
+                    "format": "path"
                 },
                 "wvdb": {
                     "type": "string",
                     "fa_icon": "fas fa-burn",
+                    "exists": true,
                     "description": "Water vapor dataset.",
-                    "help_text": "Directory containg a number text files describing global water vapor data at different timestamps, and a coordinate order (.coo-)file containig the reference system of the water vapor data."
-                },
-                "wvdb_tar": {
-                    "type": "boolean",
-                    "fa_icon": "fas fa-archive",
-                    "description": "Indicates whether wvdb is a tar archive.",
-                    "help_text": "Set to true if wvdb is a tar archive. The workflow will extract it then."
+                    "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
+                    "format": "path"
                 },
                 "data_cube": {
                     "type": "string",
                     "description": "Datacube definition.",
                     "fa_icon": "fas fa-cube",
-                    "help_text": "A single .prj file describing the projection and reference grid of the generated datacube."
+                    "exists": true,
+                    "help_text": "A single `.prj` file describing the projection and reference grid of the generated datacube.",
+                    "pattern": "^\\S+\\.prj$",
+                    "format": "file-path"
                 },
                 "aoi": {
                     "type": "string",
                     "fa_icon": "fas fa-chart-area",
+                    "exists": true,
                     "description": "Area of interest.",
-                    "help_text": "A single vector file specifying the spacial extend of the targeted area."
+                    "help_text": "A single vector file specifying the spatial extend of the targeted area.",
+                    "pattern": "^\\S+\\.(gpkg|shp)$",
+                    "format": "file-path"
                 },
                 "endmember": {
                     "type": "string",
                     "fa_icon": "fas fa-chart-line",
+                    "exists": true,
                     "description": "Endmember definition.",
-                    "help_text": "A single text file specifying where lines correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces."
+                    "help_text": "A single text file specifying where rows correspond to satellite bands and columns correspond to endmembers. Values correspond to reflectance values and are separated by spaces.",
+                    "pattern": "^\\S+\\.txt$",
+                    "format": "file-path",
+                    "mimetype": "text/plain"
                 },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
+                    "fa_icon": "fas fa-folder-open",
+                    "exists": true
                 },
                 "email": {
                     "type": "string",
@@ -94,42 +93,86 @@
             "default": "",
             "help_text": "These parameters are used to tell pipeline tools which data is expected, how this data has to be incorporated, and which parts of the imagery can be excluded (e.g. due to temporal mismatch). These parameters should be closely aligned with the provided input data.",
             "properties": {
-                "sensors_level1": {
-                    "type": "string",
-                    "default": "LT04,LT05,LE07,S2A",
-                    "fa_icon": "fas fa-satellite",
-                    "description": "Satellites for which first level data should be processed.",
-                    "help_text": "String containing comma-separated indicators of satellites in FORCE level 1format. Possible options: \n\"LT04\":  Landsat 4 TM,             \n\"LT05\":  Landsat 5 TM, \n\"LE07\":  Landsat 7 ETM+,\n\"LC08\":  Landsat 8 OLI,\n\"S2A\":    Sentinel-2A MSI,\n\"S2B\":    Sentinel-2B MSI"
-                },
                 "sensors_level2": {
                     "type": "string",
                     "default": "LND04 LND05 LND07",
                     "fa_icon": "fas fa-satellite",
                     "description": "Satellites for which data should be incorporated into higher level processing.",
-                    "help_text": "String containing space-separated indicators of satellites in FORCE level 2 format. Common options:\n\"LND04\":       6-band Landsat 4 TM, \n\"LND05\":       6-band Landsat 5 TM, \n\"LND07\":       6-band Landsat 7 ETM+,\n\"LND08/09\": 6-band Landsat 8-9 OLI, \n\"SEN2A\":      10-band Sentinel-2A, \n\"SEN2B\":      10-band Sentinel-2B,\nall options [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) \n"
+                    "help_text": "String containing space-separated indicators of satellites in FORCE level 2 format. Common options:\n\"LND04\":       6-band Landsat 4 TM, \n\"LND05\":       6-band Landsat 5 TM, \n\"LND07\":       6-band Landsat 7 ETM+,\n\"LND08/09\": 6-band Landsat 8-9 OLI, \n\"SEN2A\":      10-band Sentinel-2A, \n\"SEN2B\":      10-band Sentinel-2B,\nall options [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) \n",
+                    "pattern": "^((LND04|LND05|LND07|LND08|LND09|SEN2A|SEN2B|sen2a|sen2b|S1AIA|S1BIA|S1AID|S1BID|MOD01|MOD02|LNDLG|SEN2L|SEN2H|R-G-B|VVVHP|MODIS)(\\s|$))+$"
                 },
                 "start_date": {
                     "type": "string",
                     "default": "1984-01-01",
                     "fa_icon": "far fa-calendar-alt",
                     "description": "First day of interest.",
-                    "help_text": "String with format: \"YYYY-MM-DD\"."
+                    "help_text": "String with format: \"YYYY-MM-DD\".",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
                 },
                 "end_date": {
                     "type": "string",
                     "default": "2006-12-31",
                     "fa_icon": "far fa-calendar-alt",
                     "description": "Last day of interest.",
-                    "help_text": "String with format: \"YYYY-MM-DD\"."
+                    "help_text": "String with format: \"YYYY-MM-DD\".",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                    "format": "date"
                 },
                 "resolution": {
                     "type": "integer",
                     "default": 30,
                     "fa_icon": "fas fa-expand-arrows-alt",
-                    "description": "Spatial resolution applied in analyses."
+                    "description": "Spatial resolution applied in analyses.",
+                    "minimum": 1
                 }
             },
             "fa_icon": "fas fa-satellite"
+        },
+        "higher_level_processing_modification": {
+            "title": "Higher level processing modification",
+            "type": "object",
+            "default": "",
+            "properties": {
+                "indexes": {
+                    "type": "string",
+                    "default": "NDVI BLUE GREEN RED NIR SWIR1 SWIR2",
+                    "help_text": "Space-separated list of indexes and bands that should be considered in time series analyses. They are indicated by using their established abbreviations. The full list of available indexes is available at [https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) under the 'INDEX' parameter. Spectral unmixing is a special index and always activated.",
+                    "description": "Select which bands and indexes should be considered in time series analyses.",
+                    "fa_icon": "fas fa-satellite",
+                    "pattern": "((BLUE|GREEN|RED|NIR|SWIR1|SWIR2|RE1|RE2|RE3|BNIR|NDVI|EVI|NBR|NDTI|ARVI|SAVI|SARVI|TC-BRIGHT|TC-GREEN|TC-WET|TC-DI|NDBI|NDWI|MNDWI|NDMI|NDSI|SMA|kNDVI|NDRE1|NDRE2|CIre|NDVIre1|NDVIre2|NDVIre3|NDVIre1n|NDVIre2n|NDVIre3n|MSRre|MSRren,CCI)(\\s|$))+"
+                },
+                "return_tss": {
+                    "type": "boolean",
+                    "description": "Should the full time series stack be returned.",
+                    "help_text": "This parameter enables or disables the output of the time series stack for each tile and band/index. Here, each band shows the values of a single date.",
+                    "fa_icon": "fas fa-layer-group"
+                }
+            },
+            "description": "Modify higher level processing behaviour.",
+            "help_text": "These parameters can be used to modify the behaviour of the time series analyses process in higher level processing.",
+            "fa_icon": "fas fa-microchip"
+        },
+        "visualization": {
+            "title": "Visualization",
+            "type": "object",
+            "description": "Enable or disable visualizations.",
+            "default": "",
+            "properties": {
+                "mosaic_visualization": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether mosaic visualization should be returned.",
+                    "fa_icon": "fas fa-image"
+                },
+                "pyramid_visualization": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Whether pyramid visualization should be returned.",
+                    "fa_icon": "far fa-image"
+                }
+            },
+            "fa_icon": "fas fa-images"
         },
         "workflow_configuration": {
             "title": "Workflow configuration",
@@ -137,37 +180,35 @@
             "description": "Parameters that configure workflow behavior not directly related to FORCE,",
             "default": "",
             "properties": {
+                "save_ard": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-database",
+                    "description": "Whether analysis ready data should be published to the output directory.",
+                    "help_text": "By default, the results of preprocessing (aka. analyses ready data or level-2 data) are not published. Setting this parameter to `true` enforces that these files are published to the output directory."
+                },
+                "save_tsa": {
+                    "type": "boolean",
+                    "fa_icon": "fas fa-database",
+                    "description": "Whether the results of time series analyses should be published to the output directory.",
+                    "help_text": "By default, the results of higher level processing (aka. level-3 data) are not published. Setting this parameter to `true` enforces that these files are published to the output directory."
+                },
                 "group_size": {
                     "type": "integer",
                     "default": 100,
-                    "description": "Batch size of  tiles considered for merging.",
+                    "description": "Batch size of tiles considered for merging.",
                     "help_text": "Controls trade-off between parallelism and I/O load.\nHigher group_size -> More tiles merged in one process, less I/O load.\nLower group_size -> Less tiles merged in one process, more I/O load. ",
                     "fa_icon": "fas fa-layer-group"
                 },
-                "only_tile": {
+                "publish_dir_enabled": {
                     "type": "boolean",
-                    "description": "Controls wheter spectral unmixing is applied in higher level processing..",
-                    "fa_icon": "fas fa-project-diagram"
+                    "default": true,
+                    "description": "Publish pipeline outputs.",
+                    "help_text": "Set to `false` to prevent *all* modules from publishing their results.",
+                    "fa_icon": "fas fa-database"
                 }
             },
             "help_text": "You can savely use the defaults.",
             "fa_icon": "fas fa-project-diagram"
-        },
-        "force_parameters": {
-            "title": "FORCE parameters",
-            "type": "object",
-            "description": "Parameters specific to the FORCE tool.",
-            "default": "",
-            "properties": {
-                "force_threads": {
-                    "type": "integer",
-                    "default": 2,
-                    "description": "Number of threads spawned by FORCE for each higher-level or preprocessing task.",
-                    "fa_icon": "fas fa-microchip"
-                }
-            },
-            "fa_icon": "fas fa-terminal",
-            "help_text": ""
         },
         "institutional_config_options": {
             "title": "Institutional config options",
@@ -217,41 +258,6 @@
                 }
             }
         },
-        "max_job_request_options": {
-            "title": "Max job request options",
-            "type": "object",
-            "fa_icon": "fab fa-acquisitions-incorporated",
-            "description": "Set the top limit for requested resources for any single job.",
-            "help_text": "If you are running on a smaller system, a pipeline step requesting more resources than are available may cause the Nextflow to stop the run with an error. These options allow you to cap the maximum resources requested by any single job so that the pipeline will run on your system.\n\nNote that you can not _increase_ the resources requested by any job using these options. For that you will need your own configuration file. See [the nf-core website](https://nf-co.re/usage/configuration) for details.",
-            "properties": {
-                "max_cpus": {
-                    "type": "integer",
-                    "description": "Maximum number of CPUs that can be requested for any single job.",
-                    "default": 16,
-                    "fa_icon": "fas fa-microchip",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
-                },
-                "max_memory": {
-                    "type": "string",
-                    "description": "Maximum amount of memory that can be requested for any single job.",
-                    "default": "128.GB",
-                    "fa_icon": "fas fa-memory",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the memory requirement for each process. Should be a string in the format integer-unit e.g. `--max_memory '8.GB'`"
-                },
-                "max_time": {
-                    "type": "string",
-                    "description": "Maximum amount of time that can be requested for any single job.",
-                    "default": "240.h",
-                    "fa_icon": "far fa-clock",
-                    "pattern": "^(\\d+\\.?\\s*(s|m|h|d|day)\\s*)+$",
-                    "hidden": true,
-                    "help_text": "Use to set an upper-limit for the time requirement for each process. Should be a string in the format integer-unit e.g. `--max_time '2.h'`"
-                }
-            }
-        },
         "generic_options": {
             "title": "Generic options",
             "type": "object",
@@ -259,12 +265,6 @@
             "description": "Less common options for the pipeline, typically set in a config file.",
             "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
             "properties": {
-                "help": {
-                    "type": "boolean",
-                    "description": "Display help text.",
-                    "fa_icon": "fas fa-question-circle",
-                    "hidden": true
-                },
                 "version": {
                     "type": "boolean",
                     "description": "Display version and exit.",
@@ -340,51 +340,43 @@
                     "fa_icon": "fas fa-check-square",
                     "hidden": true
                 },
-                "validationShowHiddenParams": {
-                    "type": "boolean",
-                    "fa_icon": "far fa-eye-slash",
-                    "description": "Show all params when using `--help`",
-                    "hidden": true,
-                    "help_text": "By default, parameters set as _hidden_ in the schema are not shown on the command line when a user runs with `--help`. Specifying this option will tell the pipeline to show all parameters."
-                },
-                "validationFailUnrecognisedParams": {
-                    "type": "boolean",
+                "pipelines_testdata_base_path": {
+                    "type": "string",
                     "fa_icon": "far fa-check-circle",
-                    "description": "Validation of parameters fails when an unrecognised parameter is found.",
-                    "hidden": true,
-                    "help_text": "By default, when an unrecognised parameter is found, it returns a warinig."
+                    "description": "Base URL or local path to location of pipeline test dataset files",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
+                    "hidden": true
                 },
-                "validationLenientMode": {
-                    "type": "boolean",
-                    "fa_icon": "far fa-check-circle",
-                    "description": "Validation of parameters in lenient more.",
-                    "hidden": true,
-                    "help_text": "Allows string values that are parseable as numbers or booleans. For further information see [JSONSchema docs](https://github.com/everit-org/json-schema#lenient-mode)."
+                "trace_report_suffix": {
+                    "type": "string",
+                    "fa_icon": "far calendar",
+                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
+                    "hidden": true
                 }
             }
         }
     },
     "allOf": [
         {
-            "$ref": "#/definitions/input_output_options"
+            "$ref": "#/$defs/input_output_options"
         },
         {
-            "$ref": "#/definitions/remote_sensing_image_options"
+            "$ref": "#/$defs/remote_sensing_image_options"
         },
         {
-            "$ref": "#/definitions/workflow_configuration"
+            "$ref": "#/$defs/higher_level_processing_modification"
         },
         {
-            "$ref": "#/definitions/force_parameters"
+            "$ref": "#/$defs/visualization"
         },
         {
-            "$ref": "#/definitions/institutional_config_options"
+            "$ref": "#/$defs/workflow_configuration"
         },
         {
-            "$ref": "#/definitions/max_job_request_options"
+            "$ref": "#/$defs/institutional_config_options"
         },
         {
-            "$ref": "#/definitions/generic_options"
+            "$ref": "#/$defs/generic_options"
         }
     ]
 }
