@@ -7,7 +7,7 @@ This document describes the output produced by the pipeline.
 The directories listed below will be created in the results directory after the pipeline has finished.
 All paths are relative to the top-level results directory.
 
-Note that running this pipeline with `--publish_dir_enabled false` will prevent any module from publishing its output. See [Usage](usage.md#module-output-publishing) for details
+Note that running this pipeline with `--publish_dir_enabled false` will prevent any module from publishing its output. See [Usage](./usage.md#module-output-publishing) for details.
 
 ## Pipeline overview
 
@@ -27,13 +27,13 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `untar/`
-  - `<digital_elevation_dir>`: directory containing symlinks to decompressed digital elevation input data.
+  - `<digital_elevation_dir>/`: directory containing symlinks to decompressed digital elevation input data.
     Only present if a tar archive was provided for the digital elevation model.
     Name of the directory derived from archive contents.
-  - `<water_vapor_dir>`: directory containing symlinks to decompressed water vapor input data.
+  - `<water_vapor_dir>/`: directory containing symlinks to decompressed water vapor input data.
     Only present if a tar archive was provided for water vapor data.
     Name of the directory derived from archive contents.
-  - `<satellite_data_dir>`: directory containing symlinks to decompressed satellite imagery input data.
+  - `<satellite_data_dir>/`: directory containing symlinks to decompressed satellite imagery input data.
     Only present if a tar archive was provided for satellite data.
     Name of the directory derived from archive contents.
 
@@ -90,7 +90,10 @@ Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://
 Logs can be consulted for debugging purposes.
 ARD may be collected as a basis for other remote sensing workflows.
 The ARD in `level2_ard/` consist two `.tif` files per initial input image, a quality data file and the atmospherically corrected satellite data.
-Note that the `.tif` files are only published when the `--save_ard` parameter is set to `true` to avoid bloating the storage.
+
+:::note
+The `.tif` files are only published when the `--save_ard` parameter is set to `true` to avoid bloating the storage.
+:::
 
 ### Higher-level-Processing
 

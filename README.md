@@ -36,7 +36,7 @@ The pipeline processes satellite imagery alongside auxiliary data in multiple st
 ## Usage
 
 > [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow.Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
 To run, satellite imagery, water vapor data, a digital elevation model, endmember definitions, a datacube specification, and a area-of-interest specification are required as input data.
 Please refer to the [usage documentation](https://nf-co.re/rangeland/usage) for details on the input structure.
