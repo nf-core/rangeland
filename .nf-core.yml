@@ -15,4 +15,5 @@ template:
   outdir: .
   skip_features:
     - igenomes
+    - fastqc
   version: 1.0.0

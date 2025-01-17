@@ -93,7 +93,7 @@ workflow RANGELAND {
     }
 
     data.ifEmpty {
-        error "No directories found!"
+        error "[nf-core/rangeland] ERROR: No directories found in input path or .tar file!"
     }
 
     // Determine type of params.dem and extract when neccessary
