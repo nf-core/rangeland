@@ -15,3 +15,13 @@ This work is a continuation, and nf-core port, of the [original version of this 
 ### `Dependencies`
 
 ### `Deprecated`
+
+## v1.1.0dev - [date]
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
