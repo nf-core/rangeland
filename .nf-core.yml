@@ -2,7 +2,7 @@ lint:
   files_exist:
     - conf/igenomes.config
     - conf/igenomes_ignored.config
-nf_core_version: 3.1.1
+nf_core_version: 3.1.2
 repository_type: pipeline
 template:
   author: Fabian Lehmann, David Frantz, Felix Kummer
@@ -15,4 +15,5 @@ template:
   outdir: .
   skip_features:
     - igenomes
-  version: 1.0.0
+    - fastqc
+  version: 1.1.0dev
