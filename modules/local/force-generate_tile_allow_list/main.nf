@@ -2,7 +2,7 @@ process FORCE_GENERATE_TILE_ALLOW_LIST{
     tag { aoi.simpleName }
     label 'process_single'
 
-    container "docker.io/davidfrantz/force:3.7.10"
+    container "docker.io/davidfrantz/force:3.8.01"
 
     input:
     path aoi
@@ -18,7 +18,7 @@ process FORCE_GENERATE_TILE_ALLOW_LIST{
 
     script:
     """
-    force-tile-extent $aoi tmp/ tile_allow.txt
+    force-tile-extent -d tmp/ -a tile_allow.txt $aoi
     rm -r tmp
 
     cat <<-END_VERSIONS > versions.yml
