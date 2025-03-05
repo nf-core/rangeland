@@ -127,11 +127,7 @@
         },
         {
             "@id": "main.nf",
-            "@type": [
-                "File",
-                "SoftwareSourceCode",
-                "ComputationalWorkflow"
-            ],
+            "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
             "creator": [
                 {
                     "@id": "https://orcid.org/0009-0007-1154-6980"
@@ -150,30 +146,21 @@
                 "trend-analysis",
                 "trends"
             ],
-            "license": [
-                "MIT"
-            ],
+            "license": ["MIT"],
             "maintainer": [
                 {
                     "@id": "https://orcid.org/0009-0007-1154-6980"
                 }
             ],
-            "name": [
-                "nf-core/rangeland"
-            ],
+            "name": ["nf-core/rangeland"],
             "programmingLanguage": {
                 "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
             },
             "sdPublisher": {
                 "@id": "https://nf-co.re/"
             },
-            "url": [
-                "https://github.com/nf-core/rangeland",
-                "https://nf-co.re/rangeland/dev/"
-            ],
-            "version": [
-                "1.1.0dev"
-            ]
+            "url": ["https://github.com/nf-core/rangeland", "https://nf-co.re/rangeland/dev/"],
+            "version": ["1.1.0dev"]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
