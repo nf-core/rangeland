@@ -19,8 +19,8 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_rang
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { PREPROCESSING } from '../subworkflows/local/preprocessing'
-include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level'
+include { PREPROCESSING } from '../subworkflows/local/preprocessing/main'
+include { HIGHER_LEVEL  } from '../subworkflows/local/higher_level/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
