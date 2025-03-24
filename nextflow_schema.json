@@ -23,7 +23,7 @@
                 },
                 "dem": {
                     "type": "string",
-                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (`.tif`) and a virtual dataset file (`.vrt` file) comprising all tile-wise files from the subdirectory. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
+                    "help_text": "Path to directory containing a subdirectory with tile-wise digital elevation files (`.tif`) and a virtual dataset file (`.vrt` file) comprising all tile-wise files from the subdirectory. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "fa_icon": "fas fa-mountain",
                     "exists": true,
                     "description": "Digital elevation model.",
