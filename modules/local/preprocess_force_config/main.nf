@@ -3,7 +3,7 @@ process PREPROCESS_CONFIG {
     label 'process_single'
     label 'error_retry'
 
-    container "quay.io/nf-core/force:3.8.01"
+    container "nf-core/force:3.8.01"
 
     input:
     path data

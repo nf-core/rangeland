@@ -3,7 +3,7 @@ process FORCE_HIGHER_LEVEL {
     label 'process_medium'
     label 'error_retry'
 
-    container "quay.io/nf-core/force:3.8.01"
+    container "nf-core/force:3.8.01"
 
     input:
     tuple val(tile), path(config), path(ard), path(aoi), path (datacube), path (endmember)

@@ -2,7 +2,7 @@ process FORCE_PYRAMID {
     tag { tile }
     label 'process_low'
 
-    container "quay.io/nf-core/force:3.8.01"
+    container "nf-core/force:3.8.01"
 
     input:
     tuple val(tile), path(image)

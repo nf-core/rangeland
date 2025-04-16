@@ -2,7 +2,7 @@ process FORCE_MOSAIC{
     tag { product }
     label 'process_low'
 
-    container "quay.io/nf-core/force:3.8.01"
+    container "nf-core/force:3.8.01"
 
     input:
     tuple val(product), path('trend/*')
