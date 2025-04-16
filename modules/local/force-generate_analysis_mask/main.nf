@@ -2,7 +2,7 @@ process FORCE_GENERATE_ANALYSIS_MASK{
     tag { aoi.simpleName }
     label 'process_single'
 
-    container "docker.io/davidfrantz/force:3.8.01"
+    container "quay.io/nf-core/force:3.8.01"
 
     input:
     path aoi

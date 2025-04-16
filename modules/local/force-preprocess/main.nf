@@ -3,7 +3,7 @@ process FORCE_PREPROCESS {
     label 'process_medium'
     label 'error_retry'
 
-    container "docker.io/davidfrantz/force:3.8.01"
+    container "quay.io/nf-core/force:3.8.01"
 
     input:
     tuple path(conf), path(data), path(cube), path(tile), path(dem), path(wvdb)

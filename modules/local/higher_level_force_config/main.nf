@@ -3,7 +3,7 @@ process HIGHER_LEVEL_CONFIG {
     label 'process_single'
     label 'error_retry'
 
-    container "docker.io/davidfrantz/force:3.8.01"
+    container "quay.io/nf-core/force:3.8.01"
 
     input:
     tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
