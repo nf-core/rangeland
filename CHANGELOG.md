@@ -20,6 +20,8 @@ This work is a continuation, and nf-core port, of the [original version of this 
 
 ### `Added`
 
+- [24](https://github.com/nf-core/rangeland/pull/24) Update to FORCE version 3.8.01
+
 ### `Fixed`
 
 ### `Dependencies`

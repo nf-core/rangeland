@@ -3,7 +3,7 @@ process FORCE_HIGHER_LEVEL {
     label 'process_medium'
     label 'error_retry'
 
-    container "docker.io/davidfrantz/force:3.7.10"
+    container "nf-core/force:3.8.01"
 
     input:
     tuple val(tile), path(config), path(ard), path(aoi), path (datacube), path (endmember)
@@ -24,6 +24,7 @@ process FORCE_HIGHER_LEVEL {
     # set provenance directory
     mkdir prov
     sed -i "/^DIR_PROVENANCE /c\\DIR_PROVENANCE = prov/" \$PARAM
+    sed -i "/^INTERPOLATE /c\\INTERPOLATE = RBF" \$PARAM
 
     # higher level processing
     force-higher-level \$PARAM
