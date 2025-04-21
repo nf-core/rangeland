@@ -1,4 +1,3 @@
-include { HIGHER_LEVEL_CONFIG } from '../../../modules/local/higher_level_force_config/main'
 include { FORCE_HIGHER_LEVEL }  from '../../../modules/local/force-higher_level/main'
 include { FORCE_MOSAIC }        from '../../../modules/local/force-mosaic/main'
 include { FORCE_PYRAMID }       from '../../../modules/local/force-pyramid/main'
@@ -22,8 +21,8 @@ workflow HIGHER_LEVEL {
 
         ch_versions = Channel.empty()
 
-        // create configuration file for higher level processing
-        HIGHER_LEVEL_CONFIG (
+        // main processing
+        FORCE_HIGHER_LEVEL(
             tiles_and_masks,
             cube_file,
             endmember_file,
@@ -34,10 +33,6 @@ workflow HIGHER_LEVEL {
             indexes,
             return_tss
         )
-        ch_versions = ch_versions.mix(HIGHER_LEVEL_CONFIG.out.versions.first())
-
-        // main processing
-        FORCE_HIGHER_LEVEL( HIGHER_LEVEL_CONFIG.out.higher_level_configs_and_data )
         ch_versions = ch_versions.mix(FORCE_HIGHER_LEVEL.out.versions.first())
         trend_files = FORCE_HIGHER_LEVEL.out.trend_files.flatten().map{ x -> [ x.simpleName.substring(12), x ] }
         trend_files_mosaic = trend_files.groupTuple()
