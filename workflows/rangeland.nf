@@ -44,12 +44,31 @@ workflow RANGELAND {
     main:
 
     // checks whether provided input is within provided time range
-    def inRegion = {
-        Integer date  = it.simpleName.split("_")[3]    as Integer
+    def inRegion = { meta ->
+        Integer date  = meta['acquisition_date']          as Integer
         Integer start = params.start_date.replace('-','') as Integer
         Integer end   = params.end_date.replace('-','')   as Integer
 
-        return date >= start && date <= end
+        if (!(date >= start && date <= end)) {
+            log.info "Provided input ${meta['id']} is outside the timeframe specified by params.start_date($params.start_date) and params.end_date($params.end_date). The input is discarded."
+            return false
+        } else {
+            return true
+        }
+    }
+
+    def initMetaMap = {
+        String id          = it.simpleName
+        List   metaEntries = id.split("_")
+
+        Map meta = [
+            id               : id,
+            satellite        : metaEntries[0],
+            wrs_coordinates  : metaEntries[2],
+            acquisition_date : metaEntries[3]
+        ]
+
+        return meta
     }
 
     ch_versions      = Channel.empty()
@@ -69,7 +88,7 @@ workflow RANGELAND {
     //
     tar_versions = Channel.empty()
 
-    // Determine type of params.input and extract when neccessary
+    // Determine type of params.input and extract when necessary
     ch_input = Channel.of(file(params.input))
     ch_input.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
@@ -86,11 +105,12 @@ workflow RANGELAND {
     data = data
     .mix(ch_untared_inputs, ch_input_types.dirs)
     .map{ dirs -> file("${dirs.toUriString()}/*/*", type: 'dir', checkIfExists: true) }.flatten()
-    .filter{ dir -> inRegion(dir) }
-    .map { dir ->
+    .map{ dir ->
         log.debug "Found ${dir}"
         dir
     }
+    .map{ it -> tuple(initMetaMap(it), it) }
+    .filter{ meta, _it -> inRegion(meta) }
 
     data.ifEmpty {
         error "[nf-core/rangeland] ERROR: No directories found in input path or .tar file!"

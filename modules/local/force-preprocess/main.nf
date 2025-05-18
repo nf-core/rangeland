@@ -1,23 +1,23 @@
 process FORCE_PREPROCESS {
-    tag { data.simpleName }
+    tag { meta.id }
     label 'process_medium'
     label 'error_retry'
 
     container "nf-core/force:3.8.01"
 
     input:
-    path data
+    tuple val(meta), path(data)
     path cube
     path tile
     path dem
     path wvdb
 
     output:
-    path "**/*BOA.tif", optional: true, emit: boa_tiles
-    path "**/*QAI.tif", optional: true, emit: qai_tiles
-    path "**.log"                     , emit: log
-    path '*.prm'                      , emit: prm
-    path "versions.yml"               , emit: versions
+    tuple val(meta), path("**/*BOA.tif"), optional: true, emit: boa_tiles
+    tuple val(meta), path("**/*QAI.tif"), optional: true, emit: qai_tiles
+    path "**.log"                                       , emit: log
+    path '*.prm'                                        , emit: prm
+    path "versions.yml"                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -28,7 +28,6 @@ process FORCE_PREPROCESS {
     def logDir    = "level2_log/"
     def provDir   = "level2_prov/"
     def tmpDir    = "level2_tmp/"
-
 
     // Configuration
 
@@ -75,7 +74,7 @@ process FORCE_PREPROCESS {
     def doAod         = task.ext.args?["DO_AOD"]                 ? "DO_AOD = ${task.ext.args["DO_AOD"]}"                               : "DO_AOD = TRUE"
     def aodDir        = task.ext.args?["DIR_AOD"]                ? "DIR_AOD = ${task.ext.args["DIR_AOD"]}"                             : "DIR_AOD = NULL"
 
-    // Cloud detectionoptions
+    // Cloud detection options
     def eraseClouds   = task.ext.args?["ERASE_CLOUDS"]           ? "ERASE_CLOUDS = ${task.ext.args["ERASE_CLOUDS"]}"                   : "ERASE_CLOUDS = FALSE"
     def maxCldFrame   = task.ext.args?["MAX_CLOUD_COVER_FRAME"]  ? "MAX_CLOUD_COVER_FRAME = ${task.ext.args["MAX_CLOUD_COVER_FRAME"]}" : "MAX_CLOUD_COVER_FRAME = 75"
     def maxCldTile    = task.ext.args?["MAX_CLOUD_COVER_TILE"]   ? "MAX_CLOUD_COVER_TILE = ${task.ext.args["MAX_CLOUD_COVER_TILE"]}"   : "MAX_CLOUD_COVER_TILE = 75"
@@ -109,13 +108,13 @@ process FORCE_PREPROCESS {
 
     // Output options
     def outputFormat  = "OUTPUT_FORMAT = GTiff"
-    def outputOptions = task.ext.args?["FILE_OUTPUT_OPTIONS"]     ? "FILE_OUTPUT_OPTIONS = ${task.ext.args["FILE_OUTPUT_OPTIONS"]}"    : "FILE_OUTPUT_OPTIONS = NULL"
-    def outputDST     = task.ext.args?["OUTPUT_DST"]              ? "OUTPUT_DST = ${task.ext.args["OUTPUT_DST"]}"                      : "OUTPUT_DST = FALSE"
-    def outputAOD     = task.ext.args?["OUTPUT_AOD"]              ? "OUTPUT_AOD = ${task.ext.args["OUTPUT_AOD"]}"                      : "OUTPUT_AOD = FALSE"
-    def outputWVP     = task.ext.args?["OUTPUT_WVP"]              ? "OUTPUT_WVP = ${task.ext.args["OUTPUT_WVP"]}"                      : "OUTPUT_WVP = FALSE"
-    def outputVZN     = task.ext.args?["OUTPUT_VZN"]              ? "OUTPUT_VZN = ${task.ext.args["OUTPUT_VZN"]}"                      : "OUTPUT_VZN = FALSE"
-    def outputHOT     = task.ext.args?["OUTPUT_HOT"]              ? "OUTPUT_HOT = ${task.ext.args["OUTPUT_HOT"]}"                      : "OUTPUT_HOT = FALSE"
-    def outputOVV     = task.ext.args?["OUTPUT_OVV"]              ? "OUTPUT_OVV = ${task.ext.args["OUTPUT_OVV"]}"                      : "OUTPUT_OVV = FALSE"
+    def outputOptions = task.ext.args?["FILE_OUTPUT_OPTIONS"]    ? "FILE_OUTPUT_OPTIONS = ${task.ext.args["FILE_OUTPUT_OPTIONS"]}"     : "FILE_OUTPUT_OPTIONS = NULL"
+    def outputDST     = task.ext.args?["OUTPUT_DST"]             ? "OUTPUT_DST = ${task.ext.args["OUTPUT_DST"]}"                       : "OUTPUT_DST = FALSE"
+    def outputAOD     = task.ext.args?["OUTPUT_AOD"]             ? "OUTPUT_AOD = ${task.ext.args["OUTPUT_AOD"]}"                       : "OUTPUT_AOD = FALSE"
+    def outputWVP     = task.ext.args?["OUTPUT_WVP"]             ? "OUTPUT_WVP = ${task.ext.args["OUTPUT_WVP"]}"                       : "OUTPUT_WVP = FALSE"
+    def outputVZN     = task.ext.args?["OUTPUT_VZN"]             ? "OUTPUT_VZN = ${task.ext.args["OUTPUT_VZN"]}"                       : "OUTPUT_VZN = FALSE"
+    def outputHOT     = task.ext.args?["OUTPUT_HOT"]             ? "OUTPUT_HOT = ${task.ext.args["OUTPUT_HOT"]}"                       : "OUTPUT_HOT = FALSE"
+    def outputOVV     = task.ext.args?["OUTPUT_OVV"]             ? "OUTPUT_OVV = ${task.ext.args["OUTPUT_OVV"]}"                       : "OUTPUT_OVV = FALSE"
 
     """
     # get dem vrt

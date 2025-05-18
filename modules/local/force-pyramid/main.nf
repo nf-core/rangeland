@@ -1,15 +1,15 @@
 process FORCE_PYRAMID {
-    tag { tile }
+    tag { meta.id }
     label 'process_low'
 
     container "nf-core/force:3.8.01"
 
     input:
-    tuple val(tile), path(image)
+    tuple val(meta), path(image)
 
     output:
-    path('**')         , emit: trends
-    path "versions.yml", emit: versions
+    tuple val(meta), path('**') , emit: trends
+    path "versions.yml"         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

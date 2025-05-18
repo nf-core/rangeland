@@ -12,7 +12,7 @@ process MERGE {
 
     output:
     tuple val(id), path("*.tif"), emit: tiles_merged
-    path "versions.yml"             , emit: versions
+    path "versions.yml"         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

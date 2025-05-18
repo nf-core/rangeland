@@ -1,12 +1,12 @@
 process FORCE_HIGHER_LEVEL {
-    tag { tile }
+    tag { meta.id }
     label 'process_medium'
     label 'error_retry'
 
     container "nf-core/force:3.8.01"
 
     input:
-    tuple val(tile), path("ard/${tile}/*"), path("ard/${tile}/*"), path("mask/${tile}/aoi.tif")
+    tuple val(meta), path("ard/${meta.id}/*"), path("ard/${meta.id}/*"), path("mask/${meta.id}/aoi.tif")
     path 'ard/datacube-definition.prj'
     path endmember
     val resolution
@@ -18,17 +18,17 @@ process FORCE_HIGHER_LEVEL {
 
 
     output:
-    path 'trend/*.tif*', optional: true, emit: trend_files
-    path '*.prm'       ,                 emit: prm
-    path "versions.yml",                 emit: versions
+    tuple val(meta), path ('trend/*.tif*'), optional: true, emit: trend_files
+    path '*.prm'                                          , emit: prm
+    path "versions.yml"                                   , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     // extract tile
-    def xTile = tile[1..4]
-    def yTile = tile[7..10]
+    def xTile = meta.id[1..4]
+    def yTile = meta.id[7..10]
 
     // Configuration
 
@@ -157,7 +157,7 @@ process FORCE_HIGHER_LEVEL {
     """
     # create parameter file
 
-    PARAM=./tsa_${tile}.prm
+    PARAM=./tsa_${meta.id}.prm
     cat <<EOF > \$PARAM
     ++PARAM_TSA_START++
     ${dirLower}
