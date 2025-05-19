@@ -23,7 +23,7 @@ process FORCE_GENERATE_TILE_ALLOW_LIST{
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-tile-extent -v)
     END_VERSIONS
     """
 

@@ -205,7 +205,7 @@ process FORCE_PREPROCESS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-l2ps -v)
     END_VERSIONS
     """
 

@@ -23,7 +23,7 @@ process FORCE_GENERATE_ANALYSIS_MASK{
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-cube -v)
     END_VERSIONS
     """
 

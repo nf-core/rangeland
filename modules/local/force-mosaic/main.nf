@@ -33,7 +33,7 @@ process FORCE_MOSAIC{
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-mosaic -v)
     END_VERSIONS
     """
 

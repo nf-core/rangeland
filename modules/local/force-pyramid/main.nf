@@ -21,7 +21,7 @@ process FORCE_PYRAMID {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-pyramid -v)
     END_VERSIONS
     """
 

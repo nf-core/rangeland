@@ -264,7 +264,7 @@ process FORCE_HIGHER_LEVEL {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-higher-level -v)
     END_VERSIONS
     """
 
