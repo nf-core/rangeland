@@ -60,7 +60,13 @@ process FORCE_PREPROCESS {
 
     // Radiometric correction options
     def doAtmo        = task.ext.args?["DO_ATMO"]                ? "DO_ATMO = ${task.ext.args["DO_ATMO"]}"                             : "DO_ATMO = TRUE"
-    def doTopo        = task.ext.args?["DO_TOPO"]                ? "DO_TOPO = ${task.ext.args["DO_TOPO"]}"                             : "DO_TOPO = TRUE"
+    // check whether topographic correction is allowed (no DEM -> no topographic correction)
+    def doTopo = ""
+    if (dem.simpleName.equals("NO_FILE")) {
+        doTopo = "DO_TOPO = FALSE"
+    } else {
+        doTopo = task.ext.args?["DO_TOPO"] ? "DO_TOPO = ${task.ext.args["DO_TOPO"]}" : "DO_TOPO = TRUE"
+    }
     def doBRDF        = task.ext.args?["DO_BRDF"]                ? "DO_BRDF = ${task.ext.args["DO_BRDF"]}"                             : "DO_BRDF = TRUE"
     def adjEffect     = task.ext.args?["ADJACENCY_EFFECT"]       ? "ADJACENCY_EFFECT = ${task.ext.args["ADJACENCY_EFFECT"]}"           : "ADJACENCY_EFFECT = TRUE"
     def multiScatter  = task.ext.args?["MULTI_SCATTERING"]       ? "MULTI_SCATTERING = ${task.ext.args["MULTI_SCATTERING"]}"           : "MULTI_SCATTERING = TRUE"
@@ -117,8 +123,21 @@ process FORCE_PREPROCESS {
     def outputOVV     = task.ext.args?["OUTPUT_OVV"]             ? "OUTPUT_OVV = ${task.ext.args["OUTPUT_OVV"]}"                       : "OUTPUT_OVV = FALSE"
 
     """
-    # get dem vrt
-    DEM_FILE=\$(find $dem/ -type f -name "*.vrt" -print | head -n 1)
+    # get DEM_FILE parameter
+    DEM_FILE=""
+    if [[ "$dem.simpleName" == "NO_FILE" ]]; then
+        # no DEM
+        DEM_FILE=NULL
+    else
+        # DEM as vrt
+        DEM_VRT=\$(find $dem/ -type f -name "*.vrt" -print | head -n 1)
+        if [[ -n "\$DEM_VRT" ]]; then
+            DEM_FILE=\$DEM_VRT
+        else
+            echo "No valid DEM was provided, see docs/usage.md"
+            exit 1
+        fi
+    fi
 
     # read grid definition
     CRS=\$(sed '1q;d' $cube)

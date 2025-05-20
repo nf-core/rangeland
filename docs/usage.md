@@ -114,32 +114,65 @@ In the example above `181036/` and `181035/` would need to be in the top level o
 
 ### Digital Elevation Model (DEM)
 
-A DEM is necessary for topographic correction of Landsat data, and helps to distinguish between cloud, shadows and water surfaces.
+A DEM is beneficial for topographic correction of Landsat data, and helps to distinguish between cloud, shadows and water surfaces.
 Common sources for digital elevation models are [Copernicus](https://www.copernicus.eu/en),[Shuttle Radar Topography Mission](https://www2.jpl.nasa.gov/srtm/) (SRTM), or [Advanced Spaceborne Thermal Emission and Reflection Radiometer](https://asterweb.jpl.nasa.gov/) (ASTER).
 
-The pipeline expects a path to the digital elevation model root directory as the `--dem` parameter.
+The pipeline can be run with no DEM and with a DEM as a virtual raster.
+In the latter case, the DEM may be provided as a tarball.
+
+Users can specify the DEM through the `--dem` parameter, as described in the following sections.
+
+#### No DEM
+
+The pipeline can be executed without a DEM.
+However, such practice is strongly discourage as it significantly decreases the quality of topographic correction, atmospheric correction and, cloud detection during preprocessing.
+
+To run the pipeline without a DEM the pipeline needs to be executed with:
+
+```bash
+--dem <path_to/NO_FILE>
+```
+
+Note that the file `NO_FILE` needs to exist in the file system.
+You can use `assets/NO_FILE` provided in the pipeline repository.
+You may also supply the file through a config:
+
+```Groovy
+params {
+  dem = "$projectDir/assets/NO_FILE"
+}
+```
+
+#### DEM as a virtual raster
+
+The DEM may be provided as a virtual raster (`.vrt`).
+
+In this case, the pipeline expects a path to the digital elevation model root directory as the `--dem` parameter.
 Concretely, the expected structure would look like this:
 
 ```tree
-dem
+dem/
 ├── <dem_file>.vrt
 └── <dem_tifs>/
+    ├── dem1.tif
+    ├── dem2.tif
     └── ...
+
 ```
 
 Here, `<dem_file>.vrt` orchestrates the single digital elevation files in the `<dem_tifs>` directory.
 
-The DEM can be given to the pipeline using:
-
-```bash
---dem '[path to dem root]'
-```
+#### DEM as tarballs
 
 The digital elevation model can also be provide as a tarball (`.tar` or `.tar.gz` files).
 These files will be automatically extracted.
 Providing tarballs can be specifically helpful when using foreign files as inputs.
-In this case, it is mandatory to have the structure explained above in place.
-In the example above `<dem_file>.vrt` and `<dem_tifs>/` would need to be in the top level of the archive.
+
+In this case, the structures explained above should be in place inside the tarball.
+That is, in the DEM as a virtual raster case, `<dem_file>.vrt` and `<dem_tifs>/` would need to be located in the top level of the archive.
+If the structure of the tarball deviates you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/), which is used to un-tar the tarball.
+An example for this can be found in the [test configuration](../conf/test.config).
+To only configure the un-tar process for the DEM, the `withName: "UNTAR_DEM"` selector should be used.
 
 ### Water Vapor Database (WVDB)
 
