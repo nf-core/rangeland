@@ -72,7 +72,7 @@ process FORCE_PREPROCESS {
         doTopo        = task.ext.args?["DO_TOPO"]                ? "DO_TOPO = ${task.ext.args["DO_TOPO"]}"                             : "DO_TOPO = TRUE"
     }
     def doBRDF        = task.ext.args?["DO_BRDF"]                ? "DO_BRDF = ${task.ext.args["DO_BRDF"]}"                             : "DO_BRDF = TRUE"
-    def doAdjEffect     = task.ext.args?["ADJACENCY_EFFECT"]     ? "ADJACENCY_EFFECT = ${task.ext.args["ADJACENCY_EFFECT"]}"           : "ADJACENCY_EFFECT = TRUE"
+    def doAdjEffect   = task.ext.args?["ADJACENCY_EFFECT"]       ? "ADJACENCY_EFFECT = ${task.ext.args["ADJACENCY_EFFECT"]}"           : "ADJACENCY_EFFECT = TRUE"
     def multiScatter  = task.ext.args?["MULTI_SCATTERING"]       ? "MULTI_SCATTERING = ${task.ext.args["MULTI_SCATTERING"]}"           : "MULTI_SCATTERING = TRUE"
 
     // Water vapor correction options
