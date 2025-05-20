@@ -15,6 +15,7 @@ process FORCE_PREPROCESS {
     output:
     tuple val(meta), path("**/*BOA.tif"), optional: true, emit: boa_tiles
     tuple val(meta), path("**/*QAI.tif"), optional: true, emit: qai_tiles
+    tuple val(meta), path("**/*TOA.tif"), optional: true, emit: toa_files
     path "**.log"                                       , emit: log
     path '*.prm'                                        , emit: prm
     path "versions.yml"                                 , emit: versions
@@ -49,6 +50,9 @@ process FORCE_PREPROCESS {
     def doReproj      = task.ext.args?["DO_REPROJ"]              ? "DO_REPROJ = ${task.ext.args["DO_REPROJ"]}"                         : "DO_REPROJ = TRUE"
     def doTile        = task.ext.args?["DO_TILE"]                ? "DO_TILE = ${task.ext.args["DO_TILE"]}"                             : "DO_TILE = TRUE"
     def fileTile      = "FILE_TILE = $tile"
+    if (tile.simpleName.equals("NO_FILE")) {
+        fileTile      =  task.ext.args?["FILE_TILE"]             ? "FILE_TILE = ${task.ext.args["FILE_TILE"]}"                         : "FILE_TILE = NULL"
+    }
     // "TILE_SIZE"    can only be set after input stage-in
     // "BLOCK_SIZE"   can only be set after input stage-in
     def landsatRes    = task.ext.args?["RESOLUTION_LANDSAT"]     ? "RESOLUTION_LANDSAT = ${task.ext.args["RESOLUTION_LANDSAT"]}"       : "RESOLUTION_LANDSAT = 30"
@@ -61,14 +65,14 @@ process FORCE_PREPROCESS {
     // Radiometric correction options
     def doAtmo        = task.ext.args?["DO_ATMO"]                ? "DO_ATMO = ${task.ext.args["DO_ATMO"]}"                             : "DO_ATMO = TRUE"
     // check whether topographic correction is allowed (no DEM -> no topographic correction)
-    def doTopo = ""
+    def doTopo        = ""
     if (dem.simpleName.equals("NO_FILE")) {
-        doTopo = "DO_TOPO = FALSE"
+        doTopo        = "DO_TOPO = FALSE"
     } else {
-        doTopo = task.ext.args?["DO_TOPO"] ? "DO_TOPO = ${task.ext.args["DO_TOPO"]}" : "DO_TOPO = TRUE"
+        doTopo        = task.ext.args?["DO_TOPO"]                ? "DO_TOPO = ${task.ext.args["DO_TOPO"]}"                             : "DO_TOPO = TRUE"
     }
     def doBRDF        = task.ext.args?["DO_BRDF"]                ? "DO_BRDF = ${task.ext.args["DO_BRDF"]}"                             : "DO_BRDF = TRUE"
-    def adjEffect     = task.ext.args?["ADJACENCY_EFFECT"]       ? "ADJACENCY_EFFECT = ${task.ext.args["ADJACENCY_EFFECT"]}"           : "ADJACENCY_EFFECT = TRUE"
+    def doAdjEffect     = task.ext.args?["ADJACENCY_EFFECT"]     ? "ADJACENCY_EFFECT = ${task.ext.args["ADJACENCY_EFFECT"]}"           : "ADJACENCY_EFFECT = TRUE"
     def multiScatter  = task.ext.args?["MULTI_SCATTERING"]       ? "MULTI_SCATTERING = ${task.ext.args["MULTI_SCATTERING"]}"           : "MULTI_SCATTERING = TRUE"
 
     // Water vapor correction options
@@ -173,7 +177,7 @@ process FORCE_PREPROCESS {
     ${doAtmo}
     ${doTopo}
     ${doBRDF}
-    ${adjEffect}
+    ${doAdjEffect}
     ${multiScatter}
     ${dirWvpLut}
     ${strictWvp}
