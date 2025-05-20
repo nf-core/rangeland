@@ -77,8 +77,11 @@ process FORCE_PREPROCESS {
 
     // Water vapor correction options
     def dirWvpLut     = "DIR_WVPLUT = $wvdb"
-    def strictWvp     = "STRICT_WATER_VAPOR = FALSE"
-    def wvp           = "WATER_VAPOR = NULL"
+    def strictWvp     = task.ext.args?["STRICT_WATER_VAPOR"]     ? "STRICT_WATER_VAPOR = ${task.ext.args["STRICT_WATER_VAPOR"]}"       : "STRICT_WATER_VAPOR = FALSE"
+    def wvp           = task.ext.args?["WATER_VAPOR"]            ? "WATER_VAPOR = ${task.ext.args["WVP"]}"                             : "WATER_VAPOR = NULL"
+    if (wvdb.simpleName.equals("NO_FILE")) {
+        dirWvpLut     = "DIR_WVPLUT = NULL"
+    }
 
     // Aerosol optical depth options
     def doAod         = task.ext.args?["DO_AOD"]                 ? "DO_AOD = ${task.ext.args["DO_AOD"]}"                               : "DO_AOD = TRUE"

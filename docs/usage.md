@@ -170,9 +170,9 @@ Providing tarballs can be specifically helpful when using foreign files as input
 
 In this case, the structures explained above should be in place inside the tarball.
 That is, in the DEM as a virtual raster case, `<dem_file>.vrt` and `<dem_tifs>/` would need to be located in the top level of the archive.
-If the structure of the tarball deviates you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/), which is used to un-tar the tarball.
+If the structure of the tarball deviates, you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/), which is used to un-tar the tarball.
 An example for this can be found in the [test configuration](../conf/test.config).
-To only configure the un-tar process for the DEM, the `withName: "UNTAR_DEM"` selector should be used.
+To only configure the UNTAR process for the DEM, the `withName: "UNTAR_DEM"` selector should be used.
 
 ### Water Vapor Database (WVDB)
 
@@ -200,6 +200,46 @@ These files will be automatically extracted.
 Providing tarballs can be specifically helpful when using foreign files as inputs.
 In this case, it is mandatory to have the structure explained above in place.
 All files of the wvdb would need to be in the top level of the archive.
+If the structure of the tarball deviates, you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/), which is used to un-tar the tarball.
+An example for this can be found in the [test configuration](../conf/test.config).
+To only configure the UNTAR process for the WVDB, the `withName: "UNTAR_WVDB"` selector should be used.
+
+#### Running the pipeline without a water vapor database
+
+It is possible to run the pipeline without providing a water vapor database.
+However, processing satellite imagery without water vapor information will have negative effects on the quality of the results, especially for Landsat TM sensor data.
+If no water vapor database is available, users may provide a [global value for water vapor](#running-the-pipeline-with-a-global-water-vapor-value).
+
+To run the pipeline without a water vapor database, the `--wvdb` parameter has to be a path to a file called `NO_FILE`:
+
+```bash
+--wvdb <path_to/NO_FILE>
+```
+
+You may use `assets/NO_FILE` in this pipelines repository.
+You may also supply the file through a config:
+
+```Groovy
+params {
+  dem = "$projectDir/assets/NO_FILE"
+}
+```
+
+#### Running the pipeline with a global water vapor value
+
+When no water vapor database is available, users can provide a global water vapor value in $\frac{g}{cm^2}$.
+This can be done by adding this to Nextflow configuration file:
+
+```Groovy
+process {
+    withName: "FORCE_PREPROCESS" {
+        ext.args = { [ "WATER_VAPOR": "<Integer between 0 and 15 (inclusive)>"] }
+    }
+}
+```
+
+Here, the value of WATER_VAPOR represents the global water vapor value.
+The value should be in the range of 0 to 15 (inclusive).
 
 ### Datacube
 
