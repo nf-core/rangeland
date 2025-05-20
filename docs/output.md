@@ -89,7 +89,8 @@ The parameter files created through [force-parameter](https://force-eo.readthedo
 Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html) command.
 Logs can be consulted for debugging purposes.
 ARD may be collected as a basis for other remote sensing workflows.
-The ARD in `level2_ard/` consist two `.tif` files per initial input image, a quality data file and the atmospherically corrected satellite data.
+The ARD in `level2_ard/` contains different `.tif` files, depending on the configuration of the pipeline.
+For each tile the directory contains at least a quality data file and the atmospherically bottom of atmosphere (BOA) data.
 
 :::note
 The `.tif` files are only published when the `--save_ard` parameter is set to `true` to avoid bloating the storage.
