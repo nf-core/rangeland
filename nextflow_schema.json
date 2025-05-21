@@ -37,6 +37,14 @@
                     "help_text": "Directory containing a number text files describing global water vapor data at different timestamps, and a coordinate order (`.coo`-)file containing the reference system of the water vapor data. See [usage documentation](https://nf-co.re/rangeland/docs/usage) for details regarding the required structure.\n\nAlternatively, a tarball can be supplied. The same directory structure needs to be in place in that tarball.",
                     "format": "path"
                 },
+                "aod": {
+                    "type": "string",
+                    "default": "${projectDir}/assets/NO_FILE",
+                    "fa_icon": "fas fa-spray-can",
+                    "description": "Custom Aerosol Optical Depth data.",
+                    "help_text": "Directory containing a lookup table with custom Aerosol Optical Depth data. For the concrete format see the [FORCE docs](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/depend.html). This can be disregarded in most cases.",
+                    "format": "path"
+                },
                 "data_cube": {
                     "type": "string",
                     "description": "Datacube definition.",

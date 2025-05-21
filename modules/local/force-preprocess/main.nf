@@ -11,6 +11,7 @@ process FORCE_PREPROCESS {
     path tile
     path dem
     path wvdb
+    path aod
 
     output:
     tuple val(meta), path("**/*BOA.tif"), optional: true, emit: boa_tiles
@@ -85,7 +86,11 @@ process FORCE_PREPROCESS {
 
     // Aerosol optical depth options
     def doAod         = task.ext.args?["DO_AOD"]                 ? "DO_AOD = ${task.ext.args["DO_AOD"]}"                               : "DO_AOD = TRUE"
-    def aodDir        = task.ext.args?["DIR_AOD"]                ? "DIR_AOD = ${task.ext.args["DIR_AOD"]}"                             : "DIR_AOD = NULL"
+    def aodDir        = "DIR_AOD = $aod"
+    if (aod.simpleName.equals("NO_FILE")) {
+        aodDir        = "DIR_AOD = NULL"
+    }
+
 
     // Cloud detection options
     def eraseClouds   = task.ext.args?["ERASE_CLOUDS"]           ? "ERASE_CLOUDS = ${task.ext.args["ERASE_CLOUDS"]}"                   : "ERASE_CLOUDS = FALSE"

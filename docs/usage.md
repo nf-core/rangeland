@@ -213,7 +213,7 @@ If no water vapor database is available, users may provide a [global value for w
 To run the pipeline without a water vapor database, the `--wvdb` parameter has to be a path to a file called `NO_FILE`:
 
 ```bash
---wvdb <path_to/NO_FILE>
+--wvdb '[path_to/NO_FILE]'
 ```
 
 You may use `assets/NO_FILE` in this pipelines repository.
@@ -240,6 +240,24 @@ process {
 
 Here, the value of WATER_VAPOR represents the global water vapor value.
 The value should be in the range of 0 to 15 (inclusive).
+
+### Aerosol Optical Depth (AOD)
+
+The pipeline can be optionally run with custom AOD data.
+Note that the underlying [FORCE tool](https://force-eo.readthedocs.io/en/latest/index.html) will compute own AOD estimations.
+This may be disabled by configuring the preprocessing process.
+In that case, custom AOD values are used.
+Otherwise, custom AOD values are only used as a fallback, when internal AOD estimations fails to compute certain values.
+The usage of internal AOD estimations is recommended.
+
+Custom AOD values have to be provided as a lookup table.
+For detailed information on the format, refer to the [FORCE documentation](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/depend.html).
+
+Custom AOD data is passed to the pipeline using:
+
+```bash
+--aod '[path to aod directory root]'
+```
 
 ### Datacube
 

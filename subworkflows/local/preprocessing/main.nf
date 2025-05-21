@@ -9,6 +9,7 @@ workflow PREPROCESSING {
         data
         dem
         wvdb
+        aod
         cube_file
         aoi_file
         group_size
@@ -50,7 +51,7 @@ workflow PREPROCESSING {
         masks = FORCE_GENERATE_ANALYSIS_MASK.out.masks.flatten().map{ x -> [ [id:extractDirectory(x)], x ] }
 
         // Preprocessing
-        FORCE_PREPROCESS( data, cube_file, FORCE_GENERATE_TILE_ALLOW_LIST.out.tile_allow, dem, wvdb )
+        FORCE_PREPROCESS( data, cube_file, FORCE_GENERATE_TILE_ALLOW_LIST.out.tile_allow, dem, wvdb, aod )
         ch_versions = ch_versions.mix(FORCE_PREPROCESS.out.versions.first())
 
         // extract tiles

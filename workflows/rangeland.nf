@@ -82,6 +82,7 @@ workflow RANGELAND {
     cube_file      = file( params.data_cube )
     aoi_file       = file( params.aoi )
     endmember_file = file( params.endmember )
+    aod            = file( params.aod )
 
     //
     // MODULE: untar
@@ -157,6 +158,7 @@ workflow RANGELAND {
         data,
         dem,
         wvdb,
+        aod,
         cube_file,
         aoi_file,
         params.group_size,
