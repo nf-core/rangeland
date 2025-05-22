@@ -10,7 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "dem", "wvdb", "data_cube", "aoi", "endmember", "outdir"],
+            "required": ["input", "data_cube", "aoi", "endmember", "outdir"],
             "properties": {
                 "input": {
                     "type": "string",
@@ -39,7 +39,6 @@
                 },
                 "aod": {
                     "type": "string",
-                    "default": "${projectDir}/assets/NO_FILE",
                     "fa_icon": "fas fa-spray-can",
                     "description": "Custom Aerosol Optical Depth data.",
                     "help_text": "Directory containing a lookup table with custom Aerosol Optical Depth data. For the concrete format see the [FORCE docs](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/depend.html). This can be disregarded in most cases.",

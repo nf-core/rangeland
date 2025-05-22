@@ -82,7 +82,7 @@ workflow RANGELAND {
     cube_file      = file( params.data_cube )
     aoi_file       = file( params.aoi )
     endmember_file = file( params.endmember )
-    aod            = file( params.aod )
+    aod            = params.aod   ? file ( params.aod   ) : []
     coreg          = params.coreg ? file ( params.coreg ) : []
 
     //
@@ -119,7 +119,7 @@ workflow RANGELAND {
     }
 
     // Determine type of params.dem and extract when neccessary
-    ch_dem = Channel.of(file(params.dem))
+    ch_dem = params.dem ? Channel.of(file(params.dem)) : Channel.from([])
     ch_dem.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -132,10 +132,10 @@ workflow RANGELAND {
     ch_untared_dem = UNTAR_DEM.out.untar.map{ it[1] }
     tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
 
-    dem = dem.mix(ch_untared_dem, ch_dem_types.dirs).first()
+    dem = params.dem ? dem.mix(ch_untared_dem, ch_dem_types.dirs).first() : Channel.value([])
 
     // Determine type of params.wvdb and extract when neccessary
-    ch_wvdb = Channel.of(file(params.wvdb))
+    ch_wvdb = params.wvdb ? Channel.of(file(params.wvdb)) : Channel.from([])
     ch_wvdb.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -148,7 +148,7 @@ workflow RANGELAND {
     ch_untared_wvdb = UNTAR_WVDB.out.untar.map{ it[1] }
     tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
 
-    wvdb = wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first()
+    wvdb = params.wvdb ? wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first() : Channel.value([])
 
     ch_versions = ch_versions.mix(tar_versions.first())
 

@@ -122,26 +122,12 @@ In the latter case, the DEM may be provided as a tarball.
 
 Users can specify the DEM through the `--dem` parameter, as described in the following sections.
 
-#### No DEM
+#### Running the pipeline without a DEM
 
 The pipeline can be executed without a DEM.
 However, such practice is strongly discourage as it significantly decreases the quality of topographic correction, atmospheric correction and, cloud detection during preprocessing.
 
-To run the pipeline without a DEM the pipeline needs to be executed with:
-
-```bash
---dem <path_to/NO_FILE>
-```
-
-Note that the file `NO_FILE` needs to exist in the file system.
-You can use `assets/NO_FILE` provided in the pipeline repository.
-You may also supply the file through a config:
-
-```Groovy
-params {
-  dem = "$projectDir/assets/NO_FILE"
-}
-```
+To run the pipeline without a DEM the `--dem` parameter has to be set to `null`, which is the default.
 
 #### DEM as a virtual raster
 
@@ -210,20 +196,7 @@ It is possible to run the pipeline without providing a water vapor database.
 However, processing satellite imagery without water vapor information will have negative effects on the quality of the results, especially for Landsat TM sensor data.
 If no water vapor database is available, users may provide a [global value for water vapor](#running-the-pipeline-with-a-global-water-vapor-value).
 
-To run the pipeline without a water vapor database, the `--wvdb` parameter has to be a path to a file called `NO_FILE`:
-
-```bash
---wvdb '[path_to/NO_FILE]'
-```
-
-You may use `assets/NO_FILE` in this pipelines repository.
-You may also supply the file through a config:
-
-```Groovy
-params {
-  dem = "$projectDir/assets/NO_FILE"
-}
-```
+To run the pipeline without a water vapor database, the `--wvdb` parameter should be set to `null`, which is the default.
 
 #### Running the pipeline with a global water vapor value
 
@@ -258,6 +231,8 @@ Custom AOD data is passed to the pipeline using:
 ```bash
 --aod '[path to aod directory root]'
 ```
+
+By default, the pipeline does not run with a custom AOD (i.e. `--aod` is set to `null`).
 
 ### Datacube
 
