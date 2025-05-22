@@ -92,6 +92,17 @@ ARD may be collected as a basis for other remote sensing workflows.
 The ARD in `level2_ard/` contains different `.tif` files, depending on the configuration of the pipeline.
 For each tile the directory contains at least a quality data file and the atmospherically bottom of atmosphere (BOA) data.
 
+Optional files may include:
+
+- Cloud, cloud shadow and snow distance layer (ending with `DST.tif`)
+- Aerosol optical depth map (ending with `AOD.tif`)
+- Water vapor map (ending with `WVP.tif`)
+- View Zenith map (ending with `VZN.tif`)
+- Haze optimized transformation layer (ending with `HOT.tif`)
+- Overview thumbnails (ending with `OVV.jpg`)
+
+The optional outputs have to be enabled by [configuring the FORCE_PREPROCESS module](./usage.md#configuring-force-modules) and are not required to run the pipeline.
+
 :::note
 The `.tif` files are only published when the `--save_ard` parameter is set to `true` to avoid bloating the storage.
 :::

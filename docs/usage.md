@@ -438,6 +438,48 @@ Publishing of all module's outputs can be disabled using:
 --publish_dir_enabled  = false
 ```
 
+### Configuring FORCE modules
+
+The [force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html#) and the [force-higher-level, TSA submodule](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/index.html) perform the core analysis steps of this pipeline.
+Both tools allow for extensive configuration through parameter files.
+This pipelines automatically generates the appropriate parameter files, while also allowing users to configure every entry of said parameter files.
+This is possible through the usage of the `task.ext.args` property of the `FORCE_PREPROCESS` and `FORCE_HIGHER_LEVEL` processes for `force-l2ps` and `force-higher-level` (TSA submodule), respectively.
+Every entry of the parameter file is exposed through `task.ext.args`.
+The only exception are parameters which are described as inputs in this file (e.g. the `FILE_DEM` is supplied through the [dem parameter](#digital-elevation-model-dem) rather than through `task.ext.args`).
+Entries consist of key-value pairs.
+To change the value for a given key, a user would add the following to their Nextflow configuration file:
+
+```Groovy
+process {
+  withName: "<Process name>" {
+    ext.args = { ["<Key>": <value>] }
+  }
+}
+```
+
+Note that ext.args is a list that may contain an arbitrary amount of key-value pairs.
+
+For example, to change the cloud buffer and shadow buffer in the preprocessing step (`force-l2ps`) to 400m and 100m, this code would be placed in the configuration file:
+
+```Groovy
+process {
+  withName: "FORCE_PREPROCESS" {
+    ext.args = { ["CLOUD_BUFFER": 400, "SHADOW_BUFFER": 100] }
+  }
+}
+```
+
+For a comprehensive list of parameters see the FORCE documentation on [force-l2ps parameterization](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/param.html#l2-param) and [force-higher-level (TSA) parameterization](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html).
+The default values defined in the FORCE documentation are automatically used other values were supplied
+
+> [!WARNING]
+> Please refer to the FORCE documentation to mentioned above to understand the impact of different parameters.
+> Certain combinations of parameters may break FORCE or the pipeline.
+>
+> The `OUTPUT_FORMAT` parameters and `FILE_OUTPUT_OPTIONS` should be modified with caution.
+> The pipeline expects both modules to return `.tif` files. Other output formats will break the pipeline.
+> In addition, certain combinations of these parameters may require custom containers (e.g. container with COG GDAL drivers for `OUTPUT_FORMAT` = `COG`.)
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:

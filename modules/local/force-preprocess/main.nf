@@ -18,6 +18,12 @@ process FORCE_PREPROCESS {
     tuple val(meta), path("**/*BOA.tif"), optional: true, emit: boa_tiles
     tuple val(meta), path("**/*QAI.tif"), optional: true, emit: qai_tiles
     tuple val(meta), path("**/*TOA.tif"), optional: true, emit: toa_files
+    tuple val(meta), path("**/*DST.tif"), optional: true, emit: dst_files
+    tuple val(meta), path("**/*AOD.tif"), optional: true, emit: aod_files
+    tuple val(meta), path("**/*WVP.tif"), optional: true, emit: wvp_files
+    tuple val(meta), path("**/*VZN.tif"), optional: true, emit: vzn_files
+    tuple val(meta), path("**/*HOT.tif"), optional: true, emit: hot_files
+    tuple val(meta), path("**/*OVV.jpg"), optional: true, emit: ovv_files
     path "**.log"                                       , emit: log
     path '*.prm'                                        , emit: prm
     path "versions.yml"                                 , emit: versions
@@ -112,7 +118,7 @@ process FORCE_PREPROCESS {
     def zipTimeout    = task.ext.args?["TIMEOUT_ZIP"]            ? "TIMEOUT_ZIP = ${task.ext.args["TIMEOUT_ZIP"]}"                     : "TIMEOUT_ZIP = 30"
 
     // Output options
-    def outputFormat  = "OUTPUT_FORMAT = GTiff"
+    def outputFormat  = task.ext.args?["OUTPUT_FORMAT"]          ? "OUTPUT_FORMAT = ${task.ext.args["OUTPUT_FORMAT"]}"                 : "OUTPUT_FORMAT = GTiff"
     def outputOptions = task.ext.args?["FILE_OUTPUT_OPTIONS"]    ? "FILE_OUTPUT_OPTIONS = ${task.ext.args["FILE_OUTPUT_OPTIONS"]}"     : "FILE_OUTPUT_OPTIONS = NULL"
     def outputDST     = task.ext.args?["OUTPUT_DST"]             ? "OUTPUT_DST = ${task.ext.args["OUTPUT_DST"]}"                       : "OUTPUT_DST = FALSE"
     def outputAOD     = task.ext.args?["OUTPUT_AOD"]             ? "OUTPUT_AOD = ${task.ext.args["OUTPUT_AOD"]}"                       : "OUTPUT_AOD = FALSE"
