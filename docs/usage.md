@@ -305,6 +305,17 @@ The endmembers can be passed in a single text-file using:
 --endmember '[path to endmember]'
 ```
 
+### Coregistration Near Infrared (NIR) Data
+
+If Sentinel-2 data is being processed, users may want to apply coregistration to improve geolocation accuracy.
+To do so, the `--coreg` parameter has to be used with a path to monthly NIR base images:
+
+```bash
+--coreg '[path to NIR base images directory]'
+```
+
+For more information on coregistration and the expected input format, refer to the [FORCE documentation](https://force-eo.readthedocs.io/en/latest/howto/coreg.html#).
+
 ## Pipeline configuration
 
 Users can specify additional parameters to configure how the underlying workflow tools handle the provided data.

@@ -12,6 +12,7 @@ process FORCE_PREPROCESS {
     path dem
     path wvdb
     path aod
+    path coreg
 
     output:
     tuple val(meta), path("**/*BOA.tif"), optional: true, emit: boa_tiles
@@ -107,7 +108,7 @@ process FORCE_PREPROCESS {
     def resMerge      = task.ext.args?["RES_MERGE"]              ? "RES_MERGE = ${task.ext.args["RES_MERGE"]}"                         : "RES_MERGE = IMPROPHE"
 
     // Co-registration options
-    def coregBaseDir  = task.ext.args?["DIR_COREG_BASE"]         ? "DIR_COREG_BASE = ${task.ext.args["DIR_COREG_BASE"]}"               : "DIR_COREG_BASE = NULL"
+    def coregBaseDir  = coreg                                    ? "DIR_COREG_BASE = $coreg"                                           : "DIR_COREG_BASE = NULL"
     def coregNoData   = task.ext.args?["COREG_BASE_NODATA"]      ? "COREG_BASE_NODATA = ${task.ext.args["COREG_BASE_NODATA"]}"         : "COREG_BASE_NODATA = -9999"
 
     // Miscellaneous otions

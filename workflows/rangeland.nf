@@ -83,6 +83,7 @@ workflow RANGELAND {
     aoi_file       = file( params.aoi )
     endmember_file = file( params.endmember )
     aod            = file( params.aod )
+    coreg          = params.coreg ? file ( params.coreg ) : []
 
     //
     // MODULE: untar
@@ -161,6 +162,7 @@ workflow RANGELAND {
         aod,
         cube_file,
         aoi_file,
+        coreg,
         params.group_size,
         params.resolution
     )

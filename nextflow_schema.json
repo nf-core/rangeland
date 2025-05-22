@@ -73,6 +73,12 @@
                     "format": "file-path",
                     "mimetype": "text/plain"
                 },
+                "coreg": {
+                    "type": "string",
+                    "fa_icon": "fas fa-equals",
+                    "description": "Coregistration data for Sentinel 2 inputs.",
+                    "help_text": "NIR base images to coregister Sentinel-2 imagery. Input formats and additional information can be found in the [FORCE documentation](https://force-eo.readthedocs.io/en/latest/howto/coreg.html#)."
+                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",
