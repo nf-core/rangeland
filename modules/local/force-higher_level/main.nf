@@ -6,7 +6,7 @@ process FORCE_HIGHER_LEVEL {
     container "nf-core/force:3.8.01"
 
     input:
-    tuple val(meta), path("ard/${meta.id}/*"), path("ard/${meta.id}/*"), path("mask/${meta.id}/aoi.tif")
+    tuple val(meta), path(boa), path(qai), path(mask)
     path 'ard/datacube-definition.prj'
     path endmember
     val resolution
@@ -26,6 +26,14 @@ process FORCE_HIGHER_LEVEL {
     task.ext.when == null || task.ext.when
 
     script:
+    // paths
+    ardBasePath  = "ard/"
+    ardPath      = "$ardBasePath/${meta.id}/"
+    maskBasePath = "mask/"
+    maskPath     = "$maskBasePath/${meta.id}/"
+    trendPath    = "trend/"
+    provPath     = "prov/"
+
     // extract tile
     def xTile = meta.id[1..4]
     def yTile = meta.id[7..10]
@@ -33,13 +41,13 @@ process FORCE_HIGHER_LEVEL {
     // Configuration
 
     // Input/Output directories
-    def dirLower           = "DIR_LOWER = ard/"
-    def dirHigher          = "DIR_HIGHER = trend/"
-    def dirProv            = "DIR_PROVENANCE = prov/"
+    def dirLower           = "DIR_LOWER = $ardBasePath"
+    def dirHigher          = "DIR_HIGHER = $trendPath"
+    def dirProv            = "DIR_PROVENANCE = $provPath"
 
     // Masking
-    def dirMask            = "DIR_MASK = mask/"
-    def baseMask           = "BASE_MASK = aoi.tif"
+    def dirMask            = "DIR_MASK = $maskBasePath"
+    def baseMask           = "BASE_MASK = $mask"
 
     // Output options
     def outputFormat       = "OUTPUT_FORMAT = GTiff"
@@ -155,6 +163,13 @@ process FORCE_HIGHER_LEVEL {
     def changePenalty     = task.ext.args?["CHANGE_PENALTY"]        ? "CHANGE_PENALTY = ${task.ext.args["CHANGE_PENALTY"]}"              : "CHANGE_PENALTY = FALSE"
 
     """
+    # prepare directory structure for FORCE
+    mkdir -p $maskPath
+    mv $mask $maskPath
+
+    mkdir -p $ardPath
+    mv *.tif $ardPath
+
     # create parameter file
 
     PARAM=./tsa_${meta.id}.prm
