@@ -206,6 +206,7 @@ process FORCE_HIGHER_LEVEL {
     ${belowNoise}
     ${dateRange}
     ${doyRange}
+    ${dateIgnoreL7}
     ${index}
     ${standardizeTss}
     ${outputTss}
