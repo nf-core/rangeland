@@ -151,12 +151,12 @@ process FORCE_HIGHER_LEVEL {
     def polMidThresh      = task.ext.args?["POL_MID_THRESHOLD"]      ? "POL_MID_THRESHOLD = ${task.ext.args["POL_MID_THRESHOLD"]}"         : "POL_MID_THRESHOLD = 0.5"
     def polEndThresh      = task.ext.args?["POL_END_THRESHOLD"]      ? "POL_END_THRESHOLD = ${task.ext.args["POL_END_THRESHOLD"]}"         : "POL_END_THRESHOLD = 0.8"
     def polAdaptive       = task.ext.args?["POL_ADAPTIVE"]           ? "POL_ADAPTIVE = ${task.ext.args["POL_ADAPTIVE"]}"                   : "POL_ADAPTIVE = TRUE"
-    def pol               = "POL = VPS VBL VSA"
+    def pol               = task.ext.args?["POL"]                    ? "POL = ${task.ext.args["POL"]}"                                     : "POL = VPS VBL VSA"
     def standardizePol    = task.ext.args?["STANDARDIZE_POL"]        ? "STANDARDIZE_POL = ${task.ext.args["STANDARDIZE_POL"]}"             : "STANDARDIZE_POL = NONE"
     def outputPCT         = task.ext.args?["OUTPUT_PCT"]             ? "OUTPUT_PCT = ${task.ext.args["OUTPUT_PCT"]}"                       : "OUTPUT_PCT = FALSE"
-    def outputPOL         = "OUTPUT_POL = TRUE"
-    def outputTRO         = "OUTPUT_TRO = TRUE"
-    def outputCAO         = "OUTPUT_CAO = TRUE"
+    def outputPOL         = task.ext.arsg?["OUTPUT_POL"]             ? "OUTPUT_POL = ${task.ext.args["OUTPUT_POL"]}"                       : "OUTPUT_POL = TRUE"
+    def outputTRO         = task.ext.arsg?["OUTPUT_TRO"]             ? "OUTPUT_TRO = ${task.ext.args["OUTPUT_TRO"]}"                       : "OUTPUT_TRO = TRUE"
+    def outputCAO         = task.ext.arsg?["OUTPUT_CAO"]             ? "OUTPUT_CAO = ${task.ext.args["OUTPUT_CAO"]}"                       : "OUTPUT_CAO = TRUE"
 
     // Trend parameters
     def trendTail         = task.ext.args?["TREND_TAIL"]             ? "TREND_TAIL = ${task.ext.args["TREND_TAIL"]}"                       : "TREND_TAIL = TWO"

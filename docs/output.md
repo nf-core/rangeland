@@ -148,6 +148,13 @@ These are:
   - file names containing `TR<X>`, FORCE parameter `OUTPUT_TR<X>`
 - Extended Change, Aftereffect and Trend (CAT) analysis on time series folded by Year(X='Y')/Quarter(X='Q')/Month(X='M')/Week(X='W')/DOY time series(X='D')
   - file names containing `CA<X>`, FORCE parameter `OUTPUT_CA<X>`
+- Files for every polarmetric [configured](usage.md#configuring-force-modules) for the `POL` FORCE parameter and every index provided through [--indexes](usage.md#higher-level-processing-configuration)
+  - For each of the chosen polarmetrics:
+    - Polarmetric computation by year (file names containing `POL`, FORCE parameter `OUTPUT_POL`)
+    - Linear trend analysis for polametrics (file names containing `TRO`, FORCE parameter `OUTPUT_TRO`)
+    - Extended Change, Aftereffect, Trend (CAT) analysis (file names containing `CAO`, FORCE parameter `OUTPUT_CAO`)
+- Polar-transformed time series for every index provided through [--indexes](usage.md#higher-level-processing-configuration)
+  - file names containing `PCX` or `PCY`, FORCE parameter `OUTPUT_PCT`
 
 The concrete number of generated `.tif` files can increase significantly when the tool parameter `OUTPUT_EXPLODE` is set to `TRUE` (see: [Configuring FORCE modules](usage.md#configuring-force-modules)).
 In this case, every band within the resulting raster files is written as a individual `.tif` file.
