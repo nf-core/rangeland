@@ -94,12 +94,12 @@ For each tile the directory contains at least a quality data file and the atmosp
 
 Optional files may include:
 
-- Cloud, cloud shadow and snow distance layer (ending with `DST.tif`)
-- Aerosol optical depth map (ending with `AOD.tif`)
-- Water vapor map (ending with `WVP.tif`)
-- View Zenith map (ending with `VZN.tif`)
-- Haze optimized transformation layer (ending with `HOT.tif`)
-- Overview thumbnails (ending with `OVV.jpg`)
+- Cloud, cloud shadow and snow distance layer (ending with `DST.tif`, FORCE parameter `OUTPUT_DST`)
+- Aerosol optical depth map (ending with `AOD.tif`, FORCE parameter `OUTPUT_AOD`)
+- Water vapor map (ending with `WVP.tif`, FORCE parameter `OUTPUT_WVP`)
+- View Zenith map (ending with `VZN.tif`, FORCE parameter `OUTPUT_VZN`)
+- Haze optimized transformation layer (ending with `HOT.tif`, FORCE parameter `OUTPUT_HOT`)
+- Overview thumbnails (ending with `OVV.jpg`, FORCE parameter `OUTPUT_OVV`)
 
 The optional outputs have to be enabled by [configuring the FORCE_PREPROCESS module](./usage.md#configuring-force-modules) and are not required to run the pipeline.
 
@@ -141,6 +141,7 @@ Other output files may be enabled through [configuring FORCE modules](usage.md#c
 These are:
 
 - Time series interpolation (file names contain `TSI`, FORCE parameter `OUTPUT_TSI`)
+- Spectral temporal metrics (file names contain `STM`, FORCE parameter `OUTPUT_STM`)
 
 The concrete number of generated `.tif` files can increase significantly when the tool parameter `OUTPUT_EXPLODE` is set to `TRUE` (see: [Configuring FORCE modules](usage.md#configuring-force-modules)).
 In this case, every band within the resulting raster files is written as a individual `.tif` file.
