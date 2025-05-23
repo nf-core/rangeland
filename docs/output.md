@@ -137,6 +137,11 @@ These files contain the time series stack(TSS) for the given tile and index or b
 Here, for each date of acquisition, an image is available that contains the values for that date.
 TSS files will not be returned if `--save_tsa` is set to `false`.
 
+Other output files may be enabled through [configuring FORCE modules](usage.md#configuring-force-modules).
+These are:
+
+- Time series interpolation (file names contain `TSI`, FORCE parameter `OUTPUT_TSI`)
+
 The concrete number of generated `.tif` files can increase significantly when the tool parameter `OUTPUT_EXPLODE` is set to `TRUE` (see: [Configuring FORCE modules](usage.md#configuring-force-modules)).
 In this case, every band within the resulting raster files is written as a individual `.tif` file.
 

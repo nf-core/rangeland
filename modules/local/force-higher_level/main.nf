@@ -101,7 +101,7 @@ process FORCE_HIGHER_LEVEL {
     def smaOutputRms       = task.ext.args?["OUTPUT_RMS"]            ? "OUTPUT_RMS = ${task.ext.args["OUTPUT_RMS"]}"                       : "OUTPUT_RMS = FALSE"
 
     // Interpolation parameters
-    def interpolateMethod  = "INTERPOLATE = RBF"
+    def interpolateMethod  = task.ext.args?["INTERPOLATE"]           ? "INTERPOLATE = ${task.ext.args["INTERPOLATE"]}"                     :"INTERPOLATE = RBF"
     def movingMax          = task.ext.args?["MOVING_MAX"]            ? "MOVING_MAX = ${task.ext.args["MOVING_MAX"]}"                       : "MOVING_MAX = 16"
     def rbfSigma           = task.ext.args?["RBF_SIGMA"]             ? "RBF_SIGMA = ${task.ext.args["RBF_SIGMA"]}"                         : "RBF_SIGMA = 8 16 32"
     def rbfCutoff          = task.ext.args?["RBF_CUTOFF"]            ? "RBF_CUTOFF = ${task.ext.args["RBF_CUTOFF"]}"                       : "RBF_CUTOFF = 0.95"
@@ -109,9 +109,9 @@ process FORCE_HIGHER_LEVEL {
     def harmonicModes      = task.ext.args?["HARMONIC_MODES"]        ? "HARMONIC_MODES = ${task.ext.args["HARMONIC_MODES"]}"               : "HARMONIC_MODES = 3"
     def harmonicFitRanges  = task.ext.args?["HARMONIC_FIT_RANGE"]    ? "HARMONIC_FIT_RANGE = ${task.ext.args["HARMONIC_FIT_RANGE"]}"       : "HARMONIC_FIT_RANGE = 2015-01-01 2017-12-31"
     def outputNrt          = task.ext.args?["OUTPUT_NRT"]            ? "OUTPUT_NRT = ${task.ext.args["OUTPUT_NRT"]}"                       : "OUTPUT_NRT = FALSE"
-    def intDayStep         = "INT_DAY = 8"
+    def intDayStep         = task.ext.args?["INT_DAY"]               ? "INT_DAY = ${task.ext.args["INT_DAY"]}"                             : "INT_DAY = 8"
     def standardizedTsi    = task.ext.args?["STANDARDIZE_TSI"]       ? "STANDARDIZE_TSI = ${task.ext.args["STANDARDIZE_TSI"]}"             : "STANDARDIZE_TSI = NONE"
-    def outputTsi          = "OUTPUT_TSI = TRUE"
+    def outputTsi          = task.ext.args?["OUTPUT_TSI"]            ? "OUTPUT_TSI = ${task.ext.args["OUTPUT_TSI"]}"                       : "OUTPUT_TSI = FALSE"
 
     // Python UDF parameters
     def udfPythonFile     = task.ext.args?["FILE_PYTHON"]            ? "FILE_PYTHON = ${task.ext.args["FILE_PYTHON"]}"                     : "FILE_PYTHON = NULL"
