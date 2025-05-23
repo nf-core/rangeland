@@ -46,8 +46,8 @@ process FORCE_HIGHER_LEVEL {
     def dirProv            = "DIR_PROVENANCE = $provPath"
 
     // Masking
-    def dirMask            = "DIR_MASK = $maskBasePath"
-    def baseMask           = "BASE_MASK = $mask"
+    def dirMask            = mask                                   ? "DIR_MASK = $maskBasePath"                                       : "DIR_MASK = NULL"
+    def baseMask           = mask                                   ? "BASE_MASK = $mask"                                              : "BASE_MASK = NULL"
 
     // Output options
     def outputFormat       = "OUTPUT_FORMAT = GTiff"
