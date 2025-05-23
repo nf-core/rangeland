@@ -50,10 +50,10 @@ process FORCE_HIGHER_LEVEL {
     def baseMask           = mask                                   ? "BASE_MASK = $mask"                                              : "BASE_MASK = NULL"
 
     // Output options
-    def outputFormat       = "OUTPUT_FORMAT = GTiff"
+    def outputFormat       = task.ext.args?["OUTPUT_FORMAT"]        ? "OUTPUT_FORMAT = ${task.ext.args["OUTPUT_FORMAT"]}"              : "OUTPUT_FORMAT = GTiff"
     def outputOptions      = task.ext.args?["FILE_OUTPUT_OPTIONS"]  ? "FILE_OUTPUT_OPTIONS = ${task.ext.args["FILE_OUTPUT_OPTIONS"]}"  : "FILE_OUTPUT_OPTIONS = NULL"
     def outputExplode      = task.ext.args?["OUTPUT_EXPLODE"]       ? "OUTPUT_EXPLODE = ${task.ext.args["OUTPUT_EXPLODE"]}"            : "OUTPUT_EXPLODE = FALSE"
-    def outputSubDirs      = task.ext.args?["OUTPUT_SUBFOLDERS"]    ? "OUTPUT_SUBFOLDERS = ${task.ext.args["OUTPUT_SUBFOLDERS"]}"      : "OUTPUT_SUBFOLDERS = FALSE  "
+    def outputSubDirs      = "OUTPUT_SUBFOLDERS = FALSE"
 
     // Parallel processing
     def nThreadRead        = task.ext.args?["NTHREAD_READ"]         ? "NTHREAD_READ = ${task.ext.args["NTHREAD_READ"]}"                : "NTHREAD_READ = 8"
