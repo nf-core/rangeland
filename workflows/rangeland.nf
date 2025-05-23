@@ -81,9 +81,9 @@ workflow RANGELAND {
     wvdb           = Channel.empty()
     cube_file      = file( params.data_cube )
     aoi_file       = file( params.aoi )
-    endmember_file = file( params.endmember )
-    aod            = params.aod   ? file ( params.aod   ) : []
-    coreg          = params.coreg ? file ( params.coreg ) : []
+    endmember_file = params.endmember ? file( params.endmember ) : []
+    aod            = params.aod       ? file ( params.aod   )    : []
+    coreg          = params.coreg     ? file ( params.coreg )    : []
 
     //
     // MODULE: untar

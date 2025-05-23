@@ -259,6 +259,8 @@ AOI is passed as a single file using:
 ### Endmember
 
 For unmixing satellite-observed reflectance into sub-pixel fractions of land surface components (e.g. photosynthetic active vegetation), endmember spectra are necessary.
+Spectral mixture analysis (SMA) is only performed when the [higher-level index](#higher-level-processing-index-configuration) parameter, `--indexes`; contains `SMA`.
+Therefore, this input is optional.
 
 An example endmember definition (developed in [Hostert et al. 2003](https://www.sciencedirect.com/science/article/abs/pii/S0034425703001457)) looks like this:
 
@@ -375,7 +377,7 @@ Spectral unmixing is performed in any case.
 Thus, passing an empty `--indexes` parameter will restrict time series analyses to the results of spectral unmixing.
 All available indexes can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) above the `INDEX` entry.
 The band/index codes need to be passed in a space-separated string.
-The default value, `--indexes = "NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands.
+The default value, `--indexes = "SMA NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands.
 Note that indexes are usually computed based on certain bands.
 If these bands are not present in the preprocessed data, these indexes can not be computed.
 
@@ -385,7 +387,10 @@ The bands and indexes can be passed using:
 --indexes '[index-string]'
 ```
 
-In so cases, it may be desirable to analyze the the individual images in a time series.
+Note that if `--indexes` contains `SMA`, spectral mixture analysis is performed.
+In that case an [endmember file](#endmember) has to be provided.
+
+In some cases, it may be desirable to analyze the the individual images in a time series.
 To enable such analysis, the parameter `--return_tss` can be used.
 If set to `true`, the pipeline will return time series stacks for each tile and band combination.
 The option is disabled by default to reduce the output size.

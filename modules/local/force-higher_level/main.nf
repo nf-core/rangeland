@@ -88,12 +88,12 @@ process FORCE_HIGHER_LEVEL {
     def dateIgnoreL7       = task.ext.args?["DATE_IGNORE_LANDSAT_7"] ? "DATE_IGNORE_LANDSAT_7 = ${task.ext.args["DATE_IGNORE_LANDSAT_7"]}" : "DATE_IGNORE_LANDSAT_7 = 2099-12-31"
 
     // Spectral indes
-    def index              = "INDEX = SMA $indexes"
+    def index              = "INDEX = $indexes"
     def standardizeTss     = task.ext.args?["STANDARDIZE_TSS"]       ? "STANDARDIZE_TSS = ${task.ext.args["STANDARDIZE_TSS"]}"             : "STANDARDIZE_TSS = NONE"
     def outputTss          = return_tss                              ? "OUTPUT_TSS = TRUE"                                                 : "OUTPUT_TSS = FALSE"
 
     // Spectral mixture analysis
-    def endmemberFile      = "FILE_ENDMEM = $endmember"
+    def endmemberFile      = endmember                               ? "FILE_ENDMEM = $endmember"                                          : "FILE_ENDMEM = NULL"
     def smaSumToOne        = task.ext.args?["SMA_SUM_TO_ONE"]        ? "SMA_SUM_TO_ONE = ${task.ext.args["SMA_SUM_TO_ONE"]}"               : "SMA_SUM_TO_ONE = TRUE"
     def smaNonNeg          = task.ext.args?["SMA_NON_NEG"]           ? "SMA_NON_NEG = ${task.ext.args["SMA_NON_NEG"]}"                     : "SMA_NON_NEG = TRUE"
     def smaShdNorm         = task.ext.args?["SMA_SHD_NORM"]          ? "SMA_SHD_NORM = ${task.ext.args["SMA_SHD_NORM"]}"                   : "SMA_SHD_NORM = TRUE"
