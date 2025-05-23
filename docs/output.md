@@ -142,6 +142,12 @@ These are:
 
 - Time series interpolation (file names contain `TSI`, FORCE parameter `OUTPUT_TSI`)
 - Spectral temporal metrics (file names contain `STM`, FORCE parameter `OUTPUT_STM`)
+- Fold-by-Year(X='Y')/Quarter(X='Q')/Month(X='M')/Week(X='W')/DOY time series(X='D')
+  - file names containing `FB<X>`, FORCE parameter `OUTPUT_FB<X>`
+- Linear trend analysis for time series folded by Year(X='Y')/Quarter(X='Q')/Month(X='M')/Week(X='W')/DOY time series(X='D')
+  - file names containing `TR<X>`, FORCE parameter `OUTPUT_TR<X>`
+- Extended Change, Aftereffect and Trend (CAT) analysis on time series folded by Year(X='Y')/Quarter(X='Q')/Month(X='M')/Week(X='W')/DOY time series(X='D')
+  - file names containing `CA<X>`, FORCE parameter `OUTPUT_CA<X>`
 
 The concrete number of generated `.tif` files can increase significantly when the tool parameter `OUTPUT_EXPLODE` is set to `TRUE` (see: [Configuring FORCE modules](usage.md#configuring-force-modules)).
 In this case, every band within the resulting raster files is written as a individual `.tif` file.
