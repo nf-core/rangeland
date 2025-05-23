@@ -26,6 +26,7 @@ workflow HIGHER_LEVEL {
             tiles_and_masks,
             cube_file,
             endmember_file,
+            Channel.value([]),
             resolution,
             sensors_level2,
             start_date,
