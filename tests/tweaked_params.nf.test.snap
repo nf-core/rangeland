@@ -1,5 +1,5 @@
 {
-    "Params: --save_ard true --save_tsa true --return_tss true --sensors_level2 'LND05' --indexes 'RED NIR SWIR2' --end_date '1988-12-31'": {
+    "Params: --save_ard true --save_tsa true --sensors_level2 'LND05' --indexes 'RED NIR SWIR2' --end_date '1988-12-31'": {
         "content": [
             97,
             [
@@ -731,6 +731,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-05-25T19:03:15.031236411"
+        "timestamp": "2025-05-25T19:37:33.575980712"
     }
 }
