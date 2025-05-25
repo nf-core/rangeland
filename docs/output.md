@@ -132,14 +132,10 @@ Next, time series analysis for different vegetation characteristics is performed
 The resulting trend files in `trend_files/` can be investigated to view trends for individual tiles.
 However, these files are only published if the `--save_tsa` parameter is set to `true`.
 
-If the `--return_tss` parameter was set to `true`, the pipeline will also output `.tif` files with the `TSS` in their name.
-These files contain the time series stack(TSS) for the given tile and index or band.
-Here, for each date of acquisition, an image is available that contains the values for that date.
-TSS files will not be returned if `--save_tsa` is set to `false`.
-
 Other output files may be enabled through [configuring FORCE modules](usage.md#configuring-force-modules).
 These are:
 
+- Time series stack (file names contain `TSS`, FORCE parameter `OUTPUT_TSS`)
 - Time series interpolation (file names contain `TSI`, FORCE parameter `OUTPUT_TSI`)
 - Spectral temporal metrics (file names contain `STM`, FORCE parameter `OUTPUT_STM`)
 - Fold-by-Year(X='Y')/Quarter(X='Q')/Month(X='M')/Week(X='W')/DOY time series(X='D')

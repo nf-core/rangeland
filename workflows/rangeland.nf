@@ -181,8 +181,7 @@ workflow RANGELAND {
         params.sensors_level2,
         params.start_date,
         params.end_date,
-        params.indexes,
-        params.return_tss
+        params.indexes
     )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 

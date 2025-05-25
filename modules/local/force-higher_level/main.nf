@@ -15,7 +15,6 @@ process FORCE_HIGHER_LEVEL {
     val start_date
     val end_date
     val indexes
-    val return_tss
 
     output:
     tuple val(meta), path ('trend/*.tif*'), optional: true, emit: trend_files
@@ -90,7 +89,7 @@ process FORCE_HIGHER_LEVEL {
     // Spectral indes
     def index              = "INDEX = $indexes"
     def standardizeTss     = task.ext.args?["STANDARDIZE_TSS"]       ? "STANDARDIZE_TSS = ${task.ext.args["STANDARDIZE_TSS"]}"             : "STANDARDIZE_TSS = NONE"
-    def outputTss          = return_tss                              ? "OUTPUT_TSS = TRUE"                                                 : "OUTPUT_TSS = FALSE"
+    def outputTss          = task.ext.args?["OUTPUT_TSS"]            ? "OUTPUT_TSS = ${task.ext.args["OUTPUT_TSS"]}"                       : "OUTPUT_TSS = FALSE"
 
     // Spectral mixture analysis
     def endmemberFile      = endmember                               ? "FILE_ENDMEM = $endmember"                                          : "FILE_ENDMEM = NULL"

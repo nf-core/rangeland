@@ -15,7 +15,6 @@ workflow HIGHER_LEVEL {
         start_date
         end_date
         indexes
-        return_tss
 
     main:
 
@@ -31,8 +30,7 @@ workflow HIGHER_LEVEL {
             sensors_level2,
             start_date,
             end_date,
-            indexes,
-            return_tss
+            indexes
         )
         ch_versions = ch_versions.mix(FORCE_HIGHER_LEVEL.out.versions.first())
 

@@ -390,17 +390,6 @@ The bands and indexes can be passed using:
 Note that if `--indexes` contains `SMA`, spectral mixture analysis is performed.
 In that case an [endmember file](#endmember) has to be provided.
 
-In some cases, it may be desirable to analyze the the individual images in a time series.
-To enable such analysis, the parameter `--return_tss` can be used.
-If set to `true`, the pipeline will return time series stacks for each tile and band combination.
-The option is disabled by default to reduce the output size.
-
-The time series stack output can be enabled using:
-
-```bash
---return_tss true
-```
-
 ### Visualization
 
 The workflow provides two types of results visualization and aggregation.
