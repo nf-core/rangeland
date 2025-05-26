@@ -306,10 +306,6 @@
                 "preprocess/LT05_L1TP_181036_19870916_20201014_02_T1/param_files",
                 "preprocess/LT05_L1TP_181036_19870916_20201014_02_T1/param_files/preprocess_LT05_L1TP_181036_19870916_20201014_02_T1.prm",
                 "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1",
-                "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/level2_ard",
-                "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/level2_ard/X0109_Y0102",
-                "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/level2_ard/X0109_Y0102/19871002_LEVEL2_LND05_BOA.tif",
-                "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/level2_ard/X0109_Y0102/19871002_LEVEL2_LND05_QAI.tif",
                 "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/logs",
                 "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/logs/level2_log",
                 "preprocess/LT05_L1TP_181036_19871002_20201014_02_T1/logs/level2_log/LT05_L1TP_181036_19871002_20201014_02_T1.log",
@@ -731,6 +727,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.2"
         },
-        "timestamp": "2025-05-25T19:37:33.575980712"
+        "timestamp": "2025-05-26T13:55:28.497352854"
     }
 }

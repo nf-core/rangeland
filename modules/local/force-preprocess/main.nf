@@ -11,6 +11,7 @@ process FORCE_PREPROCESS {
     path tile
     path dem
     path wvdb
+    path aoi
     path aod
     path coreg
 
@@ -48,7 +49,7 @@ process FORCE_PREPROCESS {
     def tmpDirPrm     = "DIR_TEMP = $tmpDir"
 
     // Masking
-    def fileAoi       = task.ext.args?["FILE_AOI"]               ? "FILE_AOI = ${task.ext.args["FILE_AOI"]}"                           : "FILE_AOI = NULL"
+    def fileAoi       = aoi                                      ? "FILE_AOI = $aoi"                                                   : "FILE_AOI = NULL"
 
     // Digital elevation model
     // "FILE_DEM"     can only be set after input stage-in

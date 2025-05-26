@@ -479,6 +479,7 @@ The following FORCE parameters can _not_ be set through `task.ext.args` in prepr
 - `WVP`: Set through process's input channels and derived from `--wvdb`, see [water vapor database](#water-vapor-database-wvdb) for details.
 - `DIR_AOD`: Set through process's input channels and derived from `--aod`, see [aerosol optical depth](#aerosol-optical-depth-aod) for details.
 - `DIR_COREG_BASE`: Set through process's input channels and derived from `--coreg`, see [coregistration](#coregistration-near-infrared-nir-data) for details.
+- `FILE_AOI`: Set through process's input channels and derived from `--aoi`, see [area of interest](#area-of-interest-aoi) for details.
 
 In addition, the `DO_TOPO` FORCE parameter will only be considered when the [pipeline is executed with a digital elevation model](#digital-elevation-model-dem).
 
