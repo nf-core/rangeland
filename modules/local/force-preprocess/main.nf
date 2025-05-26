@@ -125,7 +125,7 @@ process FORCE_PREPROCESS {
     def outputWVP     = task.ext.args?["OUTPUT_WVP"]             ? "OUTPUT_WVP = ${task.ext.args["OUTPUT_WVP"]}"                       : "OUTPUT_WVP = FALSE"
     def outputVZN     = task.ext.args?["OUTPUT_VZN"]             ? "OUTPUT_VZN = ${task.ext.args["OUTPUT_VZN"]}"                       : "OUTPUT_VZN = FALSE"
     def outputHOT     = task.ext.args?["OUTPUT_HOT"]             ? "OUTPUT_HOT = ${task.ext.args["OUTPUT_HOT"]}"                       : "OUTPUT_HOT = FALSE"
-    def outputOVV     = task.ext.args?["OUTPUT_OVV"]             ? "OUTPUT_OVV = ${task.ext.args["OUTPUT_OVV"]}"                       : "OUTPUT_OVV = FALSE"
+    def outputOVV     = task.ext.args?["OUTPUT_OVV"]             ? "OUTPUT_OVV = ${task.ext.args["OUTPUT_OVV"]}"                       : "OUTPUT_OVV = TRUE"
 
     """
     # get DEM_FILE parameter

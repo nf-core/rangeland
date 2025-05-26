@@ -86,7 +86,7 @@ process FORCE_HIGHER_LEVEL {
     def doyRange           = task.ext.args?["DOY_RANGE"]             ? "DOY_RANGE = ${task.ext.args["DOY_RANGE"]}"                         : "DOY_RANGE = 1 365"
     def dateIgnoreL7       = task.ext.args?["DATE_IGNORE_LANDSAT_7"] ? "DATE_IGNORE_LANDSAT_7 = ${task.ext.args["DATE_IGNORE_LANDSAT_7"]}" : "DATE_IGNORE_LANDSAT_7 = 2099-12-31"
 
-    // Spectral indes
+    // Spectral indexes
     def index              = "INDEX = $indexes"
     def standardizeTss     = task.ext.args?["STANDARDIZE_TSS"]       ? "STANDARDIZE_TSS = ${task.ext.args["STANDARDIZE_TSS"]}"             : "STANDARDIZE_TSS = NONE"
     def outputTss          = task.ext.args?["OUTPUT_TSS"]            ? "OUTPUT_TSS = ${task.ext.args["OUTPUT_TSS"]}"                       : "OUTPUT_TSS = FALSE"
@@ -100,7 +100,7 @@ process FORCE_HIGHER_LEVEL {
     def smaOutputRms       = task.ext.args?["OUTPUT_RMS"]            ? "OUTPUT_RMS = ${task.ext.args["OUTPUT_RMS"]}"                       : "OUTPUT_RMS = FALSE"
 
     // Interpolation parameters
-    def interpolateMethod  = task.ext.args?["INTERPOLATE"]           ? "INTERPOLATE = ${task.ext.args["INTERPOLATE"]}"                     :"INTERPOLATE = RBF"
+    def interpolateMethod  = task.ext.args?["INTERPOLATE"]           ? "INTERPOLATE = ${task.ext.args["INTERPOLATE"]}"                     :"INTERPOLATE = NONE"
     def movingMax          = task.ext.args?["MOVING_MAX"]            ? "MOVING_MAX = ${task.ext.args["MOVING_MAX"]}"                       : "MOVING_MAX = 16"
     def rbfSigma           = task.ext.args?["RBF_SIGMA"]             ? "RBF_SIGMA = ${task.ext.args["RBF_SIGMA"]}"                         : "RBF_SIGMA = 8 16 32"
     def rbfCutoff          = task.ext.args?["RBF_CUTOFF"]            ? "RBF_CUTOFF = ${task.ext.args["RBF_CUTOFF"]}"                       : "RBF_CUTOFF = 0.95"
@@ -108,7 +108,7 @@ process FORCE_HIGHER_LEVEL {
     def harmonicModes      = task.ext.args?["HARMONIC_MODES"]        ? "HARMONIC_MODES = ${task.ext.args["HARMONIC_MODES"]}"               : "HARMONIC_MODES = 3"
     def harmonicFitRanges  = task.ext.args?["HARMONIC_FIT_RANGE"]    ? "HARMONIC_FIT_RANGE = ${task.ext.args["HARMONIC_FIT_RANGE"]}"       : "HARMONIC_FIT_RANGE = 2015-01-01 2017-12-31"
     def outputNrt          = task.ext.args?["OUTPUT_NRT"]            ? "OUTPUT_NRT = ${task.ext.args["OUTPUT_NRT"]}"                       : "OUTPUT_NRT = FALSE"
-    def intDayStep         = task.ext.args?["INT_DAY"]               ? "INT_DAY = ${task.ext.args["INT_DAY"]}"                             : "INT_DAY = 8"
+    def intDayStep         = task.ext.args?["INT_DAY"]               ? "INT_DAY = ${task.ext.args["INT_DAY"]}"                             : "INT_DAY = 16"
     def standardizedTsi    = task.ext.args?["STANDARDIZE_TSI"]       ? "STANDARDIZE_TSI = ${task.ext.args["STANDARDIZE_TSI"]}"             : "STANDARDIZE_TSI = NONE"
     def outputTsi          = task.ext.args?["OUTPUT_TSI"]            ? "OUTPUT_TSI = ${task.ext.args["OUTPUT_TSI"]}"                       : "OUTPUT_TSI = FALSE"
 
@@ -145,17 +145,17 @@ process FORCE_HIGHER_LEVEL {
     def outputCAW         = task.ext.args?["OUTPUT_CAW"]             ? "OUTPUT_CAW = ${task.ext.args["OUTPUT_CAW"]}"                       : "OUTPUT_CAW = FALSE"
     def outputCAD         = task.ext.args?["OUTPUT_CAD"]             ? "OUTPUT_CAD = ${task.ext.args["OUTPUT_CAD"]}"                       : "OUTPUT_CAD = FALSE"
 
-    // Land surface phenology parameters
+    // Land surface phenology parameters (polarmetrics)
     def polStartThresh    = task.ext.args?["POL_START_THRESHOLD"]    ? "POL_START_THRESHOLD = ${task.ext.args["POL_START_THRESHOLD"]}"     : "POL_START_THRESHOLD = 0.2"
     def polMidThresh      = task.ext.args?["POL_MID_THRESHOLD"]      ? "POL_MID_THRESHOLD = ${task.ext.args["POL_MID_THRESHOLD"]}"         : "POL_MID_THRESHOLD = 0.5"
     def polEndThresh      = task.ext.args?["POL_END_THRESHOLD"]      ? "POL_END_THRESHOLD = ${task.ext.args["POL_END_THRESHOLD"]}"         : "POL_END_THRESHOLD = 0.8"
     def polAdaptive       = task.ext.args?["POL_ADAPTIVE"]           ? "POL_ADAPTIVE = ${task.ext.args["POL_ADAPTIVE"]}"                   : "POL_ADAPTIVE = TRUE"
-    def pol               = task.ext.args?["POL"]                    ? "POL = ${task.ext.args["POL"]}"                                     : "POL = VPS VBL VSA"
+    def pol               = task.ext.args?["POL"]                    ? "POL = ${task.ext.args["POL"]}"                                     : "POL = VSS VPS VES VSA RMR IGS"
     def standardizePol    = task.ext.args?["STANDARDIZE_POL"]        ? "STANDARDIZE_POL = ${task.ext.args["STANDARDIZE_POL"]}"             : "STANDARDIZE_POL = NONE"
     def outputPCT         = task.ext.args?["OUTPUT_PCT"]             ? "OUTPUT_PCT = ${task.ext.args["OUTPUT_PCT"]}"                       : "OUTPUT_PCT = FALSE"
-    def outputPOL         = task.ext.arsg?["OUTPUT_POL"]             ? "OUTPUT_POL = ${task.ext.args["OUTPUT_POL"]}"                       : "OUTPUT_POL = TRUE"
-    def outputTRO         = task.ext.arsg?["OUTPUT_TRO"]             ? "OUTPUT_TRO = ${task.ext.args["OUTPUT_TRO"]}"                       : "OUTPUT_TRO = TRUE"
-    def outputCAO         = task.ext.arsg?["OUTPUT_CAO"]             ? "OUTPUT_CAO = ${task.ext.args["OUTPUT_CAO"]}"                       : "OUTPUT_CAO = TRUE"
+    def outputPOL         = task.ext.args?["OUTPUT_POL"]             ? "OUTPUT_POL = ${task.ext.args["OUTPUT_POL"]}"                       : "OUTPUT_POL = FALSE"
+    def outputTRO         = task.ext.args?["OUTPUT_TRO"]             ? "OUTPUT_TRO = ${task.ext.args["OUTPUT_TRO"]}"                       : "OUTPUT_TRO = FALSE"
+    def outputCAO         = task.ext.args?["OUTPUT_CAO"]             ? "OUTPUT_CAO = ${task.ext.args["OUTPUT_CAO"]}"                       : "OUTPUT_CAO = FALSE"
 
     // Trend parameters
     def trendTail         = task.ext.args?["TREND_TAIL"]             ? "TREND_TAIL = ${task.ext.args["TREND_TAIL"]}"                       : "TREND_TAIL = TWO"
