@@ -464,7 +464,39 @@ process {
 ```
 
 For a comprehensive list of parameters see the FORCE documentation on [force-l2ps parameterization](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/param.html#l2-param) and [force-higher-level (TSA) parameterization](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html).
-The default values defined in the FORCE documentation are automatically used other values were supplied
+
+The following FORCE parameters can _not_ be set through `task.ext.args` in preprocessing (for the `FORCE_PREPROCESS` process):
+
+- `FILE_QUEUE`: This pipeline processes one image per process, which does not require a queue for input files.
+- `DIR_LEVEL2`, `DIR_LOG`, `DIR_PROVENANCE`, `DIR_TEMP`: FORCE directories must be defined within the process working directory.
+- `FILE_DEM`: Set through process's input channels and derived from `params.dem`, see [digital elevation model](#digital-elevation-model-dem) for details.
+- `FILE_TILE`: Set through the process's input channels.
+- `TILE_SIZE`: Derived from datacube input channel, which is created based on the [datacube input](#datacube).
+- `BLOCK_SIZE`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `ORIGIN_LON`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `ORIGIN_LAT`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `PROJECTION`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `WVP`: Set through process's input channels and derived from `--wvdb`, see [water vapor database](#water-vapor-database-wvdb) for details.
+- `DIR_AOD`: Set through process's input channels and derived from `--aod`, see [aerosol optical depth](#aerosol-optical-depth-aod) for details.
+- `DIR_COREG_BASE`: Set through process's input channels and derived from `--coreg`, see [coregistration](#coregistration-near-infrared-nir-data) for details.
+
+In addition, the `DO_TOPO` FORCE parameter will only be considered when the [pipeline is executed with a digital elevation model](#digital-elevation-model-dem).
+
+The following FORCE parameters can _not_ be set through `task.ext.args` in higher-level processing (for the `FORCE_HIGHER_LEVEL` process):
+
+- `DIR_LOWER`, `DIR_HIGHER`, `DIR_PROVENANCE`: FORCE directories must be defined within the process working directory.
+- `DIR_MASK`, `BASE_MASK`: Masking parameters are derived from the input channels.
+- `OUTPUT_SUBFOLDERS`: The output directory structure is handled through Nextflow.
+- `PRETTY_PROGRESS`: Avoid interference of FORCE progress updates with Nextflow logging.
+- `X_TILE_RANGE`, `X_TILE_RANGE`: Derived from input data.
+- `FILE_TILE`: Set through input channels.
+- `RESOLUTION`: Set through [`--resolution`](#resolution).
+- `SENSORS`: Set through [`--sensors_level2`](#sensor-levels).
+- `DATE_RANGE`: Set through [`--start_date` and `--end_date`](#temporal-extent).
+- `INDEX`: Set through [`--indexes`](#higher-level-processing-configuration).
+- `FILE_ENDMEM`: Set through process's input channels and derived from `--endmember`, see [endmember](#endmember) for details.
+
+The default values defined in the FORCE documentation are automatically used if no other values were supplied.
 
 > [!WARNING]
 > Please refer to the FORCE documentation to mentioned above to understand the impact of different parameters.
