@@ -109,7 +109,7 @@
             "properties": {
                 "start_date": {
                     "type": "string",
-                    "default": "1984-01-01",
+                    "default": "1940-01-01",
                     "fa_icon": "far fa-calendar-alt",
                     "description": "First day of interest.",
                     "help_text": "String with format: \"YYYY-MM-DD\".",
@@ -118,7 +118,7 @@
                 },
                 "end_date": {
                     "type": "string",
-                    "default": "2006-12-31",
+                    "default": "2099-12-31",
                     "fa_icon": "far fa-calendar-alt",
                     "description": "Last day of interest.",
                     "help_text": "String with format: \"YYYY-MM-DD\".",
