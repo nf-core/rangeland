@@ -1,0 +1,32 @@
+nextflow_pipeline {
+
+    name "Test pipeline with non-default parameters"
+    script "../main.nf"
+
+    test("Params: --save_ard true --save_tsa true --return_tss true --sensors_level2 'LND05' --indexes 'RED NIR SWIR2' --end_date '1988-12-31'") {
+
+        when {
+            params {
+                outdir         = "$outputDir"
+                save_ard       = true
+                save_tsa       = true
+                return_tss     = true
+                sensors_level2 = "LND05"
+                indexes        = "RED NIR SWIR2"
+                end_date       = "1988-12-31"
+            }
+        }
+
+        then {
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            assert workflow.success
+            assert snapshot(
+                workflow.trace.succeeded().size(),
+                stable_name,
+            ).match()
+
+        }
+
+    }
+
+}

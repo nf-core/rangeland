@@ -6,7 +6,7 @@
 </h1>
 
 [![GitHub Actions CI Status](https://github.com/nf-core/rangeland/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/rangeland/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/nf-core/rangeland/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/rangeland/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/rangeland/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/nf-core/rangeland/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/rangeland/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/rangeland/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.14679189-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.14679189)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
@@ -19,47 +19,41 @@
 
 ## Introduction
 
-**nf-core/rangeland** is a bioinformatics pipeline that ...
+**nf-core/rangeland** is a geographical best-practice analysis pipeline for remotely sensed imagery.
+The pipeline processes satellite imagery alongside auxiliary data in multiple steps to arrive at a set of trend files related to land-cover changes. The main pipeline steps are:
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+1. Read satellite imagery, digital elevation model (dem), endmember definition, water vapor database (wvdb), datacube definition and area of interest definition (aoi)
+2. Generate allow list and analysis mask to determine which pixels from the satellite data can be used
+3. Preprocess data to obtain atmospherically corrected images alongside quality assurance information (aka. level 2 analysis read data)
+4. Merge spatially and temporally overlapping preprocessed data
+5. Classify pixels by applying linear spectral unmixing
+6. Time series analyses to obtain trends in vegetation dynamics to derive level 3 data
+7. Create mosaic and pyramid visualizations of the results
+8. Version reporting with MultiQC ([`MultiQC`](http://multiqc.info/))
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+<p align="center">
+    <img title="nf-core/rangeland diagram" src="docs/images/rangeland_diagram.png" width=95%>
+</p>
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
-
-First, prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
-
-```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-```
-
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
+To run, satellite imagery, water vapor data, a digital elevation model, endmember definitions, a datacube specification, and a area-of-interest specification are required as input data.
+Please refer to the [usage documentation](https://nf-co.re/rangeland/usage) for details on the input structure.
 
 Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
 nextflow run nf-core/rangeland \
    -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
+   --input <SATELLITE IMAGES> \
+   --dem <DIGITAL ELEVATION MODEL> \
+   --wvdb <WATER VAPOR DATA> \
+   --data_cube <DATA CUBE> \
+   --aoi <AREA OF INTEREST> \
+   --endmember <ENDMEMBER SPECIFICATION> \
    --outdir <OUTDIR>
 ```
 
@@ -76,11 +70,34 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/rangeland was originally written by Fabian Lehmann, David Frantz, Felix Kummer.
+The rangeland workflow was originally written by:
+
+- [Fabian Lehmann](https://github.com/Lehmann-Fabian)
+- [David Frantz](https://github.com/davidfrantz)
+
+The original workflow can be found on [github](https://github.com/CRC-FONDA/FORCE2NXF-Rangeland).
+
+Transformation to nf-core/rangeland was conducted by [Felix Kummer](https://github.com/Felix-Kummer).
+nf-core alignment started on the [nf-core branch of the original repository](https://github.com/CRC-FONDA/FORCE2NXF-Rangeland/tree/nf-core).
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+- [Fabian Lehmann](https://github.com/Lehmann-Fabian)
+- [Katarzyna Ewa Lewinska](https://github.com/kelewinska).
+
+## Acknowledgements
+
+This pipeline was developed and aligned with nf-core as part of the [Foundations of Workflows for Large-Scale Scientific Data Analysis (FONDA)](https://fonda.hu-berlin.de/) initiative.
+
+[![FONDA](docs/images/fonda_logo2_cropped.png)](https://fonda.hu-berlin.de/)
+
+FONDA can be cited as follows:
+
+> **The Collaborative Research Center FONDA.**
+>
+> Ulf Leser, Marcus Hilbrich, Claudia Draxl, Peter Eisert, Lars Grunske, Patrick Hostert, Dagmar Kainmüller, Odej Kao, Birte Kehr, Timo Kehrer, Christoph Koch, Volker Markl, Henning Meyerhenke, Tilmann Rabl, Alexander Reinefeld, Knut Reinert, Kerstin Ritter, Björn Scheuermann, Florian Schintke, Nicole Schweikardt, Matthias Weidlich.
+>
+> _Datenbank Spektrum_ 2021 doi: [10.1007/s13222-021-00397-5](https://doi.org/10.1007/s13222-021-00397-5)
 
 ## Contributions and Support
 
@@ -90,10 +107,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use nf-core/rangeland for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
+If you use nf-core/rangeland for your analysis, please cite it using the following doi: [10.5281/zenodo.14679189](https://doi.org/10.5281/zenodo.14679189)
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
@@ -104,3 +118,10 @@ You can cite the `nf-core` publication as follows:
 > Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
 >
 > _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
+
+This pipeline is based one the publication listed below.
+The publication can be cited as follows:
+
+> **FORCE on Nextflow: Scalable Analysis of Earth Observation Data on Commodity Clusters**
+>
+> [Lehmann, F., Frantz, D., Becker, S., Leser, U., Hostert, P. (2021). FORCE on Nextflow: Scalable Analysis of Earth Observation Data on Commodity Clusters. In CIKM Workshops.](https://www.informatik.hu-berlin.de/de/forschung/gebiete/wbi/research/publications/2021/force_nextflow.pdf/@@download/file/force_nextflow.pdf)
