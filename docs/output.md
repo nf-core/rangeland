@@ -28,14 +28,14 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - `untar/`
   - `<digital_elevation_dir>/`: directory containing symlinks to decompressed digital elevation input data.
-    Only present if a tar archive was provided for the digital elevation model.
-    Name of the directory derived from archive contents.
+    Only present if a tar archive was provided for the [digital elevation model input](usage.md#digital-elevation-model-dem).
+    The name of the directory is derived from archive contents.
   - `<water_vapor_dir>/`: directory containing symlinks to decompressed water vapor input data.
-    Only present if a tar archive was provided for water vapor data.
-    Name of the directory derived from archive contents.
+    Only present if a tar archive was provided for the [water vapor input](usage.md#water-vapor-database-wvdb).
+    The name of the directory is derived from archive contents.
   - `<satellite_data_dir>/`: directory containing symlinks to decompressed satellite imagery input data.
-    Only present if a tar archive was provided for satellite data.
-    Name of the directory derived from archive contents.
+    Only present if a tar archive was provided for the [satellite data input](usage.md#satellite-data).
+    The name of the directory is derived from archive contents.
 
 </details>
 
@@ -66,7 +66,7 @@ In the preparation step, usable tiles and pixels per tile are identified.
 These tiles are later used by other [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) submodules.
 
 [force-cube](https://force-eo.readthedocs.io/en/latest/components/auxilliary/cube.html#force-cube) computes the usable pixels for each [FORCE](https://force-eo.readthedocs.io/en/latest/index.html) tile.
-This computation is based on the specified are of interest and the resolution.
+This computation is based on the [specified are of interest](usage.md#area-of-interest-aoi) and the [resolution](usage.md#resolution).
 The resulting binary masks can be used to understand which pixels were discarded (e.g. because they only contain water).
 
 ### Preprocessing
@@ -84,7 +84,7 @@ The resulting binary masks can be used to understand which pixels were discarded
 
 Preprocessing consist of two parts, generating parameter files and actual preprocessing.
 
-The parameter files created through [force-parameter](https://force-eo.readthedocs.io/en/latest/components/auxilliary/parameter.html#force-parameter) can be viewed to understand concrete preprocessing techniques applied for a given tile.
+The parameter files created automatically and potentially [modified through `task.ext.args`](usage.md#configuring-force-modules) can be viewed to understand concrete preprocessing techniques applied for a given tile.
 
 Logs and analysis-ready-data (ARD) are generated using the [force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html) command.
 Logs can be consulted for debugging purposes.
@@ -101,7 +101,7 @@ Optional files may include:
 - Haze optimized transformation layer (ending with `HOT.tif`, FORCE parameter `OUTPUT_HOT`)
 - Overview thumbnails (ending with `OVV.jpg`, FORCE parameter `OUTPUT_OVV`)
 
-The optional outputs have to be enabled by [configuring the FORCE_PREPROCESS module](./usage.md#configuring-force-modules) and are not required to run the pipeline.
+The optional outputs have to be enabled by [configuring the FORCE_PREPROCESS module](usage.md#configuring-force-modules) and are not required to run the pipeline.
 
 :::note
 The `.tif` files are only published when the `--save_ard` parameter is set to `true` to avoid bloating the storage.
@@ -113,27 +113,20 @@ The `.tif` files are only published when the `--save_ard` parameter is set to `t
 <summary>Output files</summary>
 
 - `higher-level/<TILE>/`
-  - `param_files/`: Parameter files used in [force-higher-level](https://force-eo.readthedocs.io/en/latest/components/higher-level/index.html).
+  - `param_files/`: Parameter files used in [force-higher-level](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/index.html).
   - `trend_files/`: Symlinks to trend files that are the result of higher-level processing.
-    This may optionally contain the time series stack.
+    Output files are generated for every combination of index specified using the [`--indexes` parameter](usage.md#higher-level-processing-indexes) and product enabled through configuration (see list below)
 
 </details>
 
 Higher level processing consist of two parts, generating parameter files and performing various processing task as defined in the parameter files.
 
 Parameter files may be consulted to derive information about the specific processing task performed for a given tile.
-In this workflow, classification using spectral unmixing is performed.
-
-Spectral unmixing is a common technique to derive sub-pixel classification.
-Concretely, a set of endmember (provided using `--endmember`) is exploited to determine fractions of different types of vegetation, soil, ... for each pixel.
-
 Next, time series analysis for different vegetation characteristics is performed.
 
 The resulting trend files in `trend_files/` can be investigated to view trends for individual tiles.
-However, these files are only published if the `--save_tsa` parameter is set to `true`.
-
-Other output files may be enabled through [configuring FORCE modules](usage.md#configuring-force-modules).
-These are:
+These output files in `trend_files/` may be enabled through [configuring FORCE modules](usage.md#configuring-force-modules).
+The options are:
 
 - Time series stack (file names contain `TSS`, FORCE parameter `OUTPUT_TSS`)
 - Time series interpolation (file names contain `TSI`, FORCE parameter `OUTPUT_TSI`)
@@ -144,16 +137,20 @@ These are:
   - file names containing `TR<X>`, FORCE parameter `OUTPUT_TR<X>`
 - Extended Change, Aftereffect and Trend (CAT) analysis on time series folded by Year(X='Y')/Quarter(X='Q')/Month(X='M')/Week(X='W')/DOY time series(X='D')
   - file names containing `CA<X>`, FORCE parameter `OUTPUT_CA<X>`
-- Files for every polarmetric [configured](usage.md#configuring-force-modules) for the `POL` FORCE parameter and every index provided through [--indexes](usage.md#higher-level-processing-configuration)
+- Files for every polarmetric [configured](usage.md#configuring-force-modules) for the `POL` FORCE parameter and every index provided through [--indexes](./docs/usage.md#higher-level-processing-indexes)
   - For each of the chosen polarmetrics:
     - Polarmetric computation by year (file names containing `POL`, FORCE parameter `OUTPUT_POL`)
     - Linear trend analysis for polametrics (file names containing `TRO`, FORCE parameter `OUTPUT_TRO`)
     - Extended Change, Aftereffect, Trend (CAT) analysis (file names containing `CAO`, FORCE parameter `OUTPUT_CAO`)
-- Polar-transformed time series for every index provided through [--indexes](usage.md#higher-level-processing-configuration)
+- Polar-transformed time series for every index provided through [--indexes](./docs/usage.md#higher-level-processing-indexes)
   - file names containing `PCX` or `PCY`, FORCE parameter `OUTPUT_PCT`
 
 The concrete number of generated `.tif` files can increase significantly when the tool parameter `OUTPUT_EXPLODE` is set to `TRUE` (see: [Configuring FORCE modules](usage.md#configuring-force-modules)).
 In this case, every band within the resulting raster files is written as a individual `.tif` file.
+
+:::note
+The `.tif` files are only published when the `--save_tsa` parameter is set to `true` to avoid bloating the storage.
+:::
 
 ### Visualization
 
@@ -171,7 +168,7 @@ In this case, every band within the resulting raster files is written as a indiv
 Two types of common visualizations are generated in the last step of the pipeline.
 They are results of [force-mosaic](https://force-eo.readthedocs.io/en/latest/components/auxilliary/mosaic.html) and [force-pyramid](https://force-eo.readthedocs.io/en/latest/components/auxilliary/pyramid.html).
 Note that these visualizations do not add more logic to the workflow but rather rearrange the output files of higher-level-processing.
-Both visualizations are enabled by default but may be disabled in through configuration files or command line parameters.
+Both visualizations are enabled by default but may be disabled in through command line parameters.
 Thus, these outputs are optional.
 
 > [!NOTE]

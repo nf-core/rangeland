@@ -19,17 +19,16 @@
 
 ## Introduction
 
-**nf-core/rangeland** is a geographical best-practice analysis pipeline for remotely sensed imagery.
+**nf-core/rangeland** is a best-practice Earth Observation analysis pipeline for remotely sensed imagery.
 The pipeline processes satellite imagery alongside auxiliary data in multiple steps to arrive at a set of trend files related to land-cover changes. The main pipeline steps are:
 
-1. Read satellite imagery, digital elevation model (dem), endmember definition, water vapor database (wvdb), datacube definition and area of interest definition (aoi)
+1. Read satellite imagery, datacube definition, area of interest definition (aoi) and optional inputs such as digital elevation model (dem), endmember definition and water vapor database (wvdb)
 2. Generate allow list and analysis mask to determine which pixels from the satellite data can be used
 3. Preprocess data to obtain atmospherically corrected images alongside quality assurance information (aka. level 2 analysis read data)
-4. Merge spatially and temporally overlapping preprocessed data
-5. Classify pixels by applying linear spectral unmixing
-6. Time series analyses to obtain trends in vegetation dynamics to derive level 3 data
-7. Create mosaic and pyramid visualizations of the results
-8. Version reporting with MultiQC ([`MultiQC`](http://multiqc.info/))
+4. Merge preprocessed data based on spatially and temporally overlap
+5. Time series analyses to obtain trends in vegetation dynamics to derive level 3 data
+6. Create mosaic and pyramid visualizations of the results
+7. Version reporting with MultiQC ([`MultiQC`](http://multiqc.info/))
 
 <p align="center">
     <img title="nf-core/rangeland diagram" src="docs/images/rangeland_diagram.png" width=95%>
@@ -40,22 +39,36 @@ The pipeline processes satellite imagery alongside auxiliary data in multiple st
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-To run, satellite imagery, water vapor data, a digital elevation model, endmember definitions, a datacube specification, and a area-of-interest specification are required as input data.
+To run, satellite imagery, datacube specification, and a area-of-interest specification are required as input.
+It is highly recommended to also provide data water vapor data, a digital elevation model and a endmember definition.
 Please refer to the [usage documentation](https://nf-co.re/rangeland/usage) for details on the input structure.
 
 Now, you can run the pipeline using:
 
 ```bash
 nextflow run nf-core/rangeland \
-   -profile <docker/singularity/.../institute> \
-   --input <SATELLITE IMAGES> \
-   --dem <DIGITAL ELEVATION MODEL> \
-   --wvdb <WATER VAPOR DATA> \
-   --data_cube <DATA CUBE> \
-   --aoi <AREA OF INTEREST> \
-   --endmember <ENDMEMBER SPECIFICATION> \
-   --outdir <OUTDIR>
+    -profile <docker/singularity/.../institute> \
+    --input <SATELLITE IMAGES> \
+    --data_cube <DATA CUBE> \
+    --aoi <AREA OF INTEREST> \
+    --outdir <OUTDIR>
 ```
+
+The following parameters should be added for optimal results:
+
+```bash
+    --dem <DIGITAL ELEVATION MODEL> \
+    --wvdb <WATER VAPOR DATA> \
+    --endmember <ENDMEMBER SPECIFICATION>
+```
+
+To enable spectral unmixing, and use the endmember file, the `--indexes` parameters should contain `SMA`, e.g.:
+
+```bash
+    --indexes "SMA NDVI BLUE GREEN RED NIR SWIR1 SWIR2"
+```
+
+See the [usage documentation](./docs/usage.md#higher-level-processing-indexes) for more details on indexes.
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
@@ -83,7 +96,7 @@ nf-core alignment started on the [nf-core branch of the original repository](htt
 We thank the following people for their extensive assistance in the development of this pipeline:
 
 - [Fabian Lehmann](https://github.com/Lehmann-Fabian)
-- [Katarzyna Ewa Lewinska](https://github.com/kelewinska).
+- [Katarzyna Ewa Lewinska](https://github.com/kelewinska)
 
 ## Acknowledgements
 
