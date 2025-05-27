@@ -26,12 +26,12 @@ process FORCE_HIGHER_LEVEL {
 
     script:
     // paths
-    ardBasePath  = "ard/"
-    ardPath      = "$ardBasePath/${meta.id}/"
-    maskBasePath = "mask/"
-    maskPath     = "$maskBasePath/${meta.id}/"
-    trendPath    = "trend/"
-    provPath     = "prov/"
+    def ardBasePath  = "ard/"
+    def ardPath      = "$ardBasePath/${meta.id}/"
+    def maskBasePath = "mask/"
+    def maskPath     = "$maskBasePath/${meta.id}/"
+    def trendPath    = "trend/"
+    def provPath     = "prov/"
 
     // extract tile
     def xTile = meta.id[1..4]
