@@ -44,12 +44,31 @@ workflow RANGELAND {
     main:
 
     // checks whether provided input is within provided time range
-    def inRegion = {
-        Integer date  = it.simpleName.split("_")[3]    as Integer
+    def inRegion = { meta ->
+        Integer date  = meta['acquisition_date']          as Integer
         Integer start = params.start_date.replace('-','') as Integer
         Integer end   = params.end_date.replace('-','')   as Integer
 
-        return date >= start && date <= end
+        if (!(date >= start && date <= end)) {
+            log.info "Provided input ${meta['id']} is outside the timeframe specified by params.start_date($params.start_date) and params.end_date($params.end_date). The input is discarded."
+            return false
+        } else {
+            return true
+        }
+    }
+
+    def initMetaMap = {
+        String id          = it.simpleName
+        List   metaEntries = id.split("_")
+
+        Map meta = [
+            id               : id,
+            satellite        : metaEntries[0],
+            wrs_coordinates  : metaEntries[2],
+            acquisition_date : metaEntries[3]
+        ]
+
+        return meta
     }
 
     ch_versions      = Channel.empty()
@@ -62,14 +81,16 @@ workflow RANGELAND {
     wvdb           = Channel.empty()
     cube_file      = file( params.data_cube )
     aoi_file       = file( params.aoi )
-    endmember_file = file( params.endmember )
+    endmember_file = params.endmember ? file( params.endmember ) : []
+    aod            = params.aod       ? file ( params.aod   )    : []
+    coreg          = params.coreg     ? file ( params.coreg )    : []
 
     //
     // MODULE: untar
     //
     tar_versions = Channel.empty()
 
-    // Determine type of params.input and extract when neccessary
+    // Determine type of params.input and extract when necessary
     ch_input = Channel.of(file(params.input))
     ch_input.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
@@ -86,18 +107,19 @@ workflow RANGELAND {
     data = data
     .mix(ch_untared_inputs, ch_input_types.dirs)
     .map{ dirs -> file("${dirs.toUriString()}/*/*", type: 'dir', checkIfExists: true) }.flatten()
-    .filter{ dir -> inRegion(dir) }
-    .map { dir ->
+    .map{ dir ->
         log.debug "Found ${dir}"
         dir
     }
+    .map{ it -> tuple(initMetaMap(it), it) }
+    .filter{ meta, _it -> inRegion(meta) }
 
     data.ifEmpty {
         error "[nf-core/rangeland] ERROR: No directories found in input path or .tar file!"
     }
 
     // Determine type of params.dem and extract when neccessary
-    ch_dem = Channel.of(file(params.dem))
+    ch_dem = params.dem ? Channel.of(file(params.dem)) : Channel.from([])
     ch_dem.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -110,10 +132,10 @@ workflow RANGELAND {
     ch_untared_dem = UNTAR_DEM.out.untar.map{ it[1] }
     tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
 
-    dem = dem.mix(ch_untared_dem, ch_dem_types.dirs).first()
+    dem = params.dem ? dem.mix(ch_untared_dem, ch_dem_types.dirs).first() : Channel.value([])
 
     // Determine type of params.wvdb and extract when neccessary
-    ch_wvdb = Channel.of(file(params.wvdb))
+    ch_wvdb = params.wvdb ? Channel.of(file(params.wvdb)) : Channel.from([])
     ch_wvdb.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -126,7 +148,7 @@ workflow RANGELAND {
     ch_untared_wvdb = UNTAR_WVDB.out.untar.map{ it[1] }
     tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
 
-    wvdb = wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first()
+    wvdb = params.wvdb ? wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first() : Channel.value([])
 
     ch_versions = ch_versions.mix(tar_versions.first())
 
@@ -137,8 +159,10 @@ workflow RANGELAND {
         data,
         dem,
         wvdb,
+        aod,
         cube_file,
         aoi_file,
+        coreg,
         params.group_size,
         params.resolution
     )
@@ -157,8 +181,7 @@ workflow RANGELAND {
         params.sensors_level2,
         params.start_date,
         params.end_date,
-        params.indexes,
-        params.return_tss
+        params.indexes
     )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 

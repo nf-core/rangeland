@@ -8,7 +8,8 @@
 
 As most remote sensing workflows, this pipeline relies on numerous sources of data.
 In the following we will describe the required data and corresponding formats.
-Mandatory input data consists of satellite data, a digital elevation model, a water vapor database, a data_cube, an area-of-interest specification and an endmember definition.
+Mandatory input data consists of satellite data, a datacube and a area-of-interest specification.
+Recommended inputs include a digital elevation model, a water vapor database, and an endmember definition.
 
 ### Satellite data
 
@@ -18,7 +19,7 @@ Landsat satellites carry multispectral optical instruments that observe the land
 For information on Landsat, see [here](https://www.usgs.gov/core-science-systems/nli/landsat).
 
 Satellite data should be given as a path to a common root of all imagery.
-This is a common format used in geographic information systems, including FORCE, which is applied in this pipeline.
+This is a common format used in geographic information systems, including FORCE, which is used in this pipeline.
 The expected structure underneath the root directory should follow this example:
 
 ```tree
@@ -58,8 +59,8 @@ root
 └── ...
 ```
 
-Subdirectories of `root/` contain _path_ and _row_ information as commonly used for Landsat imagery.
-For example, the sub directory `181036/` contains imagery for path 18 and row 1036.
+Subdirectories of `root/` contain _path_ and _row_ information in [WRS-2 format](https://landsat.gsfc.nasa.gov/about/the-worldwide-reference-system/).
+For example, the sub directory `181036/` contains imagery for path 181 and row 036, which is located around the island of Crete, Greece.
 
 The next level of subdirectories contains the data for a specific day and from a specific source.
 Lets look at the example `LE07_L1TP_181036_20061217_20170105_01_T1`:
@@ -97,8 +98,8 @@ mkdir -p data
 force-level1-csd -s "LT04,LT05,LE07" -d "19840101,20061231" -c 0,70 meta/ data/ queue.txt vector/aoi.gpkg
 ```
 
-Note that an area-of-interest file has to be passed, see the area of interest section [Area of interest](#area-of-interest-aoi) for details.
-In addition, downloading data using FORCE may require access the machine-to-machine interfaces.
+Note that an area-of-interest file has to be passed, see the area of interest section [area of interest](#area-of-interest-aoi) for details.
+In addition, downloading data using FORCE may require access machine-to-machine interfaces.
 
 The satellite imagery can be given to the pipeline using:
 
@@ -111,39 +112,87 @@ These files will be automatically extracted.
 Providing tarballs can be specifically helpful when using foreign files as inputs.
 In this case, it is mandatory to have the structure explained above in place.
 In the example above `181036/` and `181035/` would need to be in the top level of the archive.
+If the structure of the tarball deviates, you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/) process, which is used to un-tar the tarball.
+An example for this can be found in the [test configuration](../conf/test.config).
+To only configure the UNTAR process for the satellite data, the `withName: "UNTAR_INPUT"` selector should be used.
+
+### Datacube
+
+The datacube definition stores information about the projection and reference grid of the generated datacube.
+For details see the [FORCE main paper](https://www.mdpi.com/2072-4292/11/9/1124) and the [datacube tutorial](https://force-eo.readthedocs.io/en/latest/howto/datacube.html).
+
+The datacube definition is passed as a single file using:
+
+```bash
+--data_cube '[path to datacube definition file]'
+```
+
+In order to quickly use the pipeline, the [datacube file used for the test profiles](https://github.com/nf-core/test-datasets/blob/36dfe5ffd2aa67a27b982168e142c35fdb9aa699/datacube/datacube-definition.prj) can be exploited.
+However, note that this file is tailored for the island of crete.
+The chosen projection maybe be suboptimal for other regions and the grid origin may be far away from the analysis extend.
+
+### Area of interest (AOI)
+
+The area of interest is a geospatial vector dataset that holds the boundary of the targeted area.
+The file must be a shapefile or geopackage vector file.
+
+AOI is passed as a single file using:
+
+```bash
+--aoi '[path to area of interest file]'
+```
 
 ### Digital Elevation Model (DEM)
 
-A DEM is necessary for topographic correction of Landsat data, and helps to distinguish between cloud, shadows and water surfaces.
+A DEM is beneficial for topographic correction of Landsat data, and helps to distinguish between cloud, shadows and water surfaces.
 Common sources for digital elevation models are [Copernicus](https://www.copernicus.eu/en),[Shuttle Radar Topography Mission](https://www2.jpl.nasa.gov/srtm/) (SRTM), or [Advanced Spaceborne Thermal Emission and Reflection Radiometer](https://asterweb.jpl.nasa.gov/) (ASTER).
 
-The pipeline expects a path to the digital elevation model root directory as the `--dem` parameter.
+The pipeline can be run with no DEM and with a DEM as a virtual raster.
+In the latter case, the DEM may be provided as a tarball.
+
+Users can specify the DEM through the `--dem` parameter, as described in the following sections.
+
+#### Running the pipeline without a DEM
+
+The pipeline can be executed without a DEM.
+However, such practice is strongly discourage as it significantly decreases the quality of topographic correction, atmospheric correction, and cloud detection during preprocessing.
+
+To run the pipeline without a DEM the `--dem` parameter has to be set to `null`, which is the default.
+
+#### DEM as a virtual raster
+
+The DEM may be provided as a virtual raster (`.vrt`).
+
+In this case, the pipeline expects a path to the digital elevation model root directory as the `--dem` parameter.
 Concretely, the expected structure would look like this:
 
 ```tree
-dem
+dem/
 ├── <dem_file>.vrt
 └── <dem_tifs>/
+    ├── dem1.tif
+    ├── dem2.tif
     └── ...
+
 ```
 
 Here, `<dem_file>.vrt` orchestrates the single digital elevation files in the `<dem_tifs>` directory.
 
-The DEM can be given to the pipeline using:
-
-```bash
---dem '[path to dem root]'
-```
+#### DEM as tarballs
 
 The digital elevation model can also be provide as a tarball (`.tar` or `.tar.gz` files).
 These files will be automatically extracted.
 Providing tarballs can be specifically helpful when using foreign files as inputs.
-In this case, it is mandatory to have the structure explained above in place.
-In the example above `<dem_file>.vrt` and `<dem_tifs>/` would need to be in the top level of the archive.
+
+In this case, the structures explained above should be in place inside the tarball.
+That is, in the DEM as a virtual raster case, `<dem_file>.vrt` and `<dem_tifs>/` would need to be located in the top level of the archive.
+If the structure of the tarball deviates, you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/) process, which is used to un-tar the tarball.
+An example for this can be found in the [test configuration](../conf/test.config).
+To only configure the UNTAR process for the DEM, the `withName: "UNTAR_DEM"` selector should be used.
 
 ### Water Vapor Database (WVDB)
 
-For atmospheric correction of Landsat data, information on the atmospheric water vapor content is necessary.
+For the atmospheric correction of Landsat data, the usage of information on the atmospheric water vapor content is recommended.
 
 The expected format for the wvdb is a directory containing daily water vapor measurements for the area of interest.
 
@@ -167,32 +216,59 @@ These files will be automatically extracted.
 Providing tarballs can be specifically helpful when using foreign files as inputs.
 In this case, it is mandatory to have the structure explained above in place.
 All files of the wvdb would need to be in the top level of the archive.
+If the structure of the tarball deviates, you may need to modify the option of the [UNTAR](https://nf-co.re/modules/untar/), which is used to un-tar the tarball.
+An example for this can be found in the [test configuration](../conf/test.config).
+To only configure the UNTAR process for the WVDB, the `withName: "UNTAR_WVDB"` selector should be used.
 
-### Datacube
+#### Running the pipeline without a water vapor database
 
-The datacube definition stores information about the projection and reference grid of the generated datacube.
-For details see the [FORCE main paper](https://www.mdpi.com/2072-4292/11/9/1124).
+It is possible to run the pipeline without providing a water vapor database.
+However, processing satellite imagery without water vapor information will have negative effects on the quality of the results, especially for Landsat TM sensor data.
+If no water vapor database is available, users may provide a [global value for water vapor](#running-the-pipeline-with-a-global-water-vapor-value).
 
-The datacube definition is passed as a single file using:
+To run the pipeline without a water vapor database, the `--wvdb` parameter should be set to `null`, which is the default.
 
-```bash
---data_cube '[path to datacube definition file]'
+#### Running the pipeline with a global water vapor value
+
+When no water vapor database is available, users can provide a global water vapor value in $\frac{g}{cm^2}$.
+This can be done by adding this to the Nextflow configuration file:
+
+```Groovy
+process {
+    withName: "FORCE_PREPROCESS" {
+        ext.args = { [ "WATER_VAPOR": "<Integer between 0 and 15 (inclusive)>"] }
+    }
+}
 ```
 
-### Area of interest (AOI)
+Here, the value of WATER_VAPOR represents the global water vapor value.
+The value should be in the range of 0 to 15 (inclusive).
 
-The area of interest is a geospatial vector dataset that holds the boundary of the targeted area.
-The file must be a shapefile or geopackage vector file.
+### Aerosol Optical Depth (AOD)
 
-AOI is passed as a single file using:
+The pipeline can be optionally run with custom AOD data.
+Note that the underlying [FORCE tool](https://force-eo.readthedocs.io/en/latest/index.html) will compute own AOD estimations.
+This may be disabled by configuring the preprocessing process.
+In that case, custom AOD values are used.
+Otherwise, custom AOD values are only used as a fallback, when internal AOD estimations fails to compute certain values.
+The usage of internal AOD estimations is recommended.
+
+Custom AOD values have to be provided as a lookup table.
+For detailed information on the format, refer to the [FORCE documentation](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/depend.html).
+
+Custom AOD data is passed to the pipeline using:
 
 ```bash
---aoi '[path to area of interest file]'
+--aod '[path to aod directory root]'
 ```
+
+By default, the pipeline does not run with a custom AOD (i.e. `--aod` is set to `null`).
 
 ### Endmember
 
 For unmixing satellite-observed reflectance into sub-pixel fractions of land surface components (e.g. photosynthetic active vegetation), endmember spectra are necessary.
+Spectral mixture analysis (SMA) is only performed when the [higher-level index](#higher-level-processing-index-configuration) parameter, `--indexes`; contains `SMA`.
+Therefore, this input is optional.
 
 An example endmember definition (developed in [Hostert et al. 2003](https://www.sciencedirect.com/science/article/abs/pii/S0034425703001457)) looks like this:
 
@@ -206,13 +282,24 @@ An example endmember definition (developed in [Hostert et al. 2003](https://www.
 ```
 
 Each colum represents a different endmember.
-Columns represent Landsat bands (R,G,B, NIR, SWIR1, SWIR2).
+rows represent Landsat bands (R,G,B, NIR, SWIR1, SWIR2).
 
 The endmembers can be passed in a single text-file using:
 
 ```bash
 --endmember '[path to endmember]'
 ```
+
+### Coregistration Near Infrared (NIR) Data
+
+If Sentinel-2 data is being processed, users may want to apply coregistration to improve geolocation accuracy.
+To do so, the `--coreg` parameter has to be used with a path to monthly NIR base images:
+
+```bash
+--coreg '[path to NIR base images directory]'
+```
+
+For more information on coregistration and the expected input format, refer to the [FORCE documentation](https://force-eo.readthedocs.io/en/latest/howto/coreg.html#).
 
 ## Pipeline configuration
 
@@ -221,8 +308,9 @@ Users can specify additional parameters to configure how the underlying workflow
 ### Sensor Levels
 
 Data from different satellites can be processed within this workflow.
-Users may wish to include different satellites in preprocessing and in higher level processing.
+Users may wish to include different satellites in higher level processing.
 All input imagery is preprocessed.
+
 The `--sensors_level2` parameter controls the selection of satellites for the higher level processing steps.
 The parameter has to follow the FORCE notation for level 2 processing.
 In particular, a string containing space-separated satellite identifiers has to be supplied (e.g. `"LND04 LND05"` to include Landsat 4 and 5).
@@ -263,7 +351,7 @@ A custom resolution can be passed using:
 --resolution '[integer]'
 ```
 
-The default value is `30`, as most Landsat satellite natively provide this resolution.
+The default value is `30`, as most Landsat satellites natively provide this resolution.
 
 ### Temporal extent
 
@@ -276,6 +364,8 @@ Start and end date can be passed using:
 --start_date '[YYYY-MM-DD]'
 --end_date   '[YYYY-MM-DD]'
 ```
+
+The default values are set to `1940-01-01` and `2099-12-31` so that no currently available data is excluded by default.
 
 ### Group size
 
@@ -290,12 +380,10 @@ The group size can be passed using:
 --group_size '[integer]'
 ```
 
-### Higher level processing configuration
+### Higher level processing indexes
 
 During the higher level processing stage, time series analyses of different satellite bands and indexes is performed.
 The concrete bands and indexes can be defined using the `--indexes` parameter.
-Spectral unmixing is performed in any case.
-Thus, passing an empty `--indexes` parameter will restrict time series analyses to the results of spectral unmixing.
 All available indexes can be found [here](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html) above the `INDEX` entry.
 The band/index codes need to be passed in a space-separated string.
 The default value, `--indexes = "NDVI BLUE GREEN RED NIR SWIR1 SWIR2"`, enables time series analyses for the NDVI index and the blue, green, red, near-infrared and both shortwave infrared bands.
@@ -308,31 +396,22 @@ The bands and indexes can be passed using:
 --indexes '[index-string]'
 ```
 
-In so cases, it may be desirable to analyze the the individual images in a time series.
-To enable such analysis, the parameter `--return_tss` can be used.
-If set to `true`, the pipeline will return time series stacks for each tile and band combination.
-The option is disabled by default to reduce the output size.
-
-The time series stack output can be enabled using:
-
-```bash
---return_tss true
-```
+If `--indexes` contains `SMA`, spectral mixture analysis is performed.
+In that case an [endmember file](#endmember) has to be provided.
 
 ### Visualization
 
 The workflow provides two types of results visualization and aggregation.
-The fine grained mosaic visualization contains all time series analyses results for all tiles in the original resolution.
+The fine grained mosaic visualization contains all time series analyses results for all tiles for one product of higher-level processing.
 Pyramid visualizations present a broad overview of the same data but at a lower resolution.
 Both visualizations can be enabled or disabled using the parameters `--mosaic_visualization` and `--pyramid_visualization`.
 By default, both visualization methods are enabled.
-Note that the mosaic visualization is required to be enabled when using the `test` and `test_full` profiles to allow the pipeline to check the correctness of its results.
 
-The visualizations can be enabled using:
+The visualizations can be disabled using:
 
 ```bash
---mosaic_visualization  = true
---pyramid_visualization = true
+--mosaic_visualization  = false
+--pyramid_visualization = false
 ```
 
 ### Intermediate data publishing
@@ -361,6 +440,79 @@ Publishing of all module's outputs can be disabled using:
 --publish_dir_enabled  = false
 ```
 
+### Configuring FORCE modules
+
+[force-l2ps](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/l2ps.html#) and the [force-higher-level, TSA submodule](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/index.html) perform the core analysis steps of this pipeline.
+Both tools allow for extensive configuration through parameter files.
+This pipelines automatically generates the appropriate parameter files, while also allowing users to configure certain entries of said parameter files.
+This is possible through the usage of the [`task.ext.args`](#custom-tool-arguments) property of the `FORCE_PREPROCESS` and `FORCE_HIGHER_LEVEL` processes for `force-l2ps` and `force-higher-level` (TSA submodule), respectively.
+These entries consist of key-value pairs.
+To change the value for a given key, a user would add the following to their Nextflow configuration file:
+
+```Groovy
+process {
+  withName: "<Process name>" {
+    ext.args = { ["<Key>": <value>] }
+  }
+}
+```
+
+Note that `ext.args` is a list that may contain an arbitrary amount of key-value pairs.
+
+For example, to change the cloud buffer and shadow buffer in the preprocessing step (`force-l2ps`) to 400m and 100m, this code would be placed in the configuration file:
+
+```Groovy
+process {
+  withName: "FORCE_PREPROCESS" {
+    ext.args = { ["CLOUD_BUFFER": 400, "SHADOW_BUFFER": 100] }
+  }
+}
+```
+
+For a comprehensive list of parameters see the FORCE documentation on [force-l2ps parameterization](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/param.html#l2-param) and [force-higher-level (TSA) parameterization](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html).
+
+The following FORCE parameters can _not_ be set through `task.ext.args` in preprocessing (for the `FORCE_PREPROCESS` process):
+
+- `FILE_QUEUE`: This pipeline processes one image per process, which does not require a queue for input files.
+- `DIR_LEVEL2`, `DIR_LOG`, `DIR_PROVENANCE`, `DIR_TEMP`: FORCE directories must be defined within the process working directory.
+- `FILE_DEM`: Set through process's input channels and derived from `params.dem`, see [digital elevation model](#digital-elevation-model-dem) for details.
+- `FILE_TILE`: Set through the process's input channels.
+- `TILE_SIZE`: Derived from datacube input channel, which is created based on the [datacube input](#datacube).
+- `BLOCK_SIZE`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `ORIGIN_LON`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `ORIGIN_LAT`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `PROJECTION`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `WVP`: Set through process's input channels and derived from `--wvdb`, see [water vapor database](#water-vapor-database-wvdb) for details.
+- `DIR_AOD`: Set through process's input channels and derived from `--aod`, see [aerosol optical depth](#aerosol-optical-depth-aod) for details.
+- `DIR_COREG_BASE`: Set through process's input channels and derived from `--coreg`, see [coregistration](#coregistration-near-infrared-nir-data) for details.
+- `FILE_AOI`: Set through process's input channels and derived from `--aoi`, see [area of interest](#area-of-interest-aoi) for details.
+
+In addition, the `DO_TOPO` FORCE parameter will only be considered when the [pipeline is executed with a digital elevation model](#digital-elevation-model-dem).
+
+The following FORCE parameters can _not_ be set through `task.ext.args` in higher-level processing (for the `FORCE_HIGHER_LEVEL` process):
+
+- `DIR_LOWER`, `DIR_HIGHER`, `DIR_PROVENANCE`: FORCE directories must be defined within the process working directory.
+- `DIR_MASK`, `BASE_MASK`: Masking parameters are derived from the input channels.
+- `OUTPUT_SUBFOLDERS`: The output directory structure is handled through Nextflow.
+- `PRETTY_PROGRESS`: Avoid interference of FORCE progress updates with Nextflow logging.
+- `X_TILE_RANGE`, `X_TILE_RANGE`: Derived from input data.
+- `FILE_TILE`: Set through input channels.
+- `RESOLUTION`: Set through [`--resolution`](#resolution).
+- `SENSORS`: Set through [`--sensors_level2`](#sensor-levels).
+- `DATE_RANGE`: Set through [`--start_date` and `--end_date`](#temporal-extent).
+- `INDEX`: Set through [`--indexes`](#higher-level-processing-configuration).
+- `FILE_ENDMEM`: Set through process's input channels and derived from `--endmember`, see [endmember](#endmember) for details.
+
+The default values defined in the FORCE documentation are automatically used if no other values were supplied.
+
+> [!WARNING]
+> Please refer to the FORCE documentation as mentioned above to understand the impact of different parameters.
+> Certain combinations of parameters may break FORCE or the pipeline.
+>
+> The `OUTPUT_FORMAT` parameters and `FILE_OUTPUT_OPTIONS` should be modified with caution.
+> The pipeline expects both modules to return `.tif` files. Other output formats will break the pipeline.
+> In addition, certain combinations of these parameters may require custom containers (e.g. container with COG GDAL drivers for `OUTPUT_FORMAT` = `COG`.)
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
@@ -370,6 +522,8 @@ nextflow run nf-core/rangeland -profile docker --input <SATELLITE_DATA_DIR> --de
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+
+The parameters `--dem`, `--wvdb` and `--endmember` are optional, but they improve the quality of results significantly or enable additional functionality.
 
 Note that the pipeline will create the following files in your working directory:
 

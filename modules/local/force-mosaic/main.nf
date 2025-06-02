@@ -1,16 +1,16 @@
 process FORCE_MOSAIC{
-    tag { product }
+    tag { meta.id }
     label 'process_low'
 
     container "nf-core/force:3.8.01"
 
     input:
-    tuple val(product), path('trend/*')
+    tuple val(meta), path('trend/*')
     path 'trend/datacube-definition.prj'
 
     output:
-    tuple val(product), path('trend/*'), emit: trend_files
-    path "versions.yml"                , emit: versions
+    tuple val(meta), path('trend/*'), emit: trend_files
+    path "versions.yml"             , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -19,8 +19,8 @@ process FORCE_MOSAIC{
     """
     move_file() {
         path=\$1
-        mkdir -p \${path%_$product*}
-        mv \$path \${path%_$product*}/${product}.\${path#*.}
+        mkdir -p \${path%_$meta.id*}
+        mv \$path \${path%_$meta.id*}/${meta.id}.\${path#*.}
     }
     export -f move_file
 
@@ -33,7 +33,7 @@ process FORCE_MOSAIC{
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force: \$(force-mosaic -v)
     END_VERSIONS
     """
 

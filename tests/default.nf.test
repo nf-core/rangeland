@@ -1,6 +1,6 @@
 nextflow_pipeline {
 
-    name "Test pipeline with default test profile settings "
+    name "Test pipeline with default test profile settings"
     script "../main.nf"
 
     test("Params: test profile default") {

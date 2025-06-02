@@ -12,7 +12,7 @@ process MERGE {
 
     output:
     tuple val(id), path("*.tif"), emit: tiles_merged
-    path "versions.yml"             , emit: versions
+    path "versions.yml"         , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -49,7 +49,7 @@ process MERGE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        force: \$(force -v | sed 's/.*: //')
+        force:  \$(force-mdcp -v)
         r-base: \$(echo \$(R --version 2>&1) | sed 's/^.*R version //; s/ .*\$//')
         raster: \$(Rscript -e "library(raster); cat(as.character(packageVersion('raster')))")
     END_VERSIONS
