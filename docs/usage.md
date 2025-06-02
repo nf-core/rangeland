@@ -119,7 +119,7 @@ To only configure the UNTAR process for the satellite data, the `withName: "UNTA
 ### Datacube
 
 The datacube definition stores information about the projection and reference grid of the generated datacube.
-For details see the [FORCE main paper](https://www.mdpi.com/2072-4292/11/9/1124) and the [datacube tutorila](https://force-eo.readthedocs.io/en/latest/howto/datacube.html).
+For details see the [FORCE main paper](https://www.mdpi.com/2072-4292/11/9/1124) and the [datacube tutorial](https://force-eo.readthedocs.io/en/latest/howto/datacube.html).
 
 The datacube definition is passed as a single file using:
 
