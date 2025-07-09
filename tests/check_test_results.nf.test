@@ -29,6 +29,8 @@ nextflow_process {
 
                 peak_change_ref = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/peak_chg_ref.tif'
                 peak_yoc_ref    = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/peak_yoc_ref.tif'
+
+                outdir = "$outputDir"
             }
 
             process {
@@ -46,7 +48,10 @@ nextflow_process {
         }
 
         then {
-            assert process.success
+            assertAll(
+                { assert process.success }
+            )
+
         }
 
     }

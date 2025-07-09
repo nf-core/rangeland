@@ -3,7 +3,7 @@ nextflow_pipeline {
     name "Test pipeline with default test profile settings"
     script "../main.nf"
 
-    test("-profile dpcker,test") {
+    test("-profile docker,test") {
 
         when {
             params {
@@ -24,13 +24,7 @@ nextflow_pipeline {
                     // All stable path name, with a relative path
                     stable_name
                 ).match() }
-
             )
-            assert snapshot(
-                workflow.trace.succeeded().size(),
-                stable_name,
-            ).match()
-
         }
 
     }
