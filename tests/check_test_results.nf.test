@@ -1,0 +1,54 @@
+// This is a pipeline level-test, not a module test, even though the main script is a module.
+// The entire workflow is executed in the setup scope using the same config as the test profile.
+// Afterwards, a single module is executed in the when scope to ensure that the pipeline generated correct results.
+
+nextflow_process {
+
+    name "Check the correctness of the pipeline results using the test profile"
+    script "../modules/local/check_results/main.nf"
+    process "CHECK_RESULTS"
+
+    test("Checking pipeline results for: -profile test") {
+
+        setup {
+            run("NFCORE_RANGELAND") {
+                script "../main.nf"
+                workflow {}
+            }
+
+        }
+
+        when {
+            params {
+                // Reference data
+                woody_change_ref = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/woody_cover_chg_ref.tif'
+                woody_yoc_ref    = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/woody_cover_yoc_ref.tif'
+
+                herbaceous_change_ref = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/herbaceous_cover_chg_ref.tif'
+                herbaceous_yoc_ref    = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/herbaceous_cover_yoc_ref.tif'
+
+                peak_change_ref = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/peak_chg_ref.tif'
+                peak_yoc_ref    = 'https://github.com/nf-core/test-datasets/raw/rangeland/reference/peak_yoc_ref.tif'
+            }
+
+            process {
+                """
+                // inputs for CHECK_RESULTS
+                input[0] = NFCORE_RANGELAND.out.mosaic.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
+                input[1] = file( params.woody_change_ref )
+                input[2] = file( params.woody_yoc_ref )
+                input[3] = file( params.herbaceous_change_ref )
+                input[4] = file( params.herbaceous_yoc_ref )
+                input[5] = file( params.peak_change_ref )
+                input[6] = file( params.peak_yoc_ref )
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+}

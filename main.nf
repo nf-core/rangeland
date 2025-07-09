@@ -29,18 +29,18 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_rang
 //
 workflow NFCORE_RANGELAND {
 
-    take:
-    samplesheet // channel: samplesheet read in from --input
-
     main:
 
     //
     // WORKFLOW: Run pipeline
     //
-    RANGELAND (
-        samplesheet
-    )
+    RANGELAND ()
+
     emit:
+    level2_ard     = RANGELAND.out.level2_ard
+    mosaic         = RANGELAND.out.mosaic
+    pyramid        = RANGELAND.out.pyramid
+    trends         = RANGELAND.out.trends
     multiqc_report = RANGELAND.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
@@ -67,9 +67,8 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    NFCORE_RANGELAND (
-        PIPELINE_INITIALISATION.out.samplesheet
-    )
+    NFCORE_RANGELAND ()
+
     //
     // SUBWORKFLOW: Run completion tasks
     //
