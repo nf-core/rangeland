@@ -2,7 +2,9 @@ lint:
   files_exist:
     - conf/igenomes.config
     - conf/igenomes_ignored.config
-nf_core_version: 3.2.1
+  nf_test_content:
+    - tests/check_test_results.nf.test
+nf_core_version: 3.3.2
 repository_type: pipeline
 template:
   author: Fabian Lehmann, David Frantz, Felix Kummer
