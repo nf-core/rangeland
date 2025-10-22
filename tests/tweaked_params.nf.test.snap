@@ -63,8 +63,9 @@
                 "higher-level/X0109_Y0102/trend_files/X0109_Y0102_19870101-19881231_001-365_HL_TSA_LNDLG_SW2_VSA-TRO.tif",
                 "multiqc",
                 "multiqc/multiqc_data",
-                "multiqc/multiqc_data/BETA-multiqc.parquet",
+                "multiqc/multiqc_data/llms-full.txt",
                 "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
@@ -752,8 +753,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
+            "nextflow": "25.04.8"
         },
-        "timestamp": "2025-07-09T13:36:48.495771811"
+        "timestamp": "2025-10-22T12:00:27.87196761"
     }
 }
