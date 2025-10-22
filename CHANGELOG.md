@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [25](https://github.com/nf-core/rangeland/pull/25) Template update for nf-core/tools v3.2.1
 - [26](https://github.com/nf-core/rangeland/pull/26) Preparation for FORCE nf-core modules
 - [29](https://github.com/nf-core/rangeland/pull/29) Template update for nf-core/tools v3.3.2
+- [30](https://github.com/nf-core/rangeland/pull/30) Template update for nf-core/tools v3.4.1
 
 ### `Fixed`
 
