@@ -71,14 +71,14 @@ workflow RANGELAND {
         return meta
     }
 
-    ch_versions      = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    ch_versions      = channel.empty()
+    ch_multiqc_files = channel.empty()
     //
     // Stage and validate input files
     //
-    data           = Channel.empty()
-    dem            = Channel.empty()
-    wvdb           = Channel.empty()
+    data           = channel.empty()
+    dem            = channel.empty()
+    wvdb           = channel.empty()
     cube_file      = file( params.data_cube )
     aoi_file       = file( params.aoi )
     endmember_file = params.endmember ? file( params.endmember ) : []
@@ -88,10 +88,10 @@ workflow RANGELAND {
     //
     // MODULE: untar
     //
-    tar_versions = Channel.empty()
+    tar_versions = channel.empty()
 
     // Determine type of params.input and extract when necessary
-    ch_input = Channel.of(file(params.input))
+    ch_input = channel.of(file(params.input))
     ch_input.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -119,7 +119,7 @@ workflow RANGELAND {
     }
 
     // Determine type of params.dem and extract when neccessary
-    ch_dem = params.dem ? Channel.of(file(params.dem)) : Channel.from([])
+    ch_dem = params.dem ? channel.of(file(params.dem)) : channel.from([])
     ch_dem.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -132,10 +132,10 @@ workflow RANGELAND {
     ch_untared_dem = UNTAR_DEM.out.untar.map{ it[1] }
     tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
 
-    dem = params.dem ? dem.mix(ch_untared_dem, ch_dem_types.dirs).first() : Channel.value([])
+    dem = params.dem ? dem.mix(ch_untared_dem, ch_dem_types.dirs).first() : channel.value([])
 
     // Determine type of params.wvdb and extract when neccessary
-    ch_wvdb = params.wvdb ? Channel.of(file(params.wvdb)) : Channel.from([])
+    ch_wvdb = params.wvdb ? channel.of(file(params.wvdb)) : channel.from([])
     ch_wvdb.branch { it
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
@@ -148,7 +148,7 @@ workflow RANGELAND {
     ch_untared_wvdb = UNTAR_WVDB.out.untar.map{ it[1] }
     tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
 
-    wvdb = params.wvdb ? wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first() : Channel.value([])
+    wvdb = params.wvdb ? wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first() : channel.value([])
 
     ch_versions = ch_versions.mix(tar_versions.first())
 
@@ -190,7 +190,7 @@ workflow RANGELAND {
     //
     // Collate and save software versions
     //
-    def topic_versions = Channel.topic("versions")
+    def topic_versions = channel.topic("versions")
         .distinct()
         .branch { entry ->
             versions_file: entry instanceof Path

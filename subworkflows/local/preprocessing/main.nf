@@ -40,7 +40,7 @@ workflow PREPROCESSING {
                 .groupTuple( remainder : true, size : group_size ).map{ [ it[0], it[1].flatten() ] }
         }
 
-        ch_versions = Channel.empty()
+        ch_versions = channel.empty()
 
         FORCE_GENERATE_TILE_ALLOW_LIST( aoi_file, cube_file )
         ch_versions = ch_versions.mix(FORCE_GENERATE_TILE_ALLOW_LIST.out.versions)

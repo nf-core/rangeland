@@ -18,14 +18,14 @@ workflow HIGHER_LEVEL {
 
     main:
 
-        ch_versions = Channel.empty()
+        ch_versions = channel.empty()
 
         // main processing
         FORCE_HIGHER_LEVEL(
             tiles_and_masks,
             cube_file,
             endmember_file,
-            Channel.value([]),
+            channel.value([]),
             resolution,
             sensors_level2,
             start_date,
@@ -58,14 +58,14 @@ workflow HIGHER_LEVEL {
                                                             .map{ product, images -> [[id:product], images] }
 
         // visualizations
-        mosaic_files = Channel.empty()
+        mosaic_files = channel.empty()
         if (mosaic_visualization) {
             FORCE_MOSAIC( trend_files_mosaic, cube_file )
             mosaic_files = FORCE_MOSAIC.out.trend_files
             ch_versions = ch_versions.mix(FORCE_MOSAIC.out.versions.first())
         }
 
-        pyramid_files = Channel.empty()
+        pyramid_files = channel.empty()
         if (pyramid_visualization) {
             FORCE_PYRAMID( trend_files_pyramid )
             pyramid_files = FORCE_PYRAMID.out.trends
