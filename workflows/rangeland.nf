@@ -43,34 +43,6 @@ workflow RANGELAND {
 
     main:
 
-    // checks whether provided input is within provided time range
-    def inRegion = { meta ->
-        Integer date  = meta['acquisition_date']          as Integer
-        Integer start = params.start_date.replace('-','') as Integer
-        Integer end   = params.end_date.replace('-','')   as Integer
-
-        if (!(date >= start && date <= end)) {
-            log.info "Provided input ${meta['id']} is outside the timeframe specified by params.start_date($params.start_date) and params.end_date($params.end_date). The input is discarded."
-            return false
-        } else {
-            return true
-        }
-    }
-
-    def initMetaMap = {
-        String id          = it.simpleName
-        List   metaEntries = id.split("_")
-
-        Map meta = [
-            id               : id,
-            satellite        : metaEntries[0],
-            wrs_coordinates  : metaEntries[2],
-            acquisition_date : metaEntries[3]
-        ]
-
-        return meta
-    }
-
     ch_versions      = channel.empty()
     ch_multiqc_files = channel.empty()
     //
@@ -92,7 +64,7 @@ workflow RANGELAND {
 
     // Determine type of params.input and extract when necessary
     ch_input = channel.of(file(params.input))
-    ch_input.branch { it
+    ch_input.branch { it ->
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
         dirs: true
@@ -101,7 +73,7 @@ workflow RANGELAND {
     .set{ ch_input_types }
 
     UNTAR_INPUT(ch_input_types.archives)
-    ch_untared_inputs = UNTAR_INPUT.out.untar.map{ it[1] }
+    ch_untared_inputs = UNTAR_INPUT.out.untar.map{ it -> it[1] }
     tar_versions = tar_versions.mix(UNTAR_INPUT.out.versions)
 
     data = data
@@ -120,7 +92,7 @@ workflow RANGELAND {
 
     // Determine type of params.dem and extract when neccessary
     ch_dem = params.dem ? channel.of(file(params.dem)) : channel.from([])
-    ch_dem.branch { it
+    ch_dem.branch { it ->
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
         dirs: true
@@ -129,14 +101,14 @@ workflow RANGELAND {
     .set{ ch_dem_types }
 
     UNTAR_DEM(ch_dem_types.archives)
-    ch_untared_dem = UNTAR_DEM.out.untar.map{ it[1] }
+    ch_untared_dem = UNTAR_DEM.out.untar.map{ it -> it[1] }
     tar_versions = tar_versions.mix(UNTAR_DEM.out.versions)
 
     dem = params.dem ? dem.mix(ch_untared_dem, ch_dem_types.dirs).first() : channel.value([])
 
     // Determine type of params.wvdb and extract when neccessary
     ch_wvdb = params.wvdb ? channel.of(file(params.wvdb)) : channel.from([])
-    ch_wvdb.branch { it
+    ch_wvdb.branch { it ->
         archives : it.name.endsWith('tar') || it.name.endsWith('tar.gz')
             return tuple([:], it)
         dirs: true
@@ -145,7 +117,7 @@ workflow RANGELAND {
     .set{ ch_wvdb_types }
 
     UNTAR_WVDB(ch_wvdb_types.archives)
-    ch_untared_wvdb = UNTAR_WVDB.out.untar.map{ it[1] }
+    ch_untared_wvdb = UNTAR_WVDB.out.untar.map{ it -> it[1] }
     tar_versions = tar_versions.mix(UNTAR_WVDB.out.versions)
 
     wvdb = params.wvdb ? wvdb.mix(ch_untared_wvdb, ch_wvdb_types.dirs).first() : channel.value([])
@@ -185,7 +157,7 @@ workflow RANGELAND {
     )
     ch_versions = ch_versions.mix(HIGHER_LEVEL.out.versions)
 
-    grouped_trend_data = HIGHER_LEVEL.out.mosaic.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
+    grouped_trend_data = HIGHER_LEVEL.out.mosaic.map{ it -> it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
 
     //
     // Collate and save software versions
@@ -266,6 +238,35 @@ workflow RANGELAND {
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 
 }
+
+    // Function that checks whether provided input is within provided time range
+    def inRegion(meta) {
+        Integer date  = meta['acquisition_date']          as Integer
+        Integer start = params.start_date.replace('-','') as Integer
+        Integer end   = params.end_date.replace('-','')   as Integer
+
+        if (!(date >= start && date <= end)) {
+            log.info "Provided input ${meta['id']} is outside the timeframe specified by params.start_date($params.start_date) and params.end_date($params.end_date). The input is discarded."
+            return false
+        } else {
+            return true
+        }
+    }
+
+    // Function to initialize the meta map based on the scene's name (which encodes metadata)
+    def initMetaMap(scene) {
+        String id          = scene.simpleName
+        List   metaEntries = id.split("_")
+
+        Map meta = [
+            id               : id,
+            satellite        : metaEntries[0],
+            wrs_coordinates  : metaEntries[2],
+            acquisition_date : metaEntries[3]
+        ]
+
+        return meta
+    }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
