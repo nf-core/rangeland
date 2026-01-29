@@ -18,28 +18,6 @@ workflow PREPROCESSING {
 
     main:
 
-        // Closure to extract the parent directory of a file
-        def extractDirectory = { it.parent.toString().substring(it.parent.toString().lastIndexOf('/') + 1 ) }
-
-        // Closure to split chipped imagery (from preprocessing), add tile id to meta map and make meta.id unique again
-        def extractTile = { ch ->
-            ch.flatMap { it[1] } // strip meta map for now, will be reintroduced after merging
-            .map{ path ->
-                def id = "${extractDirectory(path)}_${path.simpleName}"
-                [id, path]
-            }
-        }
-
-        // Closure that finds and groups files to merge
-        def groupForMerge = { ch ->
-            ch.filter{ x -> x[1].size() > 1 }
-                .map{ [ it[0].substring( 0, 11 ), it[1] ] }
-                // Sort to ensure the same groups if you use resume
-                .toSortedList{ a,b -> a[1][0].simpleName <=> b[1][0].simpleName }
-                .flatMap{it}
-                .groupTuple( remainder : true, size : group_size ).map{ [ it[0], it[1].flatten() ] }
-        }
-
         ch_versions = channel.empty()
 
         FORCE_GENERATE_TILE_ALLOW_LIST( aoi_file, cube_file )
@@ -64,8 +42,8 @@ workflow PREPROCESSING {
         qai_tiles = qai_tiles.groupTuple()
 
         // Find tiles to merge
-        boa_tiles_to_merge = groupForMerge(boa_tiles)
-        qai_tiles_to_merge = groupForMerge(qai_tiles)
+        boa_tiles_to_merge = groupForMerge(boa_tiles, group_size)
+        qai_tiles_to_merge = groupForMerge(qai_tiles, group_size)
 
         // Find tiles with only one file
         boa_tiles_done = boa_tiles.filter{ x -> x[1].size() == 1 }.map{ x -> [ x[0].substring( 0, 11 ), x[1][0] ] }
@@ -80,12 +58,36 @@ workflow PREPROCESSING {
         // Concat merged list with single images, group by tile over time
         boa_tiles = MERGE_BOA.out.tiles_merged
                         .concat( boa_tiles_done ).groupTuple()
-                        .map { [[id:it[0]], it[1].flatten() ] }
+                        .map { it -> [[id:it[0]], it[1].flatten() ] }
         qai_tiles = MERGE_QAI.out.tiles_merged
                         .concat( qai_tiles_done ).groupTuple()
-                        .map { [[id:it[0]], it[1].flatten() ] }
+                        .map { it-> [[id:it[0]], it[1].flatten() ] }
 
     emit:
         tiles_and_masks = boa_tiles.join( qai_tiles ).join( masks )
         versions        = ch_versions
+}
+
+// Function to extract the parent directory of a file
+def extractDirectory(dir) {
+    dir.parent.toString().substring(dir.parent.toString().lastIndexOf('/') + 1 )
+}
+
+ // Function to split chipped imagery (from preprocessing), add tile id to meta map and make meta.id unique again
+def extractTile(ch) {
+    ch.flatMap { it -> it[1] } // strip meta map for now, will be reintroduced after merging
+    .map{ path ->
+        def id = "${extractDirectory(path)}_${path.simpleName}"
+        [id, path]
+    }
+}
+
+// Function that finds and groups files to merge
+def groupForMerge(ch, groupSize) {
+    ch.filter{ x -> x[1].size() > 1 }
+        .map{ it -> [ it[0].substring( 0, 11 ), it[1] ] }
+        // Sort to ensure the same groups if you use resume
+        .toSortedList{ a,b -> a[1][0].simpleName <=> b[1][0].simpleName }
+        .flatMap{ it -> it }
+        .groupTuple( remainder : true, size : groupSize ).map{ it -> [ it[0], it[1].flatten() ] }
 }
