@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [30](https://github.com/nf-core/rangeland/pull/30) Template update for nf-core/tools v3.4.1
 - [32](https://github.com/nf-core/rangeland/pull/32) Template update for nf-core/tools v3.5.1
 - [33](https://github.com/nf-core/rangeland/pull/33) Nextflow strict syntax update
+- [34](https://github.com/nf-core/rangeland/pull/34) Update nf-core subworkflows
 
 ### `Fixed`
 
