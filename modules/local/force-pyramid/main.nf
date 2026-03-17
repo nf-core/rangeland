@@ -2,7 +2,7 @@ process FORCE_PYRAMID {
     tag { meta.id }
     label 'process_low'
 
-    container "nf-core/force:3.8.01"
+    container "docker.io/davidfrantz/force:3.9.02"
 
     input:
     tuple val(meta), path(image)

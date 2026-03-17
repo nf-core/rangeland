@@ -3,11 +3,11 @@ process FORCE_HIGHER_LEVEL {
     label 'process_medium'
     label 'error_retry'
 
-    container "nf-core/force:3.8.01"
+    container "docker.io/davidfrantz/force:3.9.02"
 
     input:
     tuple val(meta), path(boa), path(qai), path(mask)
-    path 'ard/datacube-definition.prj'
+    path cube
     path endmember
     path allow_list
     val resolution
@@ -53,6 +53,7 @@ process FORCE_HIGHER_LEVEL {
     def outputOptions      = task.ext.args?.getAt("FILE_OUTPUT_OPTIONS")   ? "FILE_OUTPUT_OPTIONS = ${task.ext.args["FILE_OUTPUT_OPTIONS"]}"     : "FILE_OUTPUT_OPTIONS = NULL"
     def outputExplode      = task.ext.args?.getAt("OUTPUT_EXPLODE")        ? "OUTPUT_EXPLODE = ${task.ext.args["OUTPUT_EXPLODE"]}"               : "OUTPUT_EXPLODE = FALSE"
     def outputSubDirs      = "OUTPUT_SUBFOLDERS = FALSE"
+    def failIfEmpty        = task.ext.args?.getAt("FAIL_IF_EMPTY")         ? "FAIL_IF_EMPTY = ${task.ext.args["FAIL_IF_EMPTY"]}"                 : "FAIL_IF_EMPTY = FALSE"
 
     // Parallel processing
     def nThreadRead        = task.ext.args?.getAt("NTHREAD_READ")          ? "NTHREAD_READ = ${task.ext.args["NTHREAD_READ"]}"                   : "NTHREAD_READ = 8"
@@ -65,13 +66,14 @@ process FORCE_HIGHER_LEVEL {
     def xTilePrm           = "X_TILE_RANGE = $xTile $xTile"
     def yTilePrm           = "Y_TILE_RANGE = $yTile $yTile"
     def fileTile           = allow_list                                    ? "FILE_TILE = $allow_list"                                           : "FILE_TILE = NULL"
-    def blockSize          = task.ext.args?.getAt("BLOCK_SIZE")            ? "BLOCK_SIZE = ${task.ext.args["BLOCK_SIZE"]}"                       : "BLOCK_SIZE = 0"
+    def chunkSize          = task.ext.args?.getAt("CHUNK_SIZE")            ? "CHUNK_SIZE = ${task.ext.args["CHUNK_SIZE"]}"                       : "CHUNK_SIZE = 0 0"
     def res                = "RESOLUTION = $resolution"
     def reducePSF          = task.ext.args?.getAt("REDUCE_PSF")            ? "REDUCE_PSF = ${task.ext.args["REDUCE_PSF"]}"                       : "REDUCE_PSF = FALSE"
     def useL2Improph       = task.ext.args?.getAt("USE_L2_IMPROPHE")       ? "USE_L2_IMPROPHE = ${task.ext.args["USE_L2_IMPROPHE"]}"             : "USE_L2_IMPROPHE = FALSE"
 
     // Sensor allow list
     def sensors            = "SENSORS $sensors_level2"
+    def targetSensor       = task.ext.args?.getAt("TARGET_SENSOR")         ? "TARGET_SENSOR = ${task.ext.args["TARGET_SENSOR"]}"                 : "TARGET_SENSOR = LNDLG"
     def productTypeMain    = task.ext.args?.getAt("PRODUCT_TYPE_MAIN")     ? "PRODUCT_TYPE_MAIN = ${task.ext.args["PRODUCT_TYPE_MAIN"]}"         : "PRODUCT_TYPE_MAIN = BOA"
     def productTypeQuality = task.ext.args?.getAt("PRODUCT_TYPE_QUALITY")  ? "PRODUCT_TYPE_QUALITY = ${task.ext.args["PRODUCT_TYPE_QUALITY"]}"   : "PRODUCT_TYPE_QUALITY = QAI"
     def spectralAdjust     = task.ext.args?.getAt("SPECTRAL_ADJUST")       ? "SPECTRAL_ADJUST = ${task.ext.args["SPECTRAL_ADJUST"]}"             : "SPECTRAL_ADJUST = FALSE"
@@ -170,7 +172,16 @@ process FORCE_HIGHER_LEVEL {
     mkdir -p $ardPath
     mv *.tif $ardPath
 
+
+    # set chunk size
+    CHUNKSIZE='${chunkSize}'
+    if [[ "\$CHUNKSIZE" == "CHUNK_SIZE = 0 0" ]]; then
+        TILESIZE=\$(sed '6q;d' $cube)
+        CHUNKSIZE="CHUNK_SIZE = \$TILESIZE"
+    fi
+
     # create parameter file
+    mv "$cube" "${ardBasePath}datacube-definition.prj"
 
     PARAM=./tsa_${meta.id}.prm
     cat <<EOF > \$PARAM
@@ -184,6 +195,7 @@ process FORCE_HIGHER_LEVEL {
     ${outputOptions}
     ${outputExplode}
     ${outputSubDirs}
+    ${failIfEmpty}
     ${nThreadRead}
     ${nThreadCompute}
     ${nThreadWrite}
@@ -192,11 +204,12 @@ process FORCE_HIGHER_LEVEL {
     ${xTilePrm}
     ${yTilePrm}
     ${fileTile}
-    ${blockSize}
+    \$CHUNKSIZE
     ${res}
     ${reducePSF}
     ${useL2Improph}
     ${sensors}
+    ${targetSensor}
     ${productTypeMain}
     ${productTypeQuality}
     ${spectralAdjust}

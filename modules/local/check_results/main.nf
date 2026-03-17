@@ -21,13 +21,8 @@ process CHECK_RESULTS {
 
     script:
     """
-    files=`find ./trend/ -maxdepth 1 -mindepth 1 -type d`
-    for path in \$files; do
-        mkdir -p trend/\$(ls \$path)
-        cp \$path/*/* trend/\$(ls \$path)/
-        rm \$path -r
-    done;
-    test.R trend/mosaic $woody_change_ref $woody_yoc_ref $herbaceous_change_ref $herbaceous_yoc_ref $peak_change_ref $peak_yoc_ref
+    # run check results
+    test.R ./trend $woody_change_ref $woody_yoc_ref $herbaceous_change_ref $herbaceous_yoc_ref $peak_change_ref $peak_yoc_ref
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -2,7 +2,7 @@ process FORCE_GENERATE_TILE_ALLOW_LIST{
     tag { aoi.simpleName }
     label 'process_single'
 
-    container "nf-core/force:3.8.01"
+    container "docker.io/davidfrantz/force:3.9.02"
 
     input:
     path aoi

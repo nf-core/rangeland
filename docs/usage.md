@@ -471,23 +471,39 @@ process {
 
 For a comprehensive list of parameters see the FORCE documentation on [force-l2ps parameterization](https://force-eo.readthedocs.io/en/latest/components/lower-level/level2/param.html#l2-param) and [force-higher-level (TSA) parameterization](https://force-eo.readthedocs.io/en/latest/components/higher-level/tsa/param.html).
 
+#### Preprocessing (FORCE_PREPROCESS)
+
 The following FORCE parameters can _not_ be set through `task.ext.args` in preprocessing (for the `FORCE_PREPROCESS` process):
 
 - `FILE_QUEUE`: This pipeline processes one image per process, which does not require a queue for input files.
 - `DIR_LEVEL2`, `DIR_LOG`, `DIR_PROVENANCE`, `DIR_TEMP`: FORCE directories must be defined within the process working directory.
 - `FILE_DEM`: Set through process's input channels and derived from `params.dem`, see [digital elevation model](#digital-elevation-model-dem) for details.
+- `USE_DEM_DATABASE`: Not implemented yet.
 - `FILE_TILE`: Set through the process's input channels.
 - `TILE_SIZE`: Derived from datacube input channel, which is created based on the [datacube input](#datacube).
-- `BLOCK_SIZE`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
-- `ORIGIN_LON`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
-- `ORIGIN_LAT`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
-- `PROJECTION`: Derived from datacube input channel, which is created based on the [datacube input](#datacube)..
+- `ORIGIN_LON`: Derived from datacube input channel, which is created based on the [datacube input](#datacube).
+- `ORIGIN_LAT`: Derived from datacube input channel, which is created based on the [datacube input](#datacube).
+- `PROJECTION`: Derived from datacube input channel, which is created based on the [datacube input](#datacube).
 - `WVP`: Set through process's input channels and derived from `--wvdb`, see [water vapor database](#water-vapor-database-wvdb) for details.
 - `DIR_AOD`: Set through process's input channels and derived from `--aod`, see [aerosol optical depth](#aerosol-optical-depth-aod) for details.
 - `DIR_COREG_BASE`: Set through process's input channels and derived from `--coreg`, see [coregistration](#coregistration-near-infrared-nir-data) for details.
 - `FILE_AOI`: Set through process's input channels and derived from `--aoi`, see [area of interest](#area-of-interest-aoi) for details.
 
+The following parameter's default values deviate from their current FORCE default:
+
+- `OUTPUT_FORMAT`: set to `GTiff`(GeoTIFF) instead of `COG` (cloud optimized GeoTIFF)
+
 In addition, the `DO_TOPO` FORCE parameter will only be considered when the [pipeline is executed with a digital elevation model](#digital-elevation-model-dem).
+
+> [!WARNING]
+> Please refer to the FORCE documentation as mentioned above to understand the impact of different parameters.
+> Certain combinations of parameters may break FORCE or the pipeline.
+>
+> The `OUTPUT_FORMAT` parameters and `FILE_OUTPUT_OPTIONS` should be modified with caution.
+> The pipeline expects both modules to return `.tif` files. Other output formats will break the pipeline.
+> In addition, certain combinations of these parameters may require custom containers (e.g. container with COG GDAL drivers for `OUTPUT_FORMAT` = `COG`.)
+
+#### Higher-level processing (FORCE_HIGHER_LEVEL)
 
 The following FORCE parameters can _not_ be set through `task.ext.args` in higher-level processing (for the `FORCE_HIGHER_LEVEL` process):
 
