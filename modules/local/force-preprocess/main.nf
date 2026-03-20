@@ -3,7 +3,7 @@ process FORCE_PREPROCESS {
     label 'process_medium'
     label 'error_retry'
 
-    container "docker.io/davidfrantz/force:3.9.02"
+    container "nf-core/force:3.10.04"
 
     input:
     tuple val(meta), path(data)

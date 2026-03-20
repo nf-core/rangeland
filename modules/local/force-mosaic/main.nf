@@ -2,7 +2,7 @@ process FORCE_MOSAIC{
     tag { meta.id }
     label 'process_low'
 
-    container "docker.io/davidfrantz/force:3.9.02"
+    container "nf-core/force:3.10.04"
 
     input:
     tuple val(meta), path('trend/*')

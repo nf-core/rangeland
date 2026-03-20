@@ -4,22 +4,22 @@
             97,
             {
                 "FORCE_GENERATE_ANALYSIS_MASK": {
-                    "force": "3.9.02"
+                    "force": "3.10.04"
                 },
                 "FORCE_GENERATE_TILE_ALLOW_LIST": {
-                    "force": "3.9.02"
+                    "force": "3.10.04"
                 },
                 "FORCE_HIGHER_LEVEL": {
-                    "force": "3.9.02"
+                    "force": "3.10.04"
                 },
                 "FORCE_MOSAIC": {
-                    "force": "3.9.02"
+                    "force": "3.10.04"
                 },
                 "FORCE_PREPROCESS": {
-                    "force": "3.9.02"
+                    "force": "3.10.04"
                 },
                 "FORCE_PYRAMID": {
-                    "force": "3.9.02"
+                    "force": "3.10.04"
                 },
                 "UNTAR_WVDB": {
                     "untar": 1.34
@@ -690,10 +690,10 @@
                 "untar/wvdb"
             ]
         ],
+        "timestamp": "2026-03-20T12:31:09.930795447",
         "meta": {
-            "nf-test": "0.9.3",
+            "nf-test": "0.9.4",
             "nextflow": "25.10.3"
-        },
-        "timestamp": "2026-03-16T00:57:49.556239656"
+        }
     }
 }
