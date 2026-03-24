@@ -3,7 +3,7 @@ process FORCE_PREPROCESS {
     label 'process_medium'
     label 'error_retry'
 
-    container "nf-core/force:3.8.01"
+    container "nf-core/force:3.10.04"
 
     input:
     tuple val(meta), path(data)
@@ -53,6 +53,8 @@ process FORCE_PREPROCESS {
 
     // Digital elevation model
     // "FILE_DEM"     can only be set after input stage-in
+    def useDemDB      = "USE_DEM_DATABASE = FALSE"
+    def demResampling = task.ext.args?.getAt("DEM_RESAMPLING")         ? "DEM_RESAMPLING = ${task.ext.args["DEM_RESAMPLING"]}"               : "DEM_RESAMPLING = BL"
     def demNoData     = task.ext.args?.getAt("DEM_NODATA")             ? "DEM_NODATA = ${task.ext.args["DEM_NODATA"]}"                       : "DEM_NODATA = -32767"
 
     // Data cubes
@@ -60,7 +62,6 @@ process FORCE_PREPROCESS {
     def doTile        = task.ext.args?.getAt("DO_TILE")                ? "DO_TILE = ${task.ext.args["DO_TILE"]}"                             : "DO_TILE = TRUE"
     def fileTile      = tile                                           ? "FILE_TILE = $tile"                                                 : "FILE_TILE = NULL"
     // "TILE_SIZE"    can only be set after input stage-in
-    // "BLOCK_SIZE"   can only be set after input stage-in
     def landsatRes    = task.ext.args?.getAt("RESOLUTION_LANDSAT")     ? "RESOLUTION_LANDSAT = ${task.ext.args["RESOLUTION_LANDSAT"]}"       : "RESOLUTION_LANDSAT = 30"
     def sentinel2Res  = task.ext.args?.getAt("RESOLUTION_SENTINEL2")   ? "RESOLUTION_SENTINEL2 = ${task.ext.args["RESOLUTION_SENTINEL2"]}"   : "RESOLUTION_SENTINEL2 = 10"
     // "ORIGIN_LON    can only be set after input stage-in
@@ -150,7 +151,6 @@ process FORCE_PREPROCESS {
     ORIGINX=\$(sed '2q;d' $cube)
     ORIGINY=\$(sed '3q;d' $cube)
     TILESIZE=\$(sed '6q;d' $cube)
-    BLOCKSIZE=\$(sed '7q;d' $cube)
 
     # create parameter file
     PARAM=./preprocess_${data.simpleName}.prm
@@ -165,11 +165,12 @@ process FORCE_PREPROCESS {
     ${fileAoi}
     FILE_DEM = \$DEM_FILE
     ${demNoData}
+    ${useDemDB}
+    ${demResampling}
     ${doReproj}
     ${doTile}
     ${fileTile}
     TILE_SIZE = \$TILESIZE
-    BLOCK_SIZE = \$BLOCKSIZE
     ${landsatRes}
     ${sentinel2Res}
     ORIGIN_LON = \$ORIGINX

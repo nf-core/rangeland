@@ -158,9 +158,10 @@ The `.tif` files are only published when the `--save_tsa` parameter is set to `t
 <summary>Output files</summary>
 
 - `trend/`
-  - `mosaic/<PRODUCT>/`
-    - `<TILE>/`: .tif files that are part of the mosaic.
-    - `mosaic/`: Contains a single virtual raster file that combines the .tif files into the mosaic visualization.
+  - `mosaic/`
+    - `<PRODUCT>/`: Contains all files for a single product mosaic.
+      - `<PRODUCT>.vrt` Virtual raster file for the product. This can be opened in GIS systems to view the mosaic for the product.
+      - `<TILE>`: Contains the tile data used in `.vrt` file for this mosaic.
   - `pyramid/<TREND_TYPE>/trend/<TILE>/`: Contains tile-wise pyramid visualizations for every trend analyzed in the workflow.
 
 </details>

@@ -2,7 +2,7 @@ process FORCE_MOSAIC{
     tag { meta.id }
     label 'process_low'
 
-    container "nf-core/force:3.8.01"
+    container "nf-core/force:3.10.04"
 
     input:
     tuple val(meta), path('trend/*')

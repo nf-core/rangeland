@@ -16,13 +16,7 @@ process CHECK_RESULTS_FULL {
 
     script:
     """
-    files=`find ./trend/ -maxdepth 1 -mindepth 1 -type d`
-    for path in \$files; do
-        mkdir -p trend/\$(ls \$path)
-        cp \$path/*/* trend/\$(ls \$path)/
-        rm \$path -r
-    done;
-    test.R trend/mosaic $reference
+    test.R ./trend $reference
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

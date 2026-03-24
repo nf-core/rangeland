@@ -9,13 +9,13 @@ args = commandArgs(trailingOnly=TRUE)
 
 
 if (length(args) != 7 && length(args) != 2) {
-    stop("\n Error: wrong number of parameters. Usage: \n 1st arg: workflow results directory (mosaic)
+    stop("\n Error: wrong number of parameters. Usage: \n 1st arg: staged workflow results directory
         \n 2nd-7th args:  reference rasters (*.tif) in order:
         woody cover change, woody cover year of change,
         herbaceous cover change, herbaceous cover year of change,
         peak change, peak year of change
         \nor \n
-        1st arg: workflow results directory (mosaic) \n 2nd arg: reference directory
+        1st arg: staged workflow results directory \n 2nd arg: reference directory
         ", call.=FALSE)
 }
 
@@ -46,6 +46,50 @@ compare_direction <- function(r1, r2, threshold = 0.95) {
     } else {
         return(paste("Change directions not matching. Match percentage:", match_percentage))
     }
+}
+
+# function to load staged pipeline outputs without relying on upstream VRT paths
+load_product_rast <- function(root_dir, product_suffix) {
+    tif_files <- sort(list.files(
+        root_dir,
+        pattern = paste0(product_suffix, "\\.tif$"),
+        recursive = TRUE,
+        full.names = TRUE
+    ))
+
+    if (length(tif_files) == 0) {
+        stop(
+            paste0(
+                "No staged TIFFs found for product '",
+                product_suffix,
+                "' under ",
+                root_dir
+            ),
+            call. = FALSE
+        )
+    }
+
+    if (length(tif_files) == 1) {
+        return(rast(tif_files))
+    }
+
+    merge(sprc(lapply(tif_files, rast)))
+}
+
+get_change_band <- function(r) {
+    if ("CHANGE" %in% names(r)) {
+        return(r$CHANGE)
+    }
+
+    r[[1]]
+}
+
+get_yoc_band <- function(r) {
+    if ("YEAR-OF-CHANGE" %in% names(r)) {
+        return(r["YEAR-OF-CHANGE"])
+    }
+
+    r[[3]]
 }
 
 
@@ -87,12 +131,10 @@ if (length(args) == 7 ){
 # input data dir
 dinp <- args[1]
 
-fname <- dir(dinp, ".*HL_TSA_LNDLG_SMA_VBL-CAO.vrt$", full.names=TRUE)
+woody_cover_rast <- load_product_rast(dinp, "HL_TSA_LNDLG_SMA_VBL-CAO")
 
-woody_cover_rast <- rast(fname)
-
-woody_cover_changes        <- woody_cover_rast$CHANGE
-woody_cover_year_of_change <- woody_cover_rast["YEAR-OF-CHANGE"]
+woody_cover_changes        <- get_change_band(woody_cover_rast)
+woody_cover_year_of_change <- get_yoc_band(woody_cover_rast)
 
 
 
@@ -100,24 +142,20 @@ woody_cover_year_of_change <- woody_cover_rast["YEAR-OF-CHANGE"]
 #######################################################################
 
 
-fname <- dir(dinp, ".*HL_TSA_LNDLG_SMA_VSA-CAO.vrt$", full.names=TRUE)
+herbaceous_cover_rast <- load_product_rast(dinp, "HL_TSA_LNDLG_SMA_VSA-CAO")
 
-herbaceous_cover_rast <- rast(fname)
-
-herbaceous_cover_changes        <- herbaceous_cover_rast$CHANGE
-herbaceous_cover_year_of_change <- herbaceous_cover_rast["YEAR-OF-CHANGE"]
+herbaceous_cover_changes        <- get_change_band(herbaceous_cover_rast)
+herbaceous_cover_year_of_change <- get_yoc_band(herbaceous_cover_rast)
 
 
 
 # VALUE OF PEAK SEASON
 #######################################################################
 
-fname <- dir(dinp, ".*HL_TSA_LNDLG_SMA_VPS-CAO.vrt$", full.names=TRUE)
+peak_rast <- load_product_rast(dinp, "HL_TSA_LNDLG_SMA_VPS-CAO")
 
-peak_rast <- rast(fname)
-
-peak_changes        <- peak_rast$CHANGE
-peak_year_of_change <- peak_rast["YEAR-OF-CHANGE"]
+peak_changes        <- get_change_band(peak_rast)
+peak_year_of_change <- get_yoc_band(peak_rast)
 
 
 
