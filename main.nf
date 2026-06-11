@@ -34,7 +34,12 @@ workflow NFCORE_RANGELAND {
     //
     // WORKFLOW: Run pipeline
     //
-    RANGELAND ()
+    RANGELAND (
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir
+    )
 
     emit:
     level2_ard     = RANGELAND.out.level2_ard
@@ -58,6 +63,7 @@ workflow {
     PIPELINE_INITIALISATION (
         params.version,
         params.validate_params,
+        params.monochrome_logs,
         args,
         params.outdir,
         params.help,
@@ -79,7 +85,6 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
         NFCORE_RANGELAND.out.multiqc_report
     )
 }
