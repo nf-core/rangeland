@@ -1,0 +1,57 @@
+// WARNING: This test requires approximately 400GB of free space.
+// It is excluded from default test runs due to its high resource demands.
+// Run with caution.
+
+// This is a pipeline level-test, not a module test, even though the main script is a module.
+// The entire workflow is executed in the setup scope using the same config as the test_full profile.
+// Next, still within the setup scope the reference data is pulled and extracted.
+// Afterwards, a single module is executed in the when scope to ensure that the pipeline generated correct results.
+
+nextflow_process {
+
+    name "Check the correctness of the pipeline results using the test_full profile"
+    script "../modules/local/check_results_full/main.nf"
+    process "CHECK_RESULTS_FULL"
+    config "../conf/test_full.config"
+
+    test("Checking pipeline results for: -profile test_full | requires 400GB free space") {
+
+        setup {
+            run("NFCORE_RANGELAND") {
+                script "../main.nf"
+                workflow {}
+            }
+
+            run("UNTAR", alias: "UNTAR_REF" ) {
+                script "../modules/nf-core/untar/main.nf"
+                process {
+                    """
+                    input[0] = [[:], params.reference]
+                    """
+                }
+            }
+
+        }
+
+        when {
+            params {
+                // reference data
+                reference = "s3://ngi-igenomes/test-data/rangeland/reference.tar"
+            }
+
+            process {
+                """
+                // inputs for CHECK_RESULTS_FULL
+                input[0] = NFCORE_RANGELAND.out.mosaic.map{ it[1] }.flatten().buffer( size: Integer.MAX_VALUE, remainder: true )
+                input[1] = UNTAR_REF.out.untar.map(it->it[1])
+                """
+            }
+        }
+
+        then {
+            assert process.success
+        }
+
+    }
+
+}
