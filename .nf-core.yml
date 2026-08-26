@@ -4,7 +4,7 @@ lint:
     - conf/igenomes_ignored.config
   nf_test_content:
     - tests/check_test_results.nf.test
-nf_core_version: 4.0.2
+nf_core_version: 4.0.3
 repository_type: pipeline
 template:
   author: Fabian Lehmann, David Frantz, Felix Kummer
